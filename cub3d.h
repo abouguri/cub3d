@@ -1,25 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rukia <rukia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/05 17:48:57 by rukia             #+#    #+#             */
-/*   Updated: 2025/01/05 18:09:43 by rukia            ###   ########.fr       */
+/*   Created: 2025/01/05 18:03:44 by rukia             #+#    #+#             */
+/*   Updated: 2025/01/05 18:09:22 by rukia            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
-
-int arg_check(int ac, char **av)
+typedef	enum    e_error
 {
-    int error;
-
-    error = 0;
-    if (ac > 3)
-		error = TOO_MANY_ARGS;
-	if (ac < 2)
-		error = TOO_FEW_ARGS;
+    TOO_MANY_ARGS,
+    TOO_FEW_ARGS,
     
-}
+}               t_error;
