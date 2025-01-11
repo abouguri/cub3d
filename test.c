@@ -35,7 +35,8 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void parse_file(const char *filename, t_config *config) {
+void parse_file(const char *filename, t_config *config)
+{
     FILE *file = fopen(filename, "r");
     if (!file) {
         perror("Error opening file");
@@ -54,15 +55,18 @@ void parse_file(const char *filename, t_config *config) {
     validate_map(config->map);
 }
 
-void parse_line(const char *line, t_config *config) {
+void parse_line(const char *line, t_config *config)
+{
     // Implement parsing logic for textures, colors, and map
 }
 
-void validate_map(char **map) {
+void validate_map(char **map)
+{
     // Implement map validation logic
 }
 
-void free_config(t_config *config) {
+void free_config(t_config *config)
+{
     free(config->north_texture);
     free(config->south_texture);
     free(config->west_texture);
