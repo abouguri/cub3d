@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/13 20:22:06 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/13 21:17:07 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
-# include "minilibx-linux/mlx.h"
+//# include "minilibx-linux/mlx.h"
 
 // screen
 
