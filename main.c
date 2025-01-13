@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rukia <rukia@student.42.fr>                +#+  +:+       +#+        */
+/*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/12 18:30:43 by rukia            ###   ########.fr       */
+/*   Updated: 2025/01/13 20:27:26 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 	ret = malloc(sizeof(char) * (len + 1));
 	if (!ret)
 		return (0);
-	strlcpy(ret, s + start, len + 1);
+	strncpy(ret, s + start, len + 1);
 	return (ret);
 }
 
@@ -87,6 +87,20 @@ char	**ft_split(char const *s, char c)
 	lst[i] = NULL;
 	return (lst);
 }
+// funcs extra
+
+static void	ft_exit_parse(char *s, int fd)
+{
+	if (fd < 0)
+		close(fd);
+    t_cub *data = get_cub_data();
+    
+	write(2, s, strlen(s));
+	free_array(&data->textures);
+	free_array(&data->rgb);
+	free_array(&data->map);
+	exit(1);
+}
 
 // utilities
 
@@ -108,7 +122,8 @@ void error_exit_with_cleanup(const char *message, int fd)
 
 t_cub *get_cub_data(void)
 {
-    static t_cub data = {0};
+    static t_cub data;
+    
     return &data;
 }
 
@@ -229,9 +244,9 @@ int contains_newline(char *buffer)
 int get_next_line(int fd, char **line)
 {
     int bytes_read;
-    static char *buffers[OPEN_MAX];
+    static char *buffers[FOPEN_MAX];
 
-    if (fd < 0 || BUFFER_SIZE <= 0 || fd >= OPEN_MAX || !line)
+    if (fd < 0 || BUFFER_SIZE <= 0 || fd >= FOPEN_MAX || !line)
         return -1;
 
     if (!buffers[fd])
@@ -273,23 +288,22 @@ int parse_file(int fd)
     int ret;
 
     t_cub *data = get_cub_data();
-    data->textures = calloc(TEXTURE_COUNT + 1, sizeof(char *));
-    data->colors = calloc(RGB_COUNT + 1, sizeof(char *));
+    data->textures = calloc(sizeof(char *), TEXTURE_COUNT + 1);
+    data->colors = calloc(sizeof(char *), RGB_COUNT + 1);
     if (!data->textures || !data->colors)
         return 1;
 
-    while (ft_array_length(data->textures) < TEXTURE_COUNT || ft_array_length(data->colors) < RGB_COUNT)
+    while (ft_array_length(data->textures) != TEXTURE_COUNT || ft_array_length(data->colors) != RGB_COUNT)
     {
         ret = get_next_line(fd, &line);
         if (ret == -1)
             return 1;
-        if (*line)
+        if (strlen(line) == 0)
+            ;
+        else if (parse_textures(line) && parse_colors(line))
         {
-            if (parse_textures(line) && parse_colors(line))
-            {
-                free(line);
-                return 1;
-            }
+            free(line);
+            return 1;
         }
         free(line);
         if (ret == 0) break;
@@ -297,29 +311,41 @@ int parse_file(int fd)
     return 0;
 }
 
+int	ft_strncmp(const char *s1, char *s2, size_t n)
+{
+	while (*s1 != '\0' && *s1 == *s2 && n > 0)
+	{
+		s1++;
+		s2++;
+		n--;
+	}
+	if (n == 0)
+		return (0);
+	return (*(unsigned char *)s1 - *(unsigned char *)s2);
+}
+
 int parse_textures(char *line)
 {
     char **tokens = ft_split(line, ' ');
-    if (!tokens || ft_array_length(tokens) != 2)
-    {
-        free_array(&tokens);
-        return 1;
-    }
-
     t_cub *data = get_cub_data();
-    if (strcmp(tokens[0], "NO") == 0)
-        data->textures[0] = strdup(tokens[1]);
-    else if (strcmp(tokens[0], "SO") == 0)
-        data->textures[1] = strdup(tokens[1]);
-    else if (strcmp(tokens[0], "WE") == 0)
-        data->textures[2] = strdup(tokens[1]);
-    else if (strcmp(tokens[0], "EA") == 0)
-        data->textures[3] = strdup(tokens[1]);
-    else
-    {
-        free_array(&tokens);
+    
+    printf("%s\n%s\n", tokens[0], tokens[1]);
+    printf("****** %d ******\n",ft_array_length(data->textures));
+    
+    if (!tokens)
         return 1;
-    }
+    if (ft_array_length(tokens) != 2)
+        return 1;
+    if (ft_strncmp(tokens[0], "NO", 3) == 0)
+        data->textures[0] = strdup(tokens[1]);
+    else if (ft_strncmp(tokens[0], "SO", 3) == 0)
+        data->textures[1] = strdup(tokens[1]);
+    else if (ft_strncmp(tokens[0], "WE", 3) == 0)
+        data->textures[2] = strdup(tokens[1]);
+    else if (ft_strncmp(tokens[0], "EA", 3) == 0)
+        data->textures[3] = strdup(tokens[1]);
+    else if (ft_strncmp(tokens[0], "C", 2) && ft_strncmp(tokens[0], "F", 2))
+        return (1);
     free_array(&tokens);
     return 0;
 }
@@ -327,22 +353,17 @@ int parse_textures(char *line)
 int parse_colors(char *line)
 {
     char **tokens = ft_split(line, ' ');
+    // printf("%s\n%s\n", tokens[0], tokens[1]);
+    t_cub *data = get_cub_data();
     if (!tokens || ft_array_length(tokens) != 2)
     {
         free_array(&tokens);
         return 1;
     }
-
-    t_cub *data = get_cub_data();
-    if (strcmp(tokens[0], "F") == 0)
+    if (strncmp(tokens[0], "F", 1) == 0)
         data->colors[0] = strdup(tokens[1]);
-    else if (strcmp(tokens[0], "C") == 0)
+    else if (strncmp(tokens[0], "C", 1) == 0)
         data->colors[1] = strdup(tokens[1]);
-    else
-    {
-        free_array(&tokens);
-        return 1;
-    }
     free_array(&tokens);
     return 0;
 }
@@ -429,46 +450,48 @@ int parse(char *file)
     if (fd < 0)
         error_exit(ERR_FILE_OPEN);
 
-    if (parse_file(fd))
+    if (parse_file(fd) == 1)
         error_exit_with_cleanup(ERR_INVALID_INFO, fd);
 
-    if (parse_map(fd))
+    if (parse_map(fd) == 1)
         error_exit_with_cleanup(ERR_INVALID_MAP, fd);
     
-
+    // if (validate_full_map() == 1)
+    //     ft_exit_parse(ERR_INVALID_MAP, fd);
+    
     close(fd);
     return 0;
 }
 
 //added
 
-static void	set_values(double direction_x, double direction_y, double pla_x, double pla_y)
+static void	initialize_camera(double direction_x, double direction_y, double pla_x, double pla_y)
 {
     t_cub *data = get_cub_data();
 
-	data->var.direction_x = direction_x;
-	data->var.direction_y = direction_y;
-	data->var.plane_x = pla_x;
-	data->var.plane_y = pla_y;
+	data->var.direction.x = direction_x;
+	data->var.direction.y = direction_y;
+	data->var.plane.x = pla_x;
+	data->var.plane.y = pla_y;
 }
 
-static void	init_vectors(int x, int y)
+static void	initialize_player_vectors(int x, int y)
 {
     t_cub *data = get_cub_data();
 
-	data->var.position_x = x + 0.5;
-	data->var.position_y = y + 0.5;
+	data->var.position.x = x + 0.5;
+	data->var.position.y = y + 0.5;
 	if (data->map[y][x] == 'N')
-		set_values(0, -1, 0.66, 0);
+		initialize_camera(0, -1, 0.66, 0);
 	else if (data->map[y][x] == 'S')
-		set_values(0, 1, -0.66, 0);
+		initialize_camera(0, 1, -0.66, 0);
 	else if (data->map[y][x] == 'E')
-		set_values(1, 0, 0, 0.66);
+		initialize_camera(1, 0, 0, 0.66);
 	else if (data->map[y][x] == 'W')
-		set_values(-1, 0, 0, -0.66);
+		initialize_camera(-1, 0, 0, -0.66);
 }
 
-int	check_characters(void)
+int	validate_full_map_characters(void)
 {
 	int	i;
 	int	j;
@@ -482,12 +505,12 @@ int	check_characters(void)
 		j = 0;
 		while (data->map[i][j])
 		{
-			if (!ft_strchr(" 10NSEW", data->map[i][j]))
+			if (!strchr(" 10NSEW", data->map[i][j]))
 				return (0);
 			if (data->map[i][j] == 'N' || data->map[i][j] == 'S' \
 				|| data->map[i][j] == 'E' || data->map[i][j] == 'W')
 			{
-				init_vectors(j, i);
+				initialize_player_vectors(j, i);
 				count++;
 			}
 			j++;
@@ -497,32 +520,27 @@ int	check_characters(void)
 	return (count);
 }
 
-static int	is_closed(int i, int j)
+static int	is_cell_enclosed(int i, int j)
 {
     t_cub *data = get_cub_data();
 
-	if (data->map[i][j] == '0' \
-		|| (data->map[i][j] != '1' && data->map[i][j] != ' '))
+	if (data->map[i][j] == '0' || (data->map[i][j] != '1' && data->map[i][j] != ' '))
 	{
 		if (i == 0 || !data->map[i + 1] || j == 0 || !data->map[i][j + 1])
 			return (1);
-		if (data->map[i - 1] && data->map[i - 1][j]
-			&& data->map[i - 1][j] == ' ')
+		if (data->map[i - 1] && data->map[i - 1][j] && data->map[i - 1][j] == ' ')
 			return (1);
-		if (data->map[i + 1] && data->map[i + 1][j]
-			&& data->map[i + 1][j] == ' ')
+		if (data->map[i + 1] && data->map[i + 1][j] && data->map[i + 1][j] == ' ')
 			return (1);
-		if (data->map[i] && data->map[i][j - 1]
-			&& data->map[i][j - 1] == ' ')
+		if (data->map[i] && data->map[i][j - 1] && data->map[i][j - 1] == ' ')
 			return (1);
-		if (data->map[i] && data->map[i][j + 1]
-			&& data->map[i][j + 1] == ' ')
+		if (data->map[i] && data->map[i][j + 1] && data->map[i][j + 1] == ' ')
 			return (1);
 	}
 	return (0);
 }
 
-static int	is_end(int index)
+static int	validate_full_map_end(int index)
 {
 	int		i;
 
@@ -539,27 +557,27 @@ static int	is_end(int index)
 	return (0);
 }
 
-int	validate_map(void)
+int	validate_full_map(void)
 {
 	int	i;
 	int	j;
     
     t_cub *data = get_cub_data();
-	if (ft_array_length(data->map) < 3 || check_characters() != 1)
+	if (ft_array_length(data->map) < 3 || validate_full_map_characters() != 1)
 		return (1);
 	i = 0;
 	while (data->map[i])
 	{
 		if (strlen(data->map[i]) == 0)
 		{
-			if (is_end(i) == 1)
+			if (validate_full_map_end(i) == 1)
 				return (1);
 			break ;
 		}
 		j = 0;
 		while (data->map[i][j])
 		{
-			if (is_closed(i, j) == 1)
+			if (is_cell_enclosed(i, j) == 1)
 				return (1);
 			j++;
 		}
@@ -572,25 +590,28 @@ static void	ft_exit_init(char *s)
 {
     t_cub *data = get_cub_data();
 
-	write(2, s, ft_strlen(s));
-	ft_free(&data->xpm);
-	ft_free(&data->rgb);
-	ft_free(&data->map);
+	write(2, s, strlen(s));
+	free_array(&data->textures);
+	free_array(&data->rgb);
+	free_array(&data->map);
 	exit(1);
 }
 
-static void	ft_exit_parse(char *s, int fd)
-{
-	if (fd < 0)
-		close(fd);
-    t_cub *data = get_cub_data();
-    
-	write(2, s, ft_strlen(s));
-	ft_free(&data->xpm);
-	ft_free(&data->rgb);
-	ft_free(&data->map);
-	exit(1);
-}
+// void	init(void)
+// {
+// 	void	*temporary;
+
+//     t_cub *data = get_cub_data();
+// 	data->mlx = mlx_init();
+// 	// if (init_textures() == 1)
+// 	// 	ft_exit_init("Error\nCannot load textures\n");
+// 	// if (init_colours() == 1)
+// 	// 	ft_exit_init("Error\nCannot load colors\n");
+// 	if (validate_full_map() == 1)
+// 		ft_exit_init("Error\nInvalid map\n");
+// 	temporary = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
+// 	data->win = temporary;
+// }
 
 int main(int argc, char **argv)
 {
@@ -598,6 +619,6 @@ int main(int argc, char **argv)
         error_exit(ERR_TOO_FEW_ARGS);
     if (argc > 2)
         error_exit(ERR_TOO_MANY_ARGS);
-    parse(argv[1]);
-    return EXIT_SUCCESS;
+    parse(argv[1]); 
+    return EXIT_SUCCESS; 
 }
