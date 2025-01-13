@@ -6,7 +6,7 @@
 /*   By: rukia <rukia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/09 21:05:58 by rukia            ###   ########.fr       */
+/*   Updated: 2025/01/12 18:20:50 by rukia            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,53 @@
 #define ERR_INVALID_MAP "Error: Invalid map structure.\n"
 
 // Structs
+
+typedef struct s_var
+{
+	double			position_x;
+	double			position_y;
+	double			direction_x;
+	double			direction_y;
+	double			plane_x;
+	double			plane_y;
+	double			camera_x;
+	double			ray_direction_x;
+	double			ray_direction_y;
+	double			side_distance_x;
+	double			side_distance_y;
+	double			delta_distance_x;
+	double			delta_distance_y;
+	double			perspective_wall_distance;
+	double			wall_x;
+	double			step;
+	double			texture_position;
+	double			frame_time;
+	double			move_speed;
+	double			rotate_speed;
+
+	int				map_x;
+	int				map_y;
+	int				step_x;
+	int				step_y;
+	int				hit;
+	int				side;
+	int				line_height;
+	int				draw_start;
+	int				draw_end;
+	int				texture_number;
+	int				texture_y;
+	int				texture_x;
+
+	unsigned int	color;
+}			t_var;
+
 typedef struct s_cub {
-    char **textures;
-    char **colors;
-    char **map;
+    char    **textures;
+    char    **colors;
+    char    **map;
+    char    **rgb;
+	char    **xpm;
+    t_var			var;
 } t_cub;
 
 // Function Prototypes
