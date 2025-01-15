@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/13 21:17:07 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/15 21:20:13 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,32 +90,7 @@
 //     t_var			var;
 // } t_cub;
 
-typedef struct s_position {
-    double x;
-    double y;
-} t_position;
 
-typedef struct s_direction {
-    double x;
-    double y;
-} t_direction;
-
-typedef struct s_plane {
-    double x;
-    double y;
-} t_plane;
-
-typedef struct s_ray {
-    double camera_x;
-    double direction_x;
-    double direction_y;
-    double side_distance_x;
-    double side_distance_y;
-    double delta_distance_x;
-    double delta_distance_y;
-    double perspective_wall_distance;
-    double wall_x;
-} t_ray;
 
 typedef struct s_movement {
     double frame_time;
@@ -165,7 +140,6 @@ typedef struct s_cub {
     char    **colors;
     char    **map;
     char    **rgb;
-    char    **xpm;
     t_var   var;
 } t_cub;
 
