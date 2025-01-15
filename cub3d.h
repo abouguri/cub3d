@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/15 21:20:13 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/15 21:28:37 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,41 +42,6 @@
 
 // Structs
 
-// typedef struct s_var
-// {
-// 	double			position_x;
-// 	double			position_y;
-// 	double			direction_x;
-// 	double			direction_y;
-// 	double			plane_x;
-// 	double			plane_y;
-// 	double			camera_x;
-// 	double			ray_direction_x;
-// 	double			ray_direction_y;
-// 	double			side_distance_x;
-// 	double			side_distance_y;
-// 	double			delta_distance_x;
-// 	double			delta_distance_y;
-// 	double			perspective_wall_distance;
-// 	double			wall_x;
-// 	double			step;
-// 	double			texture_position;
-// 	double			frame_time;
-// 	double			move_speed;
-// 	double			rotate_speed;
-
-// 	int				map_x;
-// 	int				map_y;
-// 	int				step_x;
-// 	int				step_y;
-// 	int				hit;
-// 	int				side;
-// 	int				line_height;
-// 	int				draw_start;
-// 	int				draw_end;
-// 	int				texture_number;
-// 	int				texture_y;
-// 	int				texture_x;
 
 // 	unsigned int	color;
 // }			t_var;
@@ -92,46 +57,6 @@
 
 
 
-typedef struct s_movement {
-    double frame_time;
-    double move_speed;
-    double rotate_speed;
-} t_movement;
-
-typedef struct s_drawing {
-    int line_height;
-    int draw_start;
-    int draw_end;
-    unsigned int color;
-} t_drawing;
-
-typedef struct s_texture {
-    int number;
-    int x;
-    int y;
-    double step;
-    double position;
-} t_texture;
-
-typedef struct s_map_info {
-    int map_x;
-    int map_y;
-    int step_x;
-    int step_y;
-    int hit;
-    int side;
-} t_map_info;
-
-typedef struct s_var {
-    t_position position;
-    t_direction direction;
-    t_plane plane;
-    t_ray ray;
-    t_movement movement;
-    t_drawing drawing;
-    t_texture texture;
-    t_map_info map_info;
-} t_var;
 
 typedef struct s_cub {
 	void	*mlx;
@@ -140,7 +65,7 @@ typedef struct s_cub {
     char    **colors;
     char    **map;
     char    **rgb;
-    t_var   var;
+    // t_var   var;
 } t_cub;
 
 

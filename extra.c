@@ -51,6 +51,48 @@ static void	initialize_camera(double direction_x, double direction_y, double pla
 // 	data->win = temporary;
 // }
 
+
+typedef struct s_movement {
+    double frame_time;
+    double move_speed;
+    double rotate_speed;
+} t_movement;
+
+typedef struct s_drawing {
+    int line_height;
+    int draw_start;
+    int draw_end;
+    unsigned int color;
+} t_drawing;
+
+typedef struct s_texture {
+    int number;
+    int x;
+    int y;
+    double step;
+    double position;
+} t_texture;
+
+typedef struct s_map_info {
+    int map_x;
+    int map_y;
+    int step_x;
+    int step_y;
+    int hit;
+    int side;
+} t_map_info;
+
+typedef struct s_var {
+    t_position position;
+    t_direction direction;
+    t_plane plane;
+    t_ray ray;
+    t_movement movement;
+    t_drawing drawing;
+    t_texture texture;
+    t_map_info map_info;
+} t_var;
+
 static void	initialize_player_vectors(int x, int y)
 {
     t_cub *data = get_cub_data();
