@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/13 21:16:28 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/15 16:18:18 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,71 +21,70 @@ int	ft_array_length(char **array)
 	i = 0;
 	while (array[i])
 		i++;
+    // printf(".........%d\n", i);
 	return (i);
 }
 
-static size_t	ft_countword(char const *s, char c)
+static int	count_words(const char *str, char c)
 {
-	size_t	count;
+	int	i;
+	int	trigger;
 
-	if (!*s)
-		return (0);
-	count = 0;
-	while (*s)
+	i = 0;
+	trigger = 0;
+	while (*str)
 	{
-		while (*s == c)
-			s++;
-		if (*s)
-			count++;
-		while (*s != c && *s)
-			s++;
+		if (*str != c && trigger == 0)
+		{
+			trigger = 1;
+			i++;
+		}
+		else if (*str == c)
+			trigger = 0;
+		str++;
 	}
-	return (count);
+	return (i);
 }
 
-char	*ft_substr(const char *s, unsigned int start, size_t len)
+static char	*word_dup(const char *str, int start, int finish)
 {
-	char	*ret;
+	char	*word;
+	int		i;
 
-	if (!s)
-		return (0);
-	if (strlen(s) < start)
-		len = 0;
-	if (strlen(s + start) < len)
-		len = strlen(s + start);
-	ret = malloc(sizeof(char) * (len + 1));
-	if (!ret)
-		return (0);
-	strncpy(ret, s + start, len + 1);
-	return (ret);
+	i = 0;
+	word = malloc((finish - start + 1) * sizeof(char));
+	while (start < finish)
+		word[i++] = str[start++];
+	word[i] = '\0';
+	return (word);
 }
 
 char	**ft_split(char const *s, char c)
 {
-	char	**lst;
-	size_t	word_len;
-	int		i;
+	size_t	i;
+	size_t	j;
+	int		index;
+	char	**split;
 
-	lst = (char **)malloc((ft_countword(s, c) + 1) * sizeof(char *));
-	if (!s || !lst)
-		return (0);
+	split = malloc((count_words(s, c) + 1) * sizeof(char *));
+	if (!s || !split)
+		return (NULL);
 	i = 0;
-	while (*s)
+	j = 0;
+	index = -1;
+	while (i <= strlen(s))
 	{
-		while (*s == c && *s)
-			s++;
-		if (*s)
+		if (s[i] != c && index < 0)
+			index = i;
+		else if ((s[i] == c || i == strlen(s)) && index >= 0)
 		{
-			if (!strchr(s, c))
-				word_len = strlen(s);
-			else
-				word_len = strchr(s, c) - s;
-			lst[i++] = ft_substr(s, 0, word_len);
-			s += word_len;
+			split[j++] = word_dup(s, index, i);
+			index = -1;
 		}
+		i++;
 	}
-	lst[i] = NULL;
-	return (lst);
+	split[j] = 0;
+	return (split);
 }
 // funcs extra
 
@@ -293,7 +292,7 @@ int parse_file(int fd)
     if (!data->textures || !data->colors)
         return 1;
 
-    while (ft_array_length(data->textures) != TEXTURE_COUNT || ft_array_length(data->colors) != RGB_COUNT)
+    while (ft_array_length(data->textures) != TEXTURE_COUNT && ft_array_length(data->colors) != RGB_COUNT)
     {
         ret = get_next_line(fd, &line);
         if (ret == -1)
@@ -305,8 +304,10 @@ int parse_file(int fd)
             free(line);
             return 1;
         }
+
         free(line);
         if (ret == 0) break;
+    printf("**%s**** %d ******\n", data->textures[0],ft_array_length(data->textures));
     }
     return 0;
 }
@@ -329,8 +330,6 @@ int parse_textures(char *line)
     char **tokens = ft_split(line, ' ');
     t_cub *data = get_cub_data();
     
-    printf("%s\n%s\n", tokens[0], tokens[1]);
-    printf("****** %d ******\n",ft_array_length(data->textures));
     
     if (!tokens)
         return 1;
@@ -507,8 +506,7 @@ int	validate_full_map_characters(void)
 		{
 			if (!strchr(" 10NSEW", data->map[i][j]))
 				return (0);
-			if (data->map[i][j] == 'N' || data->map[i][j] == 'S' \
-				|| data->map[i][j] == 'E' || data->map[i][j] == 'W')
+			if (data->map[i][j] == 'N' || data->map[i][j] == 'S' || data->map[i][j] == 'E' || data->map[i][j] == 'W')
 			{
 				initialize_player_vectors(j, i);
 				count++;
