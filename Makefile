@@ -1,6 +1,6 @@
 NAME := cub3d
 
-CC := gcc
+CC := gcc -fsanitize=address
 
 CFLAGS := -D #BUFFER_SIZE=100
 

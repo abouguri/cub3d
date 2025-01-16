@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/15 21:28:37 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/15 21:34:49 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ typedef struct s_cub {
     char    **textures;
     char    **colors;
     char    **map;
-    char    **rgb;
     // t_var   var;
 } t_cub;
 

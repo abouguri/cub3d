@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/15 21:21:51 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/16 11:21:55 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,17 @@
 
 // helpful funcs
 
-int	ft_array_length(char **array)
+int ft_array_length(char **array)
 {
-	int	i;
+    int i = 0;
 
-	i = 0;
-	while (array[i])
-		i++;
-    // printf(".........%d\n", i);
-	return (i);
+    if (!array)
+        return (0);
+    while (array[i])
+        i++;
+    return (i);
 }
+
 
 static int	count_words(const char *str, char c)
 {
@@ -96,7 +97,7 @@ static void	ft_exit_parse(char *s, int fd)
     
 	write(2, s, strlen(s));
 	free_array(&data->textures);
-	free_array(&data->rgb);
+	free_array(&data->colors);
 	free_array(&data->map);
 	exit(1);
 }
@@ -307,7 +308,6 @@ int parse_file(int fd)
 
         free(line);
         if (ret == 0) break;
-    printf("**%s**** %d ******\n", data->textures[0],ft_array_length(data->textures));
     }
     return 0;
 }
@@ -352,7 +352,6 @@ int parse_textures(char *line)
 int parse_colors(char *line)
 {
     char **tokens = ft_split(line, ' ');
-    // printf("%s\n%s\n", tokens[0], tokens[1]);
     t_cub *data = get_cub_data();
     if (!tokens || ft_array_length(tokens) != 2)
     {
@@ -370,15 +369,14 @@ int parse_colors(char *line)
 
 char **reallocate_map_memory(char **pointer, int size)
 {
-    int i;
+    int i = 0;
     char **new_pointer;
 
-    i = 0;
     new_pointer = malloc(sizeof(char *) * size);
     if (!new_pointer)
         return (NULL);
 
-    while (pointer[i])
+    while (pointer && pointer[i])
     {
         new_pointer[i] = pointer[i];
         i++;
@@ -390,29 +388,45 @@ char **reallocate_map_memory(char **pointer, int size)
 
 
 
-static int	add_line_to_map(char *line)
-{
-	char	**tmp;
 
+static int add_line_to_map(char *line)
+{
+    char **tmp;
+    int current_size;
     t_cub *data = get_cub_data();
-	if (!data->map)
-	{
-		data->map = malloc(sizeof(char *) * 2);
-		if (!data->map)
-			return (1);
-		data->map[0] = strdup(line);
-		data->map[1] = NULL;
-	}
-	else
-	{
-		tmp = reallocate_map_memory(data->map, ft_array_length(data->map) + 2);
-		if (!tmp)
-			return (1);
-		data->map = tmp;
-		data->map[ft_array_length(data->map)] = strdup(line);
-	}
-	return (0);
+
+    if (strlen(line) == 0)
+        return 0;
+
+    if (!data->map)
+    {
+        data->map = malloc(sizeof(char *) * 2);
+        if (!data->map)
+            return (1);
+        data->map[0] = strdup(line);
+        data->map[1] = NULL;
+    }
+    else
+    {
+        current_size = ft_array_length(data->map);
+
+        tmp = reallocate_map_memory(data->map, current_size + 2);
+        if (!tmp)
+            return (1);
+        data->map = tmp;
+
+        data->map[current_size] = strdup(line);
+        data->map[current_size + 1] = NULL; 
+    }
+
+    // Print current map state
+    printf("Current map state:\n");
+    for (int i = 0; data->map[i]; i++)
+        printf("Map[%d]: %s\n", i, data->map[i]);
+
+    return (0);
 }
+
 
 
 int	parse_map(int fd)
@@ -427,7 +441,7 @@ int	parse_map(int fd)
 		if (ret == -1)
 			return (1);
 		if (strlen(line) == 0 && !data->map)
-			;
+            ;
 		else if (add_line_to_map(line) == 1)
 		{
 			free(line);
@@ -436,6 +450,72 @@ int	parse_map(int fd)
 		free(line);
 		if (ret == 0)
 			break ;
+	}
+	return (0);
+}
+
+static int	is_cell_enclosed(int i, int j)
+{
+    t_cub *data = get_cub_data();
+
+	if (data->map[i][j] == '0' || (data->map[i][j] != '1' && data->map[i][j] != ' '))
+	{
+		if (i == 0 || !data->map[i + 1] || j == 0 || !data->map[i][j + 1])
+			return (1);
+		if (data->map[i - 1] && data->map[i - 1][j] && data->map[i - 1][j] == ' ')
+			return (1);
+		if (data->map[i + 1] && data->map[i + 1][j] && data->map[i + 1][j] == ' ')
+			return (1);
+		if (data->map[i] && data->map[i][j - 1] && data->map[i][j - 1] == ' ')
+			return (1);
+		if (data->map[i] && data->map[i][j + 1] && data->map[i][j + 1] == ' ')
+			return (1);
+	}
+	return (0);
+}
+
+static int	validate_full_map_end(int index)
+{
+	int		i;
+
+    t_cub *data = get_cub_data();
+	i = index;
+	i++;
+	while (data->map[i])
+	{
+		if (strlen(data->map[i]) > 0)
+			return (1);
+		i++;
+	}
+	data->map[i] = NULL;
+	return (0);
+}
+
+int	validate_full_map(void)
+{
+	int	i;
+	int	j;
+    
+    t_cub *data = get_cub_data();
+	if (ft_array_length(data->map) < 3)
+		return (1);
+	i = 0;
+	while (data->map[i])
+	{
+		if (strlen(data->map[i]) == 0)
+		{
+			if (validate_full_map_end(i) == 1)
+				return (1);
+			break ;
+		}
+		j = 0;
+		while (data->map[i][j])
+		{
+			if (is_cell_enclosed(i, j) == 1)
+				return (1);
+			j++;
+		}
+		i++;
 	}
 	return (0);
 }
@@ -455,8 +535,8 @@ int parse(char *file)
     if (parse_map(fd) == 1)
         error_exit_with_cleanup(ERR_INVALID_MAP, fd);
     
-    // if (validate_full_map() == 1)
-    //     ft_exit_parse(ERR_INVALID_MAP, fd);
+    if (validate_full_map() == 1)
+        ft_exit_parse(ERR_INVALID_MAP, fd);
     
     close(fd);
     return 0;
