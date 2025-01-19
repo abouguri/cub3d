@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/16 11:21:55 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/18 12:50:05 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,20 +87,6 @@ char	**ft_split(char const *s, char c)
 	split[j] = 0;
 	return (split);
 }
-// funcs extra
-
-static void	ft_exit_parse(char *s, int fd)
-{
-	if (fd < 0)
-		close(fd);
-    t_cub *data = get_cub_data();
-    
-	write(2, s, strlen(s));
-	free_array(&data->textures);
-	free_array(&data->colors);
-	free_array(&data->map);
-	exit(1);
-}
 
 // utilities
 
@@ -110,9 +96,18 @@ void error_exit(const char *message)
     exit(EXIT_FAILURE);
 }
 
-void error_exit_with_cleanup(const char *message, int fd)
+void error_exit_fd_cleanup(const char *message, int fd)
 {
     if (fd >= 0) close(fd);
+    t_cub *data = get_cub_data();
+    free_array(&data->textures);
+    free_array(&data->colors);
+    free_array(&data->map);
+    error_exit(message);
+}
+
+void error_exit_cleanup(const char *message)
+{
     t_cub *data = get_cub_data();
     free_array(&data->textures);
     free_array(&data->colors);
@@ -293,14 +288,17 @@ int parse_file(int fd)
     if (!data->textures || !data->colors)
         return 1;
 
-    while (ft_array_length(data->textures) != TEXTURE_COUNT && ft_array_length(data->colors) != RGB_COUNT)
+    while (ft_array_length(data->textures) != TEXTURE_COUNT || ft_array_length(data->colors) != RGB_COUNT)
     {
         ret = get_next_line(fd, &line);
+        // printf("********%s**********\n", line);
         if (ret == -1)
             return 1;
         if (strlen(line) == 0)
-            ;
-        else if (parse_textures(line) && parse_colors(line))
+            continue;
+        int textures_result = parse_textures(line);
+        int colors_result = parse_colors(line);
+        if (textures_result == 1 && colors_result)
         {
             free(line);
             return 1;
@@ -335,15 +333,17 @@ int parse_textures(char *line)
         return 1;
     if (ft_array_length(tokens) != 2)
         return 1;
-    if (ft_strncmp(tokens[0], "NO", 3) == 0)
+    if (ft_strncmp(tokens[0], "NO", 2) == 0)
+    {
         data->textures[0] = strdup(tokens[1]);
-    else if (ft_strncmp(tokens[0], "SO", 3) == 0)
+    }
+    else if (ft_strncmp(tokens[0], "SO", 2) == 0)
         data->textures[1] = strdup(tokens[1]);
-    else if (ft_strncmp(tokens[0], "WE", 3) == 0)
+    else if (ft_strncmp(tokens[0], "WE", 2) == 0)
         data->textures[2] = strdup(tokens[1]);
-    else if (ft_strncmp(tokens[0], "EA", 3) == 0)
+    else if (ft_strncmp(tokens[0], "EA", 2) == 0)
         data->textures[3] = strdup(tokens[1]);
-    else if (ft_strncmp(tokens[0], "C", 2) && ft_strncmp(tokens[0], "F", 2))
+    else if (ft_strncmp(tokens[0], "C", 1) && ft_strncmp(tokens[0], "F", 1))
         return (1);
     free_array(&tokens);
     return 0;
@@ -420,9 +420,9 @@ static int add_line_to_map(char *line)
     }
 
     // Print current map state
-    printf("Current map state:\n");
-    for (int i = 0; data->map[i]; i++)
-        printf("Map[%d]: %s\n", i, data->map[i]);
+    //printf("Current map state:\n");
+    //for (int i = 0; data->map[i]; i++)
+        //printf("Map[%d]: %s\n", i, data->map[i]);
 
     return (0);
 }
@@ -460,16 +460,16 @@ static int	is_cell_enclosed(int i, int j)
 
 	if (data->map[i][j] == '0' || (data->map[i][j] != '1' && data->map[i][j] != ' '))
 	{
-		if (i == 0 || !data->map[i + 1] || j == 0 || !data->map[i][j + 1])
-			return (1);
-		if (data->map[i - 1] && data->map[i - 1][j] && data->map[i - 1][j] == ' ')
-			return (1);
-		if (data->map[i + 1] && data->map[i + 1][j] && data->map[i + 1][j] == ' ')
-			return (1);
-		if (data->map[i] && data->map[i][j - 1] && data->map[i][j - 1] == ' ')
-			return (1);
-		if (data->map[i] && data->map[i][j + 1] && data->map[i][j + 1] == ' ')
-			return (1);
+		if (i == 0 || !data->map[i + 1] || j == 0 || j >= (int)strlen(data->map[i]) || j >= (int)strlen(data->map[i + 1]))
+            return (1);
+        if (i > 0 && j < (int)strlen(data->map[i - 1]) && data->map[i - 1][j] == ' ')
+            return (1);
+		if (data->map[i + 1] && j < (int)strlen(data->map[i + 1]) && data->map[i + 1][j] == ' ')
+            return (1);
+		if (j > 0 && data->map[i][j - 1] == ' ')
+            return (1);
+		if (j + 1 < (int)strlen(data->map[i]) && data->map[i][j + 1] == ' ')
+            return (1);
 	}
 	return (0);
 }
@@ -495,6 +495,7 @@ int	validate_full_map(void)
 {
 	int	i;
 	int	j;
+    int player_count = 0;
     
     t_cub *data = get_cub_data();
 	if (ft_array_length(data->map) < 3)
@@ -513,10 +514,14 @@ int	validate_full_map(void)
 		{
 			if (is_cell_enclosed(i, j) == 1)
 				return (1);
-			j++;
+            if (data->map[i][j] == 'S' || data->map[i][j] == 'N' || data->map[i][j] == 'W' || data->map[i][j] == 'E')
+                player_count++;
+        	j++;
 		}
 		i++;
 	}
+    if (player_count != 1)
+        return 1;
 	return (0);
 }
 
@@ -530,13 +535,12 @@ int parse(char *file)
         error_exit(ERR_FILE_OPEN);
 
     if (parse_file(fd) == 1)
-        error_exit_with_cleanup(ERR_INVALID_INFO, fd);
-
+        error_exit_fd_cleanup(ERR_INVALID_INFO, fd);
     if (parse_map(fd) == 1)
-        error_exit_with_cleanup(ERR_INVALID_MAP, fd);
+        error_exit_fd_cleanup(ERR_INVALID_MAP, fd);
     
     if (validate_full_map() == 1)
-        ft_exit_parse(ERR_INVALID_MAP, fd);
+        error_exit_cleanup(ERR_INVALID_MAP);
     
     close(fd);
     return 0;
@@ -550,6 +554,13 @@ int main(int argc, char **argv)
         error_exit(ERR_TOO_FEW_ARGS);
     if (argc > 2)
         error_exit(ERR_TOO_MANY_ARGS);
-    parse(argv[1]); 
+    parse(argv[1]);
+    for (int i = 0; get_cub_data()->textures[i]; i++)
+        printf("textures: %s\n",get_cub_data()->textures[i]);
+    for (int i = 0; get_cub_data()->colors[i]; i++)
+        printf("colors: %s\n",get_cub_data()->colors[i]);
+    for (int i = 0; get_cub_data()->map[i]; i++)
+        printf("map: %s\n",get_cub_data()->map[i]);
+    
     return EXIT_SUCCESS; 
 }
