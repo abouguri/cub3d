@@ -2,10 +2,10 @@ C 153,255,255
 F 100,100,100
 
 
-NO ./game_assets/NO.xpm
-SO ./game_assets/SO.xpm
-WE ./game_assets/WE.xpm
-EA ./game_assets/EA.xpm
+NO ./textures/NO.xpm
+SO ./textures/SO.xpm
+WE ./textures/WE.xpm
+EA ./textures/EA.xpm
 
         11111
         100S011

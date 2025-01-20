@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/20 18:14:34 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/20 20:37:37 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,8 +283,8 @@ int parse_file(int fd)
     int ret;
 
     t_cub *data = get_cub_data();
-    data->textures = calloc(sizeof(char *), TEXTURE_COUNT + 1);
-    data->colors = calloc(sizeof(char *), RGB_COUNT + 1);
+    data->textures = calloc(TEXTURE_COUNT + 1 , sizeof(char *)  );
+    data->colors = calloc(RGB_COUNT + 1  , sizeof(char *)  );
     if (!data->textures || !data->colors)
         return 1;
 
