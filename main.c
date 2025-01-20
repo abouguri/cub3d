@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/18 12:50:05 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/20 18:14:34 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -454,7 +454,7 @@ int	parse_map(int fd)
 	return (0);
 }
 
-static int	is_cell_enclosed(int i, int j)
+static int	check_cell_enclosure(int i, int j)
 {
     t_cub *data = get_cub_data();
 
@@ -474,7 +474,7 @@ static int	is_cell_enclosed(int i, int j)
 	return (0);
 }
 
-static int	validate_full_map_end(int index)
+static int	check_trailing_map_lines(int index)
 {
 	int		i;
 
@@ -491,6 +491,60 @@ static int	validate_full_map_end(int index)
 	return (0);
 }
 
+static void	init_camera_plane(double direction_x, double direction_y, double pla_x, double pla_y)
+{
+    t_cub *data = get_cub_data();
+
+	data->var.direction_x = direction_x;
+	data->var.direction_y = direction_y;
+	data->var.plane_x = pla_x;
+	data->var.plane_y = pla_y;
+}
+
+static void	init_player(int x, int y)
+{
+    t_cub *data = get_cub_data();
+
+	data->var.position_x = x + 0.5;
+	data->var.position_y = y + 0.5;
+	if (data->map[y][x] == 'N')
+		init_camera_plane(0, -1, 0.66, 0);
+	else if (data->map[y][x] == 'S')
+		init_camera_plane(0, 1, -0.66, 0);
+	else if (data->map[y][x] == 'E')
+		init_camera_plane(1, 0, 0, 0.66);
+	else if (data->map[y][x] == 'W')
+		init_camera_plane(-1, 0, 0, -0.66);
+}
+
+int	validate_characters(void)
+{
+	int	i;
+	int	j;
+	int	count;
+    t_cub *data = get_cub_data();
+
+	i = 0;
+	count = 0;
+	while (data->map[i])
+	{
+		j = 0;
+		while (data->map[i][j])
+		{
+			if (!strchr(" 10NSEW", data->map[i][j]))
+				return (0);
+			if (data->map[i][j] == 'N' || data->map[i][j] == 'S' || data->map[i][j] == 'E' || data->map[i][j] == 'W')
+			{
+				init_player(j, i);
+				count++;
+			}
+			j++;
+		}
+		i++;
+	}
+	return (count);
+}
+
 int	validate_full_map(void)
 {
 	int	i;
@@ -498,31 +552,35 @@ int	validate_full_map(void)
     int player_count = 0;
     
     t_cub *data = get_cub_data();
-	if (ft_array_length(data->map) < 3)
-		return (1);
 	i = 0;
+	if (ft_array_length(data->map) < 3 || validate_characters() != 1)
+		return (1);
 	while (data->map[i])
 	{
 		if (strlen(data->map[i]) == 0)
 		{
-			if (validate_full_map_end(i) == 1)
+			if (check_trailing_map_lines(i) == 1)
 				return (1);
 			break ;
 		}
 		j = 0;
 		while (data->map[i][j])
 		{
-			if (is_cell_enclosed(i, j) == 1)
+			if (check_cell_enclosure(i, j) == 1)
 				return (1);
             if (data->map[i][j] == 'S' || data->map[i][j] == 'N' || data->map[i][j] == 'W' || data->map[i][j] == 'E')
-                player_count++;
+                {
+                    player_count++;
+                }
         	j++;
 		}
 		i++;
 	}
     if (player_count != 1)
+    {
         return 1;
-	return (0);
+    }
+    return (0);
 }
 
 int parse(char *file)
@@ -546,6 +604,131 @@ int parse(char *file)
     return 0;
 }
 
+void	store_texture_pixels(int i)
+{
+	int	x;
+	int	y;
+    t_cub *data = get_cub_data();
+
+	y = -1;
+	while (++y < data->img2[i].height)
+	{
+		x = -1;
+		while (++x < data->img2[i].width)
+		{
+			data->texture[i][data->img2[i].height * y + x] = (data->img2[i].data_addr[data->img2[i].height * y + x]);
+		}
+	}
+}
+
+int	init_textures(void)
+{
+	int		i;
+	void	*temporary;
+	int		*address;
+    t_cub *data = get_cub_data();
+
+	i = 0;
+	while (i < 4)
+	{
+		temporary = mlx_xpm_file_to_image(data->mlx, data->textures[i], &(data->img2[i].width), &(data->img2[i].height));
+		data->img2[i].img_ptr = temporary;
+		if (!data->img2[i].img_ptr)
+			return (1);
+		address = (int *) mlx_get_data_addr(data->img2[i].img_ptr, &data->img2[i].bpp, &data->img2[i].line_size, &data->img2[i].endian);
+		data->img2[i].data_addr = address;
+		if (!data->img2[i].data_addr)
+			return (1);
+		store_texture_pixels(i);
+		mlx_destroy_image(data->mlx, data->img2[i].img_ptr);
+		i++;
+	}
+	return (0);
+}
+
+unsigned long	rgb_to_hex(int red, int green, int blue)
+{
+	return (((red & 0xff) << 16) + ((green & 0xff) << 8) + (blue & 0xff));
+}
+
+void	store_color(int *rgb, int i)
+{
+	unsigned long	temporary;
+    t_cub *data = get_cub_data();
+
+	if (i == 0)
+	{
+		temporary = rgb_to_hex(rgb[0], rgb[1], rgb[2]);
+		data->floor = temporary;
+	}
+	if (i == 1)
+	{
+		temporary = rgb_to_hex(rgb[0], rgb[1], rgb[2]);
+		data->ceilling = temporary;
+	}
+}
+
+int	*is_rgb_valid(char **array)
+{
+	int	i;
+	int	*rgb;
+
+	i = 0;
+	rgb = malloc(sizeof(int) * 4);
+	if (!rgb)
+		return (NULL);
+	while (array[i])
+	{
+		rgb[i] = atoi(array[i]);
+		if (rgb[i] < 0 || rgb[i] > 255)
+			return (NULL);
+		i++;
+	}
+	rgb[i] = 0;
+	return (rgb);
+}
+
+int	init_colors(void)
+{
+	int				i;
+	char			**temporary;
+	int				*rgb;
+    t_cub *data = get_cub_data();
+
+	i = 0;
+	while (data->rgb[i])
+	{
+		temporary = ft_split(data->rgb[i], ',');
+		if (!temporary)
+			return (1);
+		rgb = is_rgb_valid(temporary);
+		if (!rgb)
+		{
+			free(rgb);
+			return (1);
+		}
+		store_color(rgb, i);
+		free_array(&temporary);
+		free(rgb);
+		i++;
+	}
+	return (0);
+}
+
+void	init(void)
+{
+	void	*temporary;
+    t_cub *data = get_cub_data();
+    
+	data->mlx = mlx_init();
+	if (init_textures() == 1)
+		error_exit_cleanup(ERR_TEXTURE_LOAD);
+	if (init_colors() == 1)
+		error_exit_cleanup(ERR_COLORS_LOAD);
+	temporary = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT,
+			"cub3D");
+	data->win = temporary;
+}
 //added
 
 int main(int argc, char **argv)
@@ -561,6 +744,7 @@ int main(int argc, char **argv)
         printf("colors: %s\n",get_cub_data()->colors[i]);
     for (int i = 0; get_cub_data()->map[i]; i++)
         printf("map: %s\n",get_cub_data()->map[i]);
+    init();
     
     return EXIT_SUCCESS; 
 }
