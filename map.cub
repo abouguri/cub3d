@@ -1,13 +1,13 @@
-C 153,255,255
 F 100,100,100
 
 
 NO ./textures/NO.xpm
 SO ./textures/SO.xpm
 WE ./textures/WE.xpm
+C 153,255,255
 EA ./textures/EA.xpm
 
         11111
-        100S011
-        10001
+        100011
+        100N01
         11111

@@ -16,6 +16,7 @@
         "iterator": "c",
         "sstream": "c",
         "type_traits": "c",
-        "cub3d.h": "c"
+        "cub3d.h": "c",
+        "mlx_int.h": "c"
     }
 }

@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/20 18:00:05 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/21 10:10:25 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,11 @@ typedef struct s_img2
 typedef struct s_cub {
 	void	*mlx;
 	void	*win;
-    t_img2  *img2;
+    t_img2  *img2[4];
     char    **textures;
     char    **colors;
     char    **map;
 	int		texture[4][TEXTURE_HEIGHT * TEXTURE_WIDTH];
-	char	**rgb;
 	unsigned long	floor;
 	unsigned long	ceilling;
     t_var   var;

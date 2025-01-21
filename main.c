@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/20 20:37:37 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/21 16:28:03 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,11 @@ int extract_line(char **buffer, char **line)
     {
         remaining_content = strdup(&((*buffer)[i + 1]));
         if (!remaining_content)
+        {
+            free(*line);
+            *line = NULL; // Reset pointer to avoid dangling reference
             return -1;
+        }
 
         free(*buffer);
         *buffer = remaining_content;
@@ -261,7 +265,8 @@ int get_next_line(int fd, char **line)
 
     if (contains_newline(buffers[fd]))
     {
-        return extract_line(&buffers[fd], line);
+        int ret = extract_line(&buffers[fd], line);
+        return ret;
     }
     else
     {
@@ -274,38 +279,62 @@ int get_next_line(int fd, char **line)
     }
 }
 
+
+
 // parser
 
 
 int parse_file(int fd)
 {
-    char *line;
+    char *line = NULL;
     int ret;
 
     t_cub *data = get_cub_data();
-    data->textures = calloc(TEXTURE_COUNT + 1 , sizeof(char *)  );
-    data->colors = calloc(RGB_COUNT + 1  , sizeof(char *)  );
+
+    data->textures = calloc(TEXTURE_COUNT + 1, sizeof(char *));
+    data->colors = calloc(RGB_COUNT + 1, sizeof(char *));
     if (!data->textures || !data->colors)
         return 1;
 
     while (ft_array_length(data->textures) != TEXTURE_COUNT || ft_array_length(data->colors) != RGB_COUNT)
     {
         ret = get_next_line(fd, &line);
-        // printf("********%s**********\n", line);
+
         if (ret == -1)
+        {
+            free(line);
+            line = NULL; // Reset pointer after freeing
             return 1;
+        }
+
         if (strlen(line) == 0)
+        {
+            free(line);
+            line = NULL; // Reset pointer after freeing
             continue;
+        }
+
         int textures_result = parse_textures(line);
         int colors_result = parse_colors(line);
+
         if (textures_result == 1 && colors_result)
         {
             free(line);
+            line = NULL; // Reset pointer after freeing
             return 1;
         }
 
         free(line);
-        if (ret == 0) break;
+        line = NULL; // Reset pointer after freeing
+
+        if (ret == 0)
+            break;
+    }
+
+    if (line)
+    {
+        free(line);
+        line = NULL; // Reset pointer after freeing
     }
     return 0;
 }
@@ -604,47 +633,63 @@ int parse(char *file)
     return 0;
 }
 
-void	store_texture_pixels(int i)
+void store_texture_pixels(int i)
 {
-	int	x;
-	int	y;
+    int x, y;
     t_cub *data = get_cub_data();
 
-	y = -1;
-	while (++y < data->img2[i].height)
-	{
-		x = -1;
-		while (++x < data->img2[i].width)
-		{
-			data->texture[i][data->img2[i].height * y + x] = (data->img2[i].data_addr[data->img2[i].height * y + x]);
-		}
-	}
+    // Ensure the dimensions do not exceed TEXTURE_HEIGHT and TEXTURE_WIDTH
+    int max_height = (data->img2[i]->height > TEXTURE_HEIGHT) ? TEXTURE_HEIGHT : data->img2[i]->height;
+    int max_width = (data->img2[i]->width > TEXTURE_WIDTH) ? TEXTURE_WIDTH : data->img2[i]->width;
+    y = -1;
+    while (++y < max_height)
+    {
+        x = -1;
+        while (++x < max_width)
+        {
+            // Write pixel data into texture array
+            data->texture[i][y * TEXTURE_WIDTH + x] = data->img2[i]->data_addr[y * data->img2[i]->width + x];
+        }
+    }
+
 }
 
-int	init_textures(void)
+
+int init_textures(void)
 {
-	int		i;
-	void	*temporary;
-	int		*address;
-    t_cub *data = get_cub_data();
+    int     i;
+    void    *temporary;
+    t_cub   *data = get_cub_data();
 
-	i = 0;
-	while (i < 4)
-	{
-		temporary = mlx_xpm_file_to_image(data->mlx, data->textures[i], &(data->img2[i].width), &(data->img2[i].height));
-		data->img2[i].img_ptr = temporary;
-		if (!data->img2[i].img_ptr)
-			return (1);
-		address = (int *) mlx_get_data_addr(data->img2[i].img_ptr, &data->img2[i].bpp, &data->img2[i].line_size, &data->img2[i].endian);
-		data->img2[i].data_addr = address;
-		if (!data->img2[i].data_addr)
-			return (1);
-		store_texture_pixels(i);
-		mlx_destroy_image(data->mlx, data->img2[i].img_ptr);
-		i++;
-	}
-	return (0);
+    i = 0;
+    while (i < 4)
+    {
+        // Allocate memory for img2[i]
+        data->img2[i] = malloc(sizeof(t_img2));
+        temporary = mlx_xpm_file_to_image(
+            data->mlx, data->textures[i], &(data->img2[i]->width), &(data->img2[i]->height)
+        );
+
+        
+        data->img2[i]->img_ptr = temporary;
+
+        // Get the pixel data address
+        data->img2[i]->data_addr = (int *)mlx_get_data_addr(
+            data->img2[i]->img_ptr, &data->img2[i]->bpp, 
+            &data->img2[i]->line_size, &data->img2[i]->endian
+        );
+
+        // Populate texture pixel array
+        store_texture_pixels(i);
+
+        // Destroy the MiniLibX image after storing pixel data
+        mlx_destroy_image(data->mlx, data->img2[i]->img_ptr);
+        i++;
+    }
+
+    return (0);
 }
+
 
 unsigned long	rgb_to_hex(int red, int green, int blue)
 {
@@ -696,9 +741,9 @@ int	init_colors(void)
     t_cub *data = get_cub_data();
 
 	i = 0;
-	while (data->rgb[i])
+	while (data->colors[i])
 	{
-		temporary = ft_split(data->rgb[i], ',');
+		temporary = ft_split(data->colors[i], ',');
 		if (!temporary)
 			return (1);
 		rgb = is_rgb_valid(temporary);
@@ -714,22 +759,48 @@ int	init_colors(void)
 	}
 	return (0);
 }
+typedef struct	s_data {
+	void	*img;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+}				t_data;
+
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+{
+	char	*dst;
+
+	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+	*(unsigned int*)dst = color;
+}
 
 void	init(void)
 {
 	void	*temporary;
     t_cub *data = get_cub_data();
+    t_data img;
     
-	data->mlx = mlx_init();
-	if (init_textures() == 1)
-		error_exit_cleanup(ERR_TEXTURE_LOAD);
-	if (init_colors() == 1)
-		error_exit_cleanup(ERR_COLORS_LOAD);
-	temporary = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT,
-			"cub3D");
-	data->win = temporary;
+	data->mlx = mlx_init(); 
+	// if (init_textures() == 1)
+	// 	error_exit_cleanup(ERR_TEXTURE_LOAD);
+	// if (init_colors() == 1)
+	// 	error_exit_cleanup(ERR_COLORS_LOAD);
+	temporary = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
+    img.img = mlx_new_image(data->mlx, 1920, 1080);
+    img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
+								&img.endian);
+    for(int i = 0; i < 500; i++)
+    {
+        for(int j = 0; j < 500; j++)
+            my_mlx_pixel_put(&img, i, j, 0x00CC66FF);
+    }
+    mlx_put_image_to_window(data->mlx, temporary, img.img, 0, 0);
+    mlx_loop(data->mlx);    
+	// data->win = temporary;
 }
 //added
+
 
 int main(int argc, char **argv)
 {
