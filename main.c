@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/22 16:26:22 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/22 16:54:08 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -406,7 +406,6 @@ int parse_line(char *line)
         return 1;
     }
 
-    // Parse textures
     if (ft_strncmp(tokens[0], "NO", 3) == 0)
         data->textures[0] = strdup(tokens[1]);
     else if (ft_strncmp(tokens[0], "SO", 3) == 0)
@@ -416,13 +415,11 @@ int parse_line(char *line)
     else if (ft_strncmp(tokens[0], "EA", 3) == 0)
         data->textures[3] = strdup(tokens[1]);
 
-    // Parse colors
     else if (ft_strncmp(tokens[0], "F", 2) == 0)
         data->colors[0] = strdup(tokens[1]);
     else if (ft_strncmp(tokens[0], "C", 2) == 0)
         data->colors[1] = strdup(tokens[1]);
 
-    // Unknown identifier
     else
     {
         fprintf(stderr, "Error: Unknown identifier: %s\n", tokens[0]);
