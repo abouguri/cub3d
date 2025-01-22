@@ -1,3 +1,5 @@
+#include "cub3d.h"
+
 typedef struct s_position {
     double x;
     double y;
@@ -67,6 +69,12 @@ typedef struct s_var {
     t_map_info map_info;
 } t_var;
 
+t_cub *get_cub_data(void)
+{
+    static t_cub data;
+    
+    return &data;
+}
 
 void store_texture_pixels(int i)
 {
