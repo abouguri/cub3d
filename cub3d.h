@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/21 10:10:25 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/22 16:29:17 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ int parse_map(int fd);
 int parse_textures(char *line);
 int parse_colors(char *line);
 int	validate_full_map(void);
+int parse_line(char *line);
 
 int get_next_line(int fd, char **line);
 
