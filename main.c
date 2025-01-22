@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/22 17:10:51 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/22 17:39:09 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -395,6 +395,12 @@ int parse_colors(char *line)
     return 0;
 }
 
+void    print_str(char *s)
+{
+    while(*s)
+        write(1, s++, 1);
+}
+
 int parse_line(char *line)
 {
     char **tokens = ft_split(line, ' ');
@@ -411,7 +417,7 @@ int parse_line(char *line)
     {
         if (data->textures[0])
         {
-            fprintf(stderr, "Error: Duplicate texture identifier: NO\n");
+            print_str("Error: Duplicate texture identifier: NO\n");
             free_array(&tokens);
             return 1;
         }
@@ -421,7 +427,7 @@ int parse_line(char *line)
     {
         if (data->textures[1])
         {
-            fprintf(stderr, "Error: Duplicate texture identifier: SO\n");
+            print_str("Error: Duplicate texture identifier: SO\n");
             free_array(&tokens);
             return 1;
         }
@@ -431,7 +437,7 @@ int parse_line(char *line)
     {
         if (data->textures[2])
         {
-            fprintf(stderr, "Error: Duplicate texture identifier: WE\n");
+            print_str("Error: Duplicate texture identifier: WE\n");
             free_array(&tokens);
             return 1;
         }
@@ -441,7 +447,7 @@ int parse_line(char *line)
     {
         if (data->textures[3])
         {
-            fprintf(stderr, "Error: Duplicate texture identifier: EA\n");
+            print_str("Error: Duplicate texture identifier: EA\n");
             free_array(&tokens);
             return 1;
         }
@@ -452,7 +458,7 @@ int parse_line(char *line)
     {
         if (data->colors[0])
         {
-            fprintf(stderr, "Error: Duplicate color identifier: F\n");
+            print_str("Error: Duplicate color identifier: F\n");
             free_array(&tokens);
             return 1;
         }
@@ -462,7 +468,7 @@ int parse_line(char *line)
     {
         if (data->colors[1])
         {
-            fprintf(stderr, "Error: Duplicate color identifier: C\n");
+            print_str("Error: Duplicate color identifier: C\n");
             free_array(&tokens);
             return 1;
         }
@@ -471,7 +477,7 @@ int parse_line(char *line)
 
     else
     {
-        fprintf(stderr, "Error: Unknown identifier: %s\n", tokens[0]);
+        print_str("Error: Unknown identifier\n");
         free_array(&tokens);
         return 1;
     }
