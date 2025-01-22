@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/22 14:46:08 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/22 16:26:22 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,10 +314,10 @@ int parse_file(int fd)
             continue;
         }
 
-        int textures_result = parse_textures(line);
-        int colors_result = parse_colors(line);
+        // int textures_result = parse_textures(line);
+        // int colors_result = parse_colors(line);
 
-        if (textures_result == 1 && colors_result)
+        if (parse_line(line))
         {
             free(line);
             line = NULL; // Reset pointer after freeing
@@ -394,6 +394,46 @@ int parse_colors(char *line)
     free_array(&tokens);
     return 0;
 }
+
+int parse_line(char *line)
+{
+    char **tokens = ft_split(line, ' ');
+    t_cub *data = get_cub_data();
+
+    if (!tokens || ft_array_length(tokens) != 2)
+    {
+        free_array(&tokens);
+        return 1;
+    }
+
+    // Parse textures
+    if (ft_strncmp(tokens[0], "NO", 3) == 0)
+        data->textures[0] = strdup(tokens[1]);
+    else if (ft_strncmp(tokens[0], "SO", 3) == 0)
+        data->textures[1] = strdup(tokens[1]);
+    else if (ft_strncmp(tokens[0], "WE", 3) == 0)
+        data->textures[2] = strdup(tokens[1]);
+    else if (ft_strncmp(tokens[0], "EA", 3) == 0)
+        data->textures[3] = strdup(tokens[1]);
+
+    // Parse colors
+    else if (ft_strncmp(tokens[0], "F", 2) == 0)
+        data->colors[0] = strdup(tokens[1]);
+    else if (ft_strncmp(tokens[0], "C", 2) == 0)
+        data->colors[1] = strdup(tokens[1]);
+
+    // Unknown identifier
+    else
+    {
+        fprintf(stderr, "Error: Unknown identifier: %s\n", tokens[0]);
+        free_array(&tokens);
+        return 1;
+    }
+
+    free_array(&tokens);
+    return 0;
+}
+
 
 
 char **reallocate_map_memory(char **pointer, int size)
