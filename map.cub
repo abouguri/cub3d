@@ -4,6 +4,7 @@ C 153,255,255
 
 NO ./textures/NO.xpm
 SO ./textures/SO.xpm
+SO ./textures/SO.xpm
 WE ./textures/WE.xpm
 EA ./textures/EA.xpm
 
