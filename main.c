@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/22 16:54:08 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/22 17:10:51 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -406,19 +406,68 @@ int parse_line(char *line)
         return 1;
     }
 
+    // Parse textures
     if (ft_strncmp(tokens[0], "NO", 3) == 0)
+    {
+        if (data->textures[0])
+        {
+            fprintf(stderr, "Error: Duplicate texture identifier: NO\n");
+            free_array(&tokens);
+            return 1;
+        }
         data->textures[0] = strdup(tokens[1]);
+    }
     else if (ft_strncmp(tokens[0], "SO", 3) == 0)
+    {
+        if (data->textures[1])
+        {
+            fprintf(stderr, "Error: Duplicate texture identifier: SO\n");
+            free_array(&tokens);
+            return 1;
+        }
         data->textures[1] = strdup(tokens[1]);
+    }
     else if (ft_strncmp(tokens[0], "WE", 3) == 0)
+    {
+        if (data->textures[2])
+        {
+            fprintf(stderr, "Error: Duplicate texture identifier: WE\n");
+            free_array(&tokens);
+            return 1;
+        }
         data->textures[2] = strdup(tokens[1]);
+    }
     else if (ft_strncmp(tokens[0], "EA", 3) == 0)
+    {
+        if (data->textures[3])
+        {
+            fprintf(stderr, "Error: Duplicate texture identifier: EA\n");
+            free_array(&tokens);
+            return 1;
+        }
         data->textures[3] = strdup(tokens[1]);
-
+    }
+    // Parse colors
     else if (ft_strncmp(tokens[0], "F", 2) == 0)
+    {
+        if (data->colors[0])
+        {
+            fprintf(stderr, "Error: Duplicate color identifier: F\n");
+            free_array(&tokens);
+            return 1;
+        }
         data->colors[0] = strdup(tokens[1]);
+    }
     else if (ft_strncmp(tokens[0], "C", 2) == 0)
+    {
+        if (data->colors[1])
+        {
+            fprintf(stderr, "Error: Duplicate color identifier: C\n");
+            free_array(&tokens);
+            return 1;
+        }
         data->colors[1] = strdup(tokens[1]);
+    }
 
     else
     {
