@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/21 16:28:03 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/21 16:50:12 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -774,7 +774,30 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
 }
-
+void draw_circle(t_data *img, int xc, int yc, int r, int color)
+{
+    for (int x = xc - r; x <= xc + r; x++)
+    {
+        for (int y = yc - r; y <= yc + r; y++)
+        {
+            if ((x - xc) * (x - xc) + (y - yc) * (y - yc) <= r * r)
+            {
+                my_mlx_pixel_put(img, x, y, color);
+            }
+        }
+    }
+}
+int	exitbyx(int keycode)
+{
+    printf("keycode |%d|\n", keycode);
+    if (keycode == 65293)
+        {
+            printf("laaah\n");
+            return 1;
+            // exit(1);
+        }
+	return (0);
+}
 void	init(void)
 {
 	void	*temporary;
@@ -788,14 +811,12 @@ void	init(void)
 	// 	error_exit_cleanup(ERR_COLORS_LOAD);
 	temporary = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
     img.img = mlx_new_image(data->mlx, 1920, 1080);
-    img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-								&img.endian);
-    for(int i = 0; i < 500; i++)
-    {
-        for(int j = 0; j < 500; j++)
-            my_mlx_pixel_put(&img, i, j, 0x00CC66FF);
-    }
+    img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+    draw_circle(&img, 250, 250, 100, 0x0000FF00); // Draw a green circle
+    // my_mlx_pixel_put(&img, 5, 5, 0x00CC66FF);
     mlx_put_image_to_window(data->mlx, temporary, img.img, 0, 0);
+    // mlx_key_hook(temporary, exitbyx, &data);
+    mlx_hook(temporary, 3, 1L<<1, exitbyx, &data);
     mlx_loop(data->mlx);    
 	// data->win = temporary;
 }
