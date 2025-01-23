@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 14:31:33 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 16:17:45 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -352,64 +352,101 @@ int	ft_strncmp(const char *s1, char *s2, size_t n)
 	return (*(unsigned char *)s1 - *(unsigned char *)s2);
 }
 
-int parse_textures(char *line)
-{
-    char **tokens = ft_split(line, ' ');
-    t_cub *data = get_cub_data();
+// int parse_textures(char *line)
+// {
+//     char **tokens = ft_split(line, ' ');
+//     t_cub *data = get_cub_data();
     
     
-    if (!tokens)
-        return 1;
-    if (ft_array_length(tokens) != 2)
-        return 1;
-    if (ft_strncmp(tokens[0], "NO", 3) == 0)
-    {
-        data->textures[0] = strdup(tokens[1]);
-    }
-    else if (ft_strncmp(tokens[0], "SO", 3) == 0)
-        data->textures[1] = strdup(tokens[1]);
-    else if (ft_strncmp(tokens[0], "WE", 3) == 0)
-        data->textures[2] = strdup(tokens[1]);
-    else if (ft_strncmp(tokens[0], "EA", 3) == 0)
-        data->textures[3] = strdup(tokens[1]);
-    else if (ft_strncmp(tokens[0], "C", 2) && ft_strncmp(tokens[0], "F", 2))
-        return (1);
-    free_array(&tokens);
-    return 0;
-}
+//     if (!tokens)
+//         return 1;
+//     if (ft_array_length(tokens) != 2)
+//         return 1;
+//     if (ft_strncmp(tokens[0], "NO", 3) == 0)
+//     {
+//         data->textures[0] = strdup(tokens[1]);
+//     }
+//     else if (ft_strncmp(tokens[0], "SO", 3) == 0)
+//         data->textures[1] = strdup(tokens[1]);
+//     else if (ft_strncmp(tokens[0], "WE", 3) == 0)
+//         data->textures[2] = strdup(tokens[1]);
+//     else if (ft_strncmp(tokens[0], "EA", 3) == 0)
+//         data->textures[3] = strdup(tokens[1]);
+//     else if (ft_strncmp(tokens[0], "C", 2) && ft_strncmp(tokens[0], "F", 2))
+//         return (1);
+//     free_array(&tokens);
+//     return 0;
+// }
 
-int parse_colors(char *line)
-{
-    char **tokens = ft_split(line, ' ');
-    t_cub *data = get_cub_data();
-    if (!tokens || ft_array_length(tokens) != 2)
-    {
-        free_array(&tokens);
-        return 1;
-    }
-    if (strncmp(tokens[0], "F", 2) == 0)
-        data->colors[0] = strdup(tokens[1]);
-    else if (strncmp(tokens[0], "C", 2) == 0)
-        data->colors[1] = strdup(tokens[1]);
-    free_array(&tokens);
-    return 0;
-}
+// int parse_colors(char *line)
+// {
+//     char **tokens = ft_split(line, ' ');
+//     t_cub *data = get_cub_data();
+//     if (!tokens || ft_array_length(tokens) != 2)
+//     {
+//         free_array(&tokens);
+//         return 1;
+//     }
+//     if (strncmp(tokens[0], "F", 2) == 0)
+//         data->colors[0] = strdup(tokens[1]);
+//     else if (strncmp(tokens[0], "C", 2) == 0)
+//         data->colors[1] = strdup(tokens[1]);
+//     free_array(&tokens);
+//     return 0;
+// }
 
 void    print_str(char *s)
 {
     while(*s)
         write(1, s++, 1);
 }
-int    map_info_error(char **tokens, char *s)
+void    map_info_error(char **tokens, char *s)
 {
     print_str(s);
     print_str(tokens[0]);
     print_str("\n");
     free_array (&tokens);
-    return (1);
 }
 
+int parse_texture(t_cub *data, char *identifier, char *path, char **tokens)
+{
+    int index;
 
+    if (ft_strncmp(identifier, "NO", 3) == 0)
+        index = 0;
+    else if (ft_strncmp(identifier, "SO", 3) == 0)
+        index = 1;
+    else if (ft_strncmp(identifier, "WE", 3) == 0)
+        index = 2;
+    else if (ft_strncmp(identifier, "EA", 3) == 0)
+        index = 3;
+    else
+        return (map_info_error(tokens, UNKNOWN_IDENTIFIER), 1);
+
+    if (data->textures[index])
+        return (map_info_error(tokens, DUPLICATE_TEXTURE), 1);
+
+    data->textures[index] = strdup(path);
+    return 0;
+}
+
+int parse_color(t_cub *data, char *identifier, char *value, char **tokens)
+{
+    int index;
+
+    if (ft_strncmp(identifier, "F", 2) == 0)
+        index = 0;
+    else if (ft_strncmp(identifier, "C", 2) == 0)
+        index = 1;
+    else
+        return (map_info_error(tokens, UNKNOWN_IDENTIFIER), 1);
+
+    if (data->colors[index])
+        return (map_info_error(tokens, DUPLICATE_COLOR), 1);
+
+    data->colors[index] = strdup(value);
+    return 0;
+}
 
 int parse_line(char *line)
 {
@@ -422,51 +459,24 @@ int parse_line(char *line)
         return 1;
     }
 
-    // Parse textures
-    if (ft_strncmp(tokens[0], "NO", 3) == 0)
+    if (ft_strncmp(tokens[0], "NO", 3) == 0 || ft_strncmp(tokens[0], "SO", 3) == 0 ||
+        ft_strncmp(tokens[0], "WE", 3) == 0 || ft_strncmp(tokens[0], "EA", 3) == 0)
     {
-        if (data->textures[0])
-            return map_info_error(tokens, DUPLICATE_TEXTURE);
-        data->textures[0] = strdup(tokens[1]);
+        if (parse_texture(data, tokens[0], tokens[1], tokens) == 1)
+            return 1;
     }
-    else if (ft_strncmp(tokens[0], "SO", 3) == 0)
+    else if (ft_strncmp(tokens[0], "F", 2) == 0 || ft_strncmp(tokens[0], "C", 2) == 0)
     {
-        if (data->textures[1])
-            return map_info_error(tokens, DUPLICATE_TEXTURE);
-        data->textures[1] = strdup(tokens[1]);
+        if (parse_color(data, tokens[0], tokens[1], tokens) == 1)
+            return 1;
     }
-    else if (ft_strncmp(tokens[0], "WE", 3) == 0)
-    {
-        if (data->textures[2])
-            return map_info_error(tokens, DUPLICATE_TEXTURE);
-        data->textures[2] = strdup(tokens[1]);
-    }
-    else if (ft_strncmp(tokens[0], "EA", 3) == 0)
-    {
-        if (data->textures[3])
-            return map_info_error(tokens, DUPLICATE_TEXTURE);
-        data->textures[3] = strdup(tokens[1]);
-    }
-    // Parse colors
-    else if (ft_strncmp(tokens[0], "F", 2) == 0)
-    {
-        if (data->colors[0])
-            return map_info_error(tokens, DUPLICATE_COLOR);
-        data->colors[0] = strdup(tokens[1]);
-    }
-    else if (ft_strncmp(tokens[0], "C", 2) == 0)
-    {
-        if (data->colors[1])
-            return map_info_error(tokens, DUPLICATE_COLOR);
-        data->colors[1] = strdup(tokens[1]);
-    }
-
     else
-            return map_info_error(tokens, UNKNOWN_IDENTIFIER);
+        return (map_info_error(tokens, UNKNOWN_IDENTIFIER), 1);
 
     free_array(&tokens);
     return 0;
 }
+
 
 
 
