@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 16:17:45 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 16:35:01 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,20 +303,17 @@ int parse_file(int fd)
         if (ret == -1)
         {
             free(line);
-            line = NULL; // Reset pointer after freeing
+            line = NULL;
             return 1;
         }
 
         if (strlen(line) == 0)
         {
             free(line);
-            line = NULL; // Reset pointer after freeing
+            line = NULL;
             continue;
         }
-
-        // int textures_result = parse_textures(line);
-        // int colors_result = parse_colors(line);
-
+        
         if (parse_line(line))
         {
             free(line);
@@ -499,13 +496,36 @@ char **reallocate_map_memory(char **pointer, int size)
     return (new_pointer);
 }
 
+int initialize_map(t_cub *data, char *line)
+{
+    data->map = malloc(sizeof(char *) * 2);
+    if (!data->map)
+        return 1;
 
+    data->map[0] = strdup(line);
+    data->map[1] = NULL;
 
+    return 0;
+}
+
+int append_line_to_map(t_cub *data, char *line)
+{
+    char **tmp;
+    int current_size = ft_array_length(data->map);
+
+    tmp = reallocate_map_memory(data->map, current_size + 2);
+    if (!tmp)
+        return 1;
+
+    data->map = tmp;
+    data->map[current_size] = strdup(line);
+    data->map[current_size + 1] = NULL;
+
+    return 0;
+}
 
 static int add_line_to_map(char *line)
 {
-    char **tmp;
-    int current_size;
     t_cub *data = get_cub_data();
 
     if (strlen(line) == 0)
@@ -513,32 +533,55 @@ static int add_line_to_map(char *line)
 
     if (!data->map)
     {
-        data->map = malloc(sizeof(char *) * 2);
-        if (!data->map)
-            return (1);
-        data->map[0] = strdup(line);
-        data->map[1] = NULL;
+        if (initialize_map(data, line) == 1)
+            return 1;
     }
     else
     {
-        current_size = ft_array_length(data->map);
-
-        tmp = reallocate_map_memory(data->map, current_size + 2);
-        if (!tmp)
-            return (1);
-        data->map = tmp;
-
-        data->map[current_size] = strdup(line);
-        data->map[current_size + 1] = NULL; 
+        if (append_line_to_map(data, line) == 1)
+            return 1;
     }
 
-    // Print current map state
-    //printf("Current map state:\n");
-    //for (int i = 0; data->map[i]; i++)
-        //printf("Map[%d]: %s\n", i, data->map[i]);
-
-    return (0);
+    return 0;
 }
+
+// static int add_line_to_map(char *line)
+// {
+//     char **tmp;
+//     int current_size;
+//     t_cub *data = get_cub_data();
+
+//     if (strlen(line) == 0)
+//         return 0;
+
+//     if (!data->map)
+//     {
+//         data->map = malloc(sizeof(char *) * 2);
+//         if (!data->map)
+//             return (1);
+//         data->map[0] = strdup(line);
+//         data->map[1] = NULL;
+//     }
+//     else
+//     {
+//         current_size = ft_array_length(data->map);
+
+//         tmp = reallocate_map_memory(data->map, current_size + 2);
+//         if (!tmp)
+//             return (1);
+//         data->map = tmp;
+
+//         data->map[current_size] = strdup(line);
+//         data->map[current_size + 1] = NULL; 
+//     }
+
+//     // Print current map state
+//     //printf("Current map state:\n");
+//     //for (int i = 0; data->map[i]; i++)
+//         //printf("Map[%d]: %s\n", i, data->map[i]);
+
+//     return (0);
+// }
 
 
 
@@ -682,17 +725,13 @@ int	validate_full_map(void)
 			if (check_cell_enclosure(i, j) == 1)
 				return (1);
             if (data->map[i][j] == 'S' || data->map[i][j] == 'N' || data->map[i][j] == 'W' || data->map[i][j] == 'E')
-                {
                     player_count++;
-                }
         	j++;
 		}
 		i++;
 	}
     if (player_count != 1)
-    {
         return 1;
-    }
     return (0);
 }
 
