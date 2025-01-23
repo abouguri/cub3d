@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/22 16:29:17 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 14:29:11 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,10 @@
 #define ERR_INVALID_MAP "Error: Invalid map structure.\n"
 # define ERR_TEXTURE_LOAD "Error\nCannot load textures\n"
 # define ERR_COLORS_LOAD "Error\nCannot load colors\n"
+# define DUPLICATE_TEXTURE "Error: Duplicate texture identifier: "
+# define DUPLICATE_COLOR "Error: Duplicate color identifier: "
+# define UNKNOWN_IDENTIFIER "Error: Unknown identifier: "
+
 
 // Structs
 
