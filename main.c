@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 17:25:29 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 18:05:12 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -667,13 +667,13 @@ static void	init_player(int x, int y)
 
 	data->var.position_x = x + 0.5;
 	data->var.position_y = y + 0.5;
-	if (data->map[y][x] == 'N')
+	if (data->map[y][x] == NORTH)
 		init_camera_plane(0, -1, 0.66, 0);
-	else if (data->map[y][x] == 'S')
+	else if (data->map[y][x] == SOUTH)
 		init_camera_plane(0, 1, -0.66, 0);
-	else if (data->map[y][x] == 'E')
+	else if (data->map[y][x] == EAST)
 		init_camera_plane(1, 0, 0, 0.66);
-	else if (data->map[y][x] == 'W')
+	else if (data->map[y][x] == WEST)
 		init_camera_plane(-1, 0, 0, -0.66);
 }
 
@@ -691,9 +691,9 @@ int	validate_characters(void)
 		j = 0;
 		while (data->map[i][j])
 		{
-			if (!strchr(" 10NSEW", data->map[i][j]))
+			if (!strchr(VALID_MAP_SYMBOLS, data->map[i][j]))
 				return (0);
-			if (data->map[i][j] == 'N' || data->map[i][j] == 'S' || data->map[i][j] == 'E' || data->map[i][j] == 'W')
+			if (data->map[i][j] == NORTH || data->map[i][j] == SOUTH || data->map[i][j] == EAST || data->map[i][j] == WEST)
 			{
 				init_player(j, i);
 				count++;
@@ -705,38 +705,81 @@ int	validate_characters(void)
 	return (count);
 }
 
-int	validate_full_map(void)
+static int validate_map_initialization(t_cub *data)
 {
-	int	i;
-	int	j;
-    int player_count = 0;
-    
-    t_cub *data = get_cub_data();
-	i = 0;
-	if (ft_array_length(data->map) < 3 || validate_characters() != 1)
-		return (1);
-	while (data->map[i])
-	{
-		if (strlen(data->map[i]) == 0)
-		{
-			if (check_trailing_map_lines(i) == 1)
-				return (1);
-			break ;
-		}
-		j = 0;
-		while (data->map[i][j])
-		{
-			if (check_cell_enclosure(i, j) == 1)
-				return (1);
-            if (data->map[i][j] == 'S' || data->map[i][j] == 'N' || data->map[i][j] == 'W' || data->map[i][j] == 'E')
-                    player_count++;
-        	j++;
-		}
-		i++;
-	}
-    if (player_count != 1)
-        return 1;
+    if (ft_array_length(data->map) < 3)
+    {
+        printf(SMALL_MAP);
+        return (1);
+    }
+    if (validate_characters() != 1)
+    {
+        printf(INVALID_CHARACTERS);
+        return (1);
+    }
     return (0);
+}
+
+static int validate_trailing_lines(int i, t_cub *data)
+{
+    if (strlen(data->map[i]) == 0)
+    {
+        if (check_trailing_map_lines(i) == 1)
+        {
+            printf(TRAILING_EMPTY_LINES);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int validate_cells_and_players(t_cub *data, int *player_count)
+{
+    int i = 0;
+    int j;
+
+    while (data->map[i])
+    {
+        if (validate_trailing_lines(i, data) == 1)
+            return 1;
+
+        j = 0;
+        while (data->map[i][j])
+        {
+            if (check_cell_enclosure(i, j) == 1)
+                return 1;
+
+            if (data->map[i][j] == SOUTH || data->map[i][j] == NORTH ||
+                data->map[i][j] == WEST || data->map[i][j] == EAST)
+            {
+                (*player_count)++;
+            }
+            j++;
+        }
+        i++;
+    }
+
+    return 0;
+}
+
+int validate_full_map(void)
+{
+    t_cub *data = get_cub_data();
+    int player_count = 0;
+
+    if (validate_map_initialization(data) == 1)
+        return (1);
+
+    if (validate_cells_and_players(data, &player_count) == 1)
+        return (1);
+
+    if (player_count != 1)
+    {
+        printf(SINGLE_PLAYER_NEEDED, player_count);
+        return (1);
+    }
+
+    return 0;
 }
 
 int parse(char *file)
