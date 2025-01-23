@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 14:29:11 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 17:24:02 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@
 # define DUPLICATE_TEXTURE "Error: Duplicate texture identifier: "
 # define DUPLICATE_COLOR "Error: Duplicate color identifier: "
 # define UNKNOWN_IDENTIFIER "Error: Unknown identifier: "
-
+# define BOUNDARY_CELL_NOT_ENCLOSED "Error: Cell (%d, %d) is at the boundary and not enclosed\n"
+# define CELL_NOT_ENCLOSED "Error: Cell (%d, %d) is not enclosed\n"
 
 // Structs
 

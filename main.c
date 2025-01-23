@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 16:53:20 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 17:25:29 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -614,20 +614,24 @@ static int	check_cell_enclosure(int i, int j)
 {
     t_cub *data = get_cub_data();
 
-	if (data->map[i][j] == '0' || (data->map[i][j] != '1' && data->map[i][j] != ' '))
-	{
-		if (i == 0 || !data->map[i + 1] || j == 0 || j >= (int)strlen(data->map[i]) || j >= (int)strlen(data->map[i + 1]))
-            return (1);
-        if (i > 0 && j < (int)strlen(data->map[i - 1]) && data->map[i - 1][j] == ' ')
-            return (1);
-		if (data->map[i + 1] && j < (int)strlen(data->map[i + 1]) && data->map[i + 1][j] == ' ')
-            return (1);
-		if (j > 0 && data->map[i][j - 1] == ' ')
-            return (1);
-		if (j + 1 < (int)strlen(data->map[i]) && data->map[i][j + 1] == ' ')
-            return (1);
-	}
-	return (0);
+    if (data->map[i][j] == '0' || (data->map[i][j] != '1' && data->map[i][j] != ' '))
+    {
+        if (i == 0 || j == 0 || i >= ft_array_length(data->map) - 1 || j >= (int)strlen(data->map[i]) - 1)
+        {
+            printf(BOUNDARY_CELL_NOT_ENCLOSED, i, j);
+            return 1;
+        }
+
+        if ((i > 0 && j < (int)strlen(data->map[i - 1]) && data->map[i - 1][j] == ' ') ||
+            (i + 1 < ft_array_length(data->map) && j < (int)strlen(data->map[i + 1]) && data->map[i + 1][j] == ' ') ||
+            (j > 0 && data->map[i][j - 1] == ' ') ||
+            (j + 1 < (int)strlen(data->map[i]) && data->map[i][j + 1] == ' '))
+        {
+            printf(CELL_NOT_ENCLOSED, i, j);
+            return 1;
+        }
+    }
+    return 0;
 }
 
 static int	check_trailing_map_lines(int index)
