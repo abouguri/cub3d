@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 16:35:01 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 16:53:20 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,18 +283,39 @@ int get_next_line(int fd, char **line)
 
 // parser
 
+int initialize_resources(t_cub *data)
+{
+    data->textures = calloc(TEXTURE_COUNT + 1, sizeof(char *));
+    data->colors = calloc(RGB_COUNT + 1, sizeof(char *));
+    if (!data->textures || !data->colors)
+        return (1);
+    return (0);
+}
+
+int process_line(char *line)
+{
+    if (strlen(line) == 0)
+    {
+        free(line);
+        return (0);
+    }
+    if (parse_line(line))
+    {
+        free(line);
+        return (1);
+    }
+    free(line);
+    return (0);
+}
 
 int parse_file(int fd)
 {
     char *line = NULL;
     int ret;
-
     t_cub *data = get_cub_data();
 
-    data->textures = calloc(TEXTURE_COUNT + 1, sizeof(char *));
-    data->colors = calloc(RGB_COUNT + 1, sizeof(char *));
-    if (!data->textures || !data->colors)
-        return 1;
+    if (initialize_resources(data))
+        return (1);
 
     while (ft_array_length(data->textures) != TEXTURE_COUNT || ft_array_length(data->colors) != RGB_COUNT)
     {
@@ -303,37 +324,16 @@ int parse_file(int fd)
         if (ret == -1)
         {
             free(line);
-            line = NULL;
-            return 1;
+            return (1);
         }
 
-        if (strlen(line) == 0)
-        {
-            free(line);
-            line = NULL;
-            continue;
-        }
-        
-        if (parse_line(line))
-        {
-            free(line);
-            line = NULL; // Reset pointer after freeing
-            return 1;
-        }
-
-        free(line);
-        line = NULL; // Reset pointer after freeing
+        if (process_line(line))
+            return (1);
 
         if (ret == 0)
             break;
     }
-
-    if (line)
-    {
-        free(line);
-        line = NULL; // Reset pointer after freeing
-    }
-    return 0;
+    return (0);
 }
 
 int	ft_strncmp(const char *s1, char *s2, size_t n)
@@ -424,7 +424,7 @@ int parse_texture(t_cub *data, char *identifier, char *path, char **tokens)
         return (map_info_error(tokens, DUPLICATE_TEXTURE), 1);
 
     data->textures[index] = strdup(path);
-    return 0;
+    return (0);
 }
 
 int parse_color(t_cub *data, char *identifier, char *value, char **tokens)
@@ -442,7 +442,7 @@ int parse_color(t_cub *data, char *identifier, char *value, char **tokens)
         return (map_info_error(tokens, DUPLICATE_COLOR), 1);
 
     data->colors[index] = strdup(value);
-    return 0;
+    return (0);
 }
 
 int parse_line(char *line)
@@ -453,25 +453,25 @@ int parse_line(char *line)
     if (!tokens || ft_array_length(tokens) != 2)
     {
         free_array(&tokens);
-        return 1;
+        return (1);
     }
 
     if (ft_strncmp(tokens[0], "NO", 3) == 0 || ft_strncmp(tokens[0], "SO", 3) == 0 ||
         ft_strncmp(tokens[0], "WE", 3) == 0 || ft_strncmp(tokens[0], "EA", 3) == 0)
     {
         if (parse_texture(data, tokens[0], tokens[1], tokens) == 1)
-            return 1;
+            return (1);
     }
     else if (ft_strncmp(tokens[0], "F", 2) == 0 || ft_strncmp(tokens[0], "C", 2) == 0)
     {
         if (parse_color(data, tokens[0], tokens[1], tokens) == 1)
-            return 1;
+            return (1);
     }
     else
         return (map_info_error(tokens, UNKNOWN_IDENTIFIER), 1);
 
     free_array(&tokens);
-    return 0;
+    return (0);
 }
 
 
@@ -500,12 +500,12 @@ int initialize_map(t_cub *data, char *line)
 {
     data->map = malloc(sizeof(char *) * 2);
     if (!data->map)
-        return 1;
+        return (1);
 
     data->map[0] = strdup(line);
     data->map[1] = NULL;
 
-    return 0;
+    return (0);
 }
 
 int append_line_to_map(t_cub *data, char *line)
@@ -515,13 +515,13 @@ int append_line_to_map(t_cub *data, char *line)
 
     tmp = reallocate_map_memory(data->map, current_size + 2);
     if (!tmp)
-        return 1;
+        return (1);
 
     data->map = tmp;
     data->map[current_size] = strdup(line);
     data->map[current_size + 1] = NULL;
 
-    return 0;
+    return (0);
 }
 
 static int add_line_to_map(char *line)
@@ -529,20 +529,20 @@ static int add_line_to_map(char *line)
     t_cub *data = get_cub_data();
 
     if (strlen(line) == 0)
-        return 0;
+        return (0);
 
     if (!data->map)
     {
         if (initialize_map(data, line) == 1)
-            return 1;
+            return (1);
     }
     else
     {
         if (append_line_to_map(data, line) == 1)
-            return 1;
+            return (1);
     }
 
-    return 0;
+    return (0);
 }
 
 // static int add_line_to_map(char *line)
