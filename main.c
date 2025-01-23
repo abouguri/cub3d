@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 18:05:12 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 18:25:25 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -705,21 +705,6 @@ int	validate_characters(void)
 	return (count);
 }
 
-static int validate_map_initialization(t_cub *data)
-{
-    if (ft_array_length(data->map) < 3)
-    {
-        printf(SMALL_MAP);
-        return (1);
-    }
-    if (validate_characters() != 1)
-    {
-        printf(INVALID_CHARACTERS);
-        return (1);
-    }
-    return (0);
-}
-
 static int validate_trailing_lines(int i, t_cub *data)
 {
     if (strlen(data->map[i]) == 0)
@@ -730,10 +715,10 @@ static int validate_trailing_lines(int i, t_cub *data)
             return 1;
         }
     }
-    return 0;
+    return (0);
 }
 
-static int validate_cells_and_players(t_cub *data, int *player_count)
+static int validate_cells_and_players(t_cub *data)
 {
     int i = 0;
     int j;
@@ -741,45 +726,38 @@ static int validate_cells_and_players(t_cub *data, int *player_count)
     while (data->map[i])
     {
         if (validate_trailing_lines(i, data) == 1)
-            return 1;
+            return (1);
 
         j = 0;
         while (data->map[i][j])
         {
             if (check_cell_enclosure(i, j) == 1)
-                return 1;
-
-            if (data->map[i][j] == SOUTH || data->map[i][j] == NORTH ||
-                data->map[i][j] == WEST || data->map[i][j] == EAST)
-            {
-                (*player_count)++;
-            }
+                return (1);
             j++;
         }
         i++;
     }
-
-    return 0;
+    return (0);
 }
 
 int validate_full_map(void)
 {
     t_cub *data = get_cub_data();
-    int player_count = 0;
-
-    if (validate_map_initialization(data) == 1)
-        return (1);
-
-    if (validate_cells_and_players(data, &player_count) == 1)
-        return (1);
+    int player_count = validate_characters();
 
     if (player_count != 1)
     {
         printf(SINGLE_PLAYER_NEEDED, player_count);
         return (1);
     }
-
-    return 0;
+    if (ft_array_length(data->map) < 3)
+    {
+        printf(SMALL_MAP);
+        return (1);
+    }
+    if (validate_cells_and_players(data) == 1)
+        return (1);
+    return (0);
 }
 
 int parse(char *file)
