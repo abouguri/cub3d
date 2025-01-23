@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 14:29:11 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 18:05:04 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,12 @@
 // #define BUFFER_SIZE 42
 #define TEXTURE_COUNT 4
 #define RGB_COUNT 2
+#define NORTH 'N'
+#define SOUTH 'S'
+#define EAST 'E'
+#define WEST 'W'
+#define VALID_MAP_SYMBOLS " 10NSEW"
+
 #include  <string.h>   
 // Error Messages
 #define ERR_TOO_FEW_ARGS "Error: Too few arguments. Provide a .cub file.\n"
@@ -46,7 +52,12 @@
 # define DUPLICATE_TEXTURE "Error: Duplicate texture identifier: "
 # define DUPLICATE_COLOR "Error: Duplicate color identifier: "
 # define UNKNOWN_IDENTIFIER "Error: Unknown identifier: "
-
+# define BOUNDARY_CELL_NOT_ENCLOSED "Error: Cell (%d, %d) is at the boundary and not enclosed\n"
+# define CELL_NOT_ENCLOSED "Error: Cell (%d, %d) is not enclosed\n"
+# define SMALL_MAP "Error: Map is too small\n"
+# define INVALID_CHARACTERS "Error: Map contains invalid characters\n"
+# define TRAILING_EMPTY_LINES "Error: Map contains trailing empty lines\n"
+# define SINGLE_PLAYER_NEEDED "Error: Map must contain exactly one player (found %d)\n"
 
 // Structs
 
