@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/22 17:39:09 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/23 14:31:33 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -400,6 +400,16 @@ void    print_str(char *s)
     while(*s)
         write(1, s++, 1);
 }
+int    map_info_error(char **tokens, char *s)
+{
+    print_str(s);
+    print_str(tokens[0]);
+    print_str("\n");
+    free_array (&tokens);
+    return (1);
+}
+
+
 
 int parse_line(char *line)
 {
@@ -416,71 +426,43 @@ int parse_line(char *line)
     if (ft_strncmp(tokens[0], "NO", 3) == 0)
     {
         if (data->textures[0])
-        {
-            print_str("Error: Duplicate texture identifier: NO\n");
-            free_array(&tokens);
-            return 1;
-        }
+            return map_info_error(tokens, DUPLICATE_TEXTURE);
         data->textures[0] = strdup(tokens[1]);
     }
     else if (ft_strncmp(tokens[0], "SO", 3) == 0)
     {
         if (data->textures[1])
-        {
-            print_str("Error: Duplicate texture identifier: SO\n");
-            free_array(&tokens);
-            return 1;
-        }
+            return map_info_error(tokens, DUPLICATE_TEXTURE);
         data->textures[1] = strdup(tokens[1]);
     }
     else if (ft_strncmp(tokens[0], "WE", 3) == 0)
     {
         if (data->textures[2])
-        {
-            print_str("Error: Duplicate texture identifier: WE\n");
-            free_array(&tokens);
-            return 1;
-        }
+            return map_info_error(tokens, DUPLICATE_TEXTURE);
         data->textures[2] = strdup(tokens[1]);
     }
     else if (ft_strncmp(tokens[0], "EA", 3) == 0)
     {
         if (data->textures[3])
-        {
-            print_str("Error: Duplicate texture identifier: EA\n");
-            free_array(&tokens);
-            return 1;
-        }
+            return map_info_error(tokens, DUPLICATE_TEXTURE);
         data->textures[3] = strdup(tokens[1]);
     }
     // Parse colors
     else if (ft_strncmp(tokens[0], "F", 2) == 0)
     {
         if (data->colors[0])
-        {
-            print_str("Error: Duplicate color identifier: F\n");
-            free_array(&tokens);
-            return 1;
-        }
+            return map_info_error(tokens, DUPLICATE_COLOR);
         data->colors[0] = strdup(tokens[1]);
     }
     else if (ft_strncmp(tokens[0], "C", 2) == 0)
     {
         if (data->colors[1])
-        {
-            print_str("Error: Duplicate color identifier: C\n");
-            free_array(&tokens);
-            return 1;
-        }
+            return map_info_error(tokens, DUPLICATE_COLOR);
         data->colors[1] = strdup(tokens[1]);
     }
 
     else
-    {
-        print_str("Error: Unknown identifier\n");
-        free_array(&tokens);
-        return 1;
-    }
+            return map_info_error(tokens, UNKNOWN_IDENTIFIER);
 
     free_array(&tokens);
     return 0;
