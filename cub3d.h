@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/24 16:49:09 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/24 22:24:04 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,18 @@
 #include <limits.h>
 # include "minilibx-linux/mlx.h"
 
+// colors
+
+#define WHITE  0xFFFFFF  // White for floor or background
+#define BLUE   0x0000FF  // Blue for walls
+#define BLACK  0x000000  // Black for grid lines
+#define GREEN  0x00FF00  // Green for the player
+
 // screen
 
 # define SCREEN_HEIGHT	1000
 # define SCREEN_WIDTH 	1500
-# define CELL_SIZE	100
+# define CELL_SIZE	40
 # define TEXTURE_HEIGHT 64
 # define TEXTURE_WIDTH  64
 

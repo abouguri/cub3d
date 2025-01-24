@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/24 17:39:08 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/24 22:39:59 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,40 +209,56 @@ int read_and_append_to_buffer(char **buffer, int fd, int *bytes_read)
     return append_to_buffer(buffer, combined_content, &temp);
 }
 
+static char *create_line(const char *buffer, int length)
+{
+    char *line = malloc(length + 1);
+    if (!line)
+        return NULL;
+
+    strncpy(line, buffer, length);
+    line[length] = '\0';
+    return line;
+}
+
+static char *get_remaining_content(const char *buffer, int index)
+{
+    char *remaining = strdup(&buffer[index + 1]);
+    return remaining;
+}
+
+static void clear_buffer(char **buffer)
+{
+    free(*buffer);
+    *buffer = NULL;
+}
+
 int extract_line(char **buffer, char **line)
 {
     int i = 0;
-    char *remaining_content;
 
     while ((*buffer)[i] != '\n' && (*buffer)[i] != '\0')
         i++;
-
-    *line = malloc(i + 1);
+    *line = create_line(*buffer, i);
     if (!*line)
         return -1;
 
-    strncpy(*line, *buffer, i);
-    (*line)[i] = '\0';
-
-    if ((*buffer)[i] == '\0')
+    if ((*buffer)[i] == '\0') // No remaining content
     {
-        free(*buffer);
-        *buffer = NULL;
+        clear_buffer(buffer); // Free and NULL the buffer
     }
     else
     {
-        remaining_content = strdup(&((*buffer)[i + 1]));
-        if (!remaining_content)
+        char *remaining = get_remaining_content(*buffer, i);
+        if (!remaining)
         {
-            free(*line);
-            *line = NULL; // Reset pointer to avoid dangling reference
+            free(*line); // Free the allocated line in case of failure
+            *line = NULL;
             return -1;
         }
 
-        free(*buffer);
-        *buffer = remaining_content;
+        clear_buffer(buffer); // Free old buffer
+        *buffer = remaining;  // Set remaining buffer
     }
-
     return 1;
 }
 
@@ -908,46 +924,109 @@ static void init_window(t_cub *data, t_data *img, int win_width, int win_height)
 static int get_cell_color(char cell)
 {
     if (cell == '0') // Floor
-        return (0xFFFFFF); // White
+        return (WHITE); // White
     if (cell == '1') // Wall
-        return (0x0000FF); // Blue
+        return (BLUE); // Blue
     return (0); // Default color for invalid cells
 }
 
 static void draw_grid(t_data *img, int map_width, int map_height, int cell_size)
 {
-    int x, y;
-
-    // Draw vertical grid lines
-    for (x = 0; x <= map_width; x++)
+    int x;
+    int y;
+    
+    x = 0;
+    // Vertical
+    while (x <= map_width)
     {
-        for (y = 0; y < map_height * cell_size; y++)
+        y = 0;
+        while (y < map_height * cell_size)
         {
-            my_mlx_pixel_put(img, x * cell_size, y, 0x000000); // Black for grid lines
+            my_mlx_pixel_put(img, x * cell_size, y, BLACK);
+            y++;
         }
+        x++;
     }
-
-    // Draw horizontal grid lines
-    for (y = 0; y <= map_height; y++)
+    // Horizontal
+    y = 0;
+    while (y <= map_height)
     {
-        for (x = 0; x < map_width * cell_size; x++)
+        x = 0;
+        while (x < map_width * cell_size)
         {
-            my_mlx_pixel_put(img, x, y * cell_size, 0x000000); // Black for grid lines
+            my_mlx_pixel_put(img, x, y * cell_size, BLACK);
+            x++;
         }
+        y++;
     }
 }
 
 static void draw_circle(t_data *img, int center_x, int center_y, int radius, int color)
 {
-    for (int y = -radius; y <= radius; y++)
+    int y = -radius;
+
+    while (y <= radius)
     {
-        for (int x = -radius; x <= radius; x++)
+        int x = -radius;
+        while (x <= radius)
         {
             if (x * x + y * y <= radius * radius) // Check if the pixel is within the circle
             {
                 my_mlx_pixel_put(img, center_x + x, center_y + y, color);
             }
+            x++;
         }
+        y++;
+    }
+}
+
+static void draw_cell(t_data *img, int x, int y, int cell_size, int color)
+{
+    int p_x = 0;
+
+    while (p_x < cell_size)
+    {
+        int p_y = 0;
+        while (p_y < cell_size)
+        {
+            int pixel_x = p_x + x * cell_size;
+            int pixel_y = p_y + y * cell_size;
+            my_mlx_pixel_put(img, pixel_x, pixel_y, color);
+            p_y++;
+        }
+        p_x++;
+    }
+}
+
+static void draw_player(t_data *img, int x, int y, int cell_size)
+{
+    draw_cell(img, x, y, cell_size, WHITE);
+
+    int center_x = x * cell_size + cell_size / 2;
+    int center_y = y * cell_size + cell_size / 2;
+    draw_circle(img, center_x, center_y, cell_size / 4, GREEN);
+}
+
+static void render_map_cells(t_data *img, char **map, int cell_size)
+{
+    int y = 0;
+
+    while (y < ft_array_length(map))
+    {
+        int x = 0;
+        while (x < (int)strlen(map[y]))
+        {
+            int color = get_cell_color(map[y][x]);
+
+            draw_cell(img, x, y, cell_size, color);
+
+            if (map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'E' || map[y][x] == 'W')
+            {
+                draw_player(img, x, y, cell_size);
+            }
+            x++;
+        }
+        y++;
     }
 }
 
@@ -956,49 +1035,13 @@ static void render_map_to_image(t_data *img, char **map, int cell_size)
     int map_width = ft_max_length(map);
     int map_height = ft_array_length(map);
 
-    // Render the map and player
-    for (int y = 0; y < map_height; y++)
-    {
-        for (int x = 0; x < (int)strlen(map[y]); x++)
-        {
-            int color = get_cell_color(map[y][x]);
+    // cells and player
+    render_map_cells(img, map, cell_size);
 
-            // Draw the background of the cell
-            for (int p_x = 0; p_x < cell_size; p_x++)
-            {
-                for (int p_y = 0; p_y < cell_size; p_y++)
-                {
-                    int pixel_x = p_x + x * cell_size;
-                    int pixel_y = p_y + y * cell_size;
-                    my_mlx_pixel_put(img, pixel_x, pixel_y, color);
-                }
-            }
-
-            // If it's the player, draw the green circle
-            if (map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'E' || map[y][x] == 'W')
-            {
-                // Ensure the player square is white first
-                for (int p_x = 0; p_x < cell_size; p_x++)
-                {
-                    for (int p_y = 0; p_y < cell_size; p_y++)
-                    {
-                        int pixel_x = p_x + x * cell_size;
-                        int pixel_y = p_y + y * cell_size;
-                        my_mlx_pixel_put(img, pixel_x, pixel_y, 0xFFFFFFFF); // White square for player background
-                    }
-                }
-
-                // Draw the green circle for the player
-                int center_x = x * cell_size + cell_size / 2;
-                int center_y = y * cell_size + cell_size / 2;
-                draw_circle(img, center_x, center_y, cell_size / 4, 0x00FF00); // Green circle
-            }
-        }
-    }
-
-    // Draw the grid on top of the map
+    // Grid
     draw_grid(img, map_width, map_height, cell_size);
 }
+
 
 
 void init(void)
@@ -1013,8 +1056,8 @@ void init(void)
     render_map_to_image(&img, data->map, CELL_SIZE);
     mlx_put_image_to_window(data->mlx, data->win, img.img, 0, 0);
 
-    mlx_hook(data->win, 17, 0L, on_destroy, data); // Close event
-    mlx_loop(data->mlx); // Start the MLX loop
+    mlx_hook(data->win, 17, 0L, on_destroy, data);
+    mlx_loop(data->mlx);
 }
 
 
