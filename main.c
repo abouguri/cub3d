@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/24 15:56:44 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/24 17:39:08 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -596,10 +596,10 @@ static char *trim_line(const char *line)
     const char *start = line;
     const char *end;
 
-    while (*start && is_whitespace(*start))
-        start++;
-    if (*start == '\0')
-        return (strdup(""));
+    // while (*start && is_whitespace(*start))
+    //     start++;
+    // if (*start == '\0')
+    //     return (strdup(""));
     end = start + strlen(start) - 1;
     while (end > start && is_whitespace(*end))
         end--;
@@ -616,7 +616,7 @@ static char *trim_line(const char *line)
 static int add_line_to_map(char *line)
 {
     t_cub *data = get_cub_data();
-    char *trimmed_line = trim_line(line); // Trim leading and trailing spaces
+    char *trimmed_line = trim_line(line);
 
     if (!trimmed_line)
         return (1);
@@ -641,48 +641,9 @@ static int add_line_to_map(char *line)
             return (1);
         }
     }
-    free(trimmed_line); // Clean up the trimmed line
+    free(trimmed_line);
     return (0);
 }
-
-// static int add_line_to_map(char *line)
-// {
-//     char **tmp;
-//     int current_size;
-//     t_cub *data = get_cub_data();
-
-//     if (strlen(line) == 0)
-//         return 0;
-
-//     if (!data->map)
-//     {
-//         data->map = malloc(sizeof(char *) * 2);
-//         if (!data->map)
-//             return (1);
-//         data->map[0] = strdup(line);
-//         data->map[1] = NULL;
-//     }
-//     else
-//     {
-//         current_size = ft_array_length(data->map);
-
-//         tmp = reallocate_map_memory(data->map, current_size + 2);
-//         if (!tmp)
-//             return (1);
-//         data->map = tmp;
-
-//         data->map[current_size] = strdup(line);
-//         data->map[current_size + 1] = NULL; 
-//     }
-
-//     // Print current map state
-//     //printf("Current map state:\n");
-//     //for (int i = 0; data->map[i]; i++)
-//         //printf("Map[%d]: %s\n", i, data->map[i]);
-
-//     return (0);
-// }
-
 
 
 int parse_map(int fd)
@@ -697,20 +658,20 @@ int parse_map(int fd)
         if (ret == -1)
             return (1);
 
-        if (strlen(line) == 0 && !data->map) // Skip leading empty lines
+        if (strlen(line) == 0 && !data->map)
         {
             free(line);
             continue;
         }
 
-        if (add_line_to_map(line) == 1) // Add valid map lines
+        if (add_line_to_map(line) == 1)
         {
             free(line);
             return (1);
         }
 
         free(line);
-        if (ret == 0) // End of file
+        if (ret == 0)
             break;
     }
 
@@ -904,19 +865,7 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
 }
-void draw_circle(t_data *img, int xc, int yc, int r, int color)
-{
-    for (int x = xc - r; x <= xc + r; x++)
-    {
-        for (int y = yc - r; y <= yc + r; y++)
-        {
-            if ((x - xc) * (x - xc) + (y - yc) * (y - yc) <= r * r)
-            {
-                my_mlx_pixel_put(img, x, y, color);
-            }
-        }
-    }
-}
+
 int	exitbyx(int keycode, t_data *data)
 {
     (void)data;
@@ -936,51 +885,184 @@ int on_destroy(void*data)
     mlx_loop_end(((t_cub*)data)->mlx);
     return 0;
 }
-void	init(void)
+static void init_window(t_cub *data, t_data *img, int win_width, int win_height)
 {
-	void	*temporary;
-    t_cub *data = get_cub_data();
-    t_data img;
-    
-	data->mlx = mlx_init(); 
-	// if (init_textures() == 1)
-	// 	error_exit_cleanup(ERR_TEXTURE_LOAD);
-	// if (init_colors() == 1)
-	// 	error_exit_cleanup(ERR_COLORS_LOAD);
-    int win_height = ft_array_length(data->map) * CELL_SIZE; 
-    int win_width = ft_max_length(data->map) * CELL_SIZE; 
-	temporary = mlx_new_window(data->mlx, win_width, win_height, "cub3D");
-    img.img = mlx_new_image(data->mlx, win_width, win_height);
-    img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-    for (int y = 0; y < ft_array_length(data->map); y++)
+    data->mlx = mlx_init();
+    if (!data->mlx)
+        error_exit_cleanup(ERR_INIT_MLX);
+
+    data->win = mlx_new_window(data->mlx, win_width, win_height, "cub3D");
+    if (!data->win)
+        error_exit_cleanup(ERR_CREATE_WINDOW);
+
+    img->img = mlx_new_image(data->mlx, win_width, win_height);
+    if (!img->img)
+        error_exit_cleanup(ERR_CREATE_IMAGE);
+
+    img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length, &img->endian);
+    if (!img->addr)
+        error_exit_cleanup(ERR_GET_IMAGE_ADDR);
+}
+
+
+static int get_cell_color(char cell)
+{
+    if (cell == '0') // Floor
+        return (0xFFFFFF); // White
+    if (cell == '1') // Wall
+        return (0x0000FF); // Blue
+    return (0); // Default color for invalid cells
+}
+
+static void draw_grid(t_data *img, int map_width, int map_height, int cell_size)
+{
+    int x, y;
+
+    // Draw vertical grid lines
+    for (x = 0; x <= map_width; x++)
     {
-        for (int x = 0; x < (int)strlen(data->map[y]); x++)
+        for (y = 0; y < map_height * cell_size; y++)
         {
-            int color = 0;
-            if (data->map[y][x] == '0')
-                color = 0xFFFFFFFF;
-            else if (data->map[y][x] == 'N' || data->map[y][x] == 'W' || data->map[y][x] == 'S' || data->map[y][x] == 'E')
-                color = 0xFF0000FF;
-            for (int p_x = 0; p_x < CELL_SIZE; p_x++)
+            my_mlx_pixel_put(img, x * cell_size, y, 0x000000); // Black for grid lines
+        }
+    }
+
+    // Draw horizontal grid lines
+    for (y = 0; y <= map_height; y++)
+    {
+        for (x = 0; x < map_width * cell_size; x++)
+        {
+            my_mlx_pixel_put(img, x, y * cell_size, 0x000000); // Black for grid lines
+        }
+    }
+}
+
+static void draw_circle(t_data *img, int center_x, int center_y, int radius, int color)
+{
+    for (int y = -radius; y <= radius; y++)
+    {
+        for (int x = -radius; x <= radius; x++)
+        {
+            if (x * x + y * y <= radius * radius) // Check if the pixel is within the circle
             {
-                for (int p_y = 0; p_y < CELL_SIZE; p_y++)
-                {
-                    int pixel_x = p_x + x * CELL_SIZE;
-                    int pixel_y = p_y + y * CELL_SIZE;
-                    my_mlx_pixel_put(&img, pixel_x,  pixel_y,  color);
-                }
+                my_mlx_pixel_put(img, center_x + x, center_y + y, color);
             }
         }
     }
-    
-    // my_mlx_pixel_put(&img, 5, 5, 0x00CC66FF);
-    mlx_put_image_to_window(data->mlx, temporary, img.img, 0, 0);
-    // mlx_key_hook(temporary, exitbyx, &data);
-    //mlx_hook(temporary, 3, 1L<<1, exitbyx, &data);
-    mlx_hook(temporary, 17, 0L, on_destroy, &data);
-    mlx_loop(data->mlx);    
-	// data->win = temporary;
 }
+
+static void render_map_to_image(t_data *img, char **map, int cell_size)
+{
+    int map_width = ft_max_length(map);
+    int map_height = ft_array_length(map);
+
+    // Render the map and player
+    for (int y = 0; y < map_height; y++)
+    {
+        for (int x = 0; x < (int)strlen(map[y]); x++)
+        {
+            int color = get_cell_color(map[y][x]);
+
+            // Draw the background of the cell
+            for (int p_x = 0; p_x < cell_size; p_x++)
+            {
+                for (int p_y = 0; p_y < cell_size; p_y++)
+                {
+                    int pixel_x = p_x + x * cell_size;
+                    int pixel_y = p_y + y * cell_size;
+                    my_mlx_pixel_put(img, pixel_x, pixel_y, color);
+                }
+            }
+
+            // If it's the player, draw the green circle
+            if (map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'E' || map[y][x] == 'W')
+            {
+                // Ensure the player square is white first
+                for (int p_x = 0; p_x < cell_size; p_x++)
+                {
+                    for (int p_y = 0; p_y < cell_size; p_y++)
+                    {
+                        int pixel_x = p_x + x * cell_size;
+                        int pixel_y = p_y + y * cell_size;
+                        my_mlx_pixel_put(img, pixel_x, pixel_y, 0xFFFFFFFF); // White square for player background
+                    }
+                }
+
+                // Draw the green circle for the player
+                int center_x = x * cell_size + cell_size / 2;
+                int center_y = y * cell_size + cell_size / 2;
+                draw_circle(img, center_x, center_y, cell_size / 4, 0x00FF00); // Green circle
+            }
+        }
+    }
+
+    // Draw the grid on top of the map
+    draw_grid(img, map_width, map_height, cell_size);
+}
+
+
+void init(void)
+{
+    t_cub *data = get_cub_data();
+    t_data img;
+
+    int win_height = ft_array_length(data->map) * CELL_SIZE;
+    int win_width = ft_max_length(data->map) * CELL_SIZE;
+
+    init_window(data, &img, win_width, win_height);
+    render_map_to_image(&img, data->map, CELL_SIZE);
+    mlx_put_image_to_window(data->mlx, data->win, img.img, 0, 0);
+
+    mlx_hook(data->win, 17, 0L, on_destroy, data); // Close event
+    mlx_loop(data->mlx); // Start the MLX loop
+}
+
+
+// void	init(void)
+// {
+// 	void	*temporary;
+//     t_cub *data = get_cub_data();
+//     t_data img;
+    
+// 	data->mlx = mlx_init(); 
+// 	// if (init_textures() == 1)
+// 	// 	error_exit_cleanup(ERR_TEXTURE_LOAD);
+// 	// if (init_colors() == 1)
+// 	// 	error_exit_cleanup(ERR_COLORS_LOAD);
+//     int win_height = ft_array_length(data->map) * CELL_SIZE; 
+//     int win_width = ft_max_length(data->map) * CELL_SIZE; 
+// 	temporary = mlx_new_window(data->mlx, win_width, win_height, "cub3D");
+//     img.img = mlx_new_image(data->mlx, win_width, win_height);
+//     img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+//     for (int y = 0; y < ft_array_length(data->map); y++)
+//     {
+//         for (int x = 0; x < (int)strlen(data->map[y]); x++)
+//         {
+//             int color = 0;
+//             if (data->map[y][x] == '0')
+//                 color = 0xFFFFFFFF;
+//             else if (data->map[y][x] == 'N' || data->map[y][x] == 'W' || data->map[y][x] == 'S' || data->map[y][x] == 'E')
+//                 color = 0xFF0000FF;
+//             for (int p_x = 0; p_x < CELL_SIZE; p_x++)
+//             {
+//                 for (int p_y = 0; p_y < CELL_SIZE; p_y++)
+//                 {
+//                     int pixel_x = p_x + x * CELL_SIZE;
+//                     int pixel_y = p_y + y * CELL_SIZE;
+//                     my_mlx_pixel_put(&img, pixel_x,  pixel_y,  color);
+//                 }
+//             }
+//         }
+//     }
+    
+//     // my_mlx_pixel_put(&img, 5, 5, 0x00CC66FF);
+//     mlx_put_image_to_window(data->mlx, temporary, img.img, 0, 0);
+//     // mlx_key_hook(temporary, exitbyx, &data);
+//     //mlx_hook(temporary, 3, 1L<<1, exitbyx, &data);
+//     mlx_hook(temporary, 17, 0L, on_destroy, &data);
+//     mlx_loop(data->mlx);    
+// 	// data->win = temporary;
+// }
 //added
 
 

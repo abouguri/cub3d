@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/24 11:30:26 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/24 16:49:09 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,33 +32,38 @@
 // Constants
 
 // #define BUFFER_SIZE 42
-#define TEXTURE_COUNT 4
-#define RGB_COUNT 2
-#define NORTH 'N'
-#define SOUTH 'S'
-#define EAST 'E'
-#define WEST 'W'
-#define VALID_MAP_SYMBOLS " 10NSEW"
+# define TEXTURE_COUNT 4
+# define RGB_COUNT 2
+# define NORTH 'N'
+# define SOUTH 'S'
+# define EAST 'E'
+# define WEST 'W'
+# define VALID_MAP_SYMBOLS " 10NSEW"
 
 #include  <string.h>   
 // Error Messages
-#define ERR_TOO_FEW_ARGS "Error: Too few arguments. Provide a .cub file.\n"
-#define ERR_TOO_MANY_ARGS "Error: Too many arguments. Only the .cub file is required.\n"
-#define ERR_INVALID_EXT "Error: Invalid file extension. The file must have a .cub extension.\n"
-#define ERR_FILE_OPEN "Error: Cannot open the map file.\n"
-#define ERR_INVALID_INFO "Error: Invalid map information in the file.\n"
-#define ERR_INVALID_MAP "Error: Invalid map structure.\n"
+# define ERR_TOO_FEW_ARGS "Error\nToo few arguments. Provide a .cub file.\n"
+# define ERR_TOO_MANY_ARGS "Error\nToo many arguments. Only the .cub file is required.\n"
+# define ERR_INVALID_EXT "Error\nInvalid file extension. The file must have a .cub extension.\n"
+# define ERR_FILE_OPEN "Error\nCannot open the map file.\n"
+# define ERR_INVALID_INFO "Error\nInvalid map information in the file.\n"
+# define ERR_INVALID_MAP "Error\nInvalid map structure.\n"
 # define ERR_TEXTURE_LOAD "Error\nCannot load textures\n"
 # define ERR_COLORS_LOAD "Error\nCannot load colors\n"
-# define DUPLICATE_TEXTURE "Error: Duplicate texture identifier: "
-# define DUPLICATE_COLOR "Error: Duplicate color identifier: "
-# define UNKNOWN_IDENTIFIER "Error: Unknown identifier: "
-# define BOUNDARY_CELL_NOT_ENCLOSED "Error: Cell (%d, %d) is at the boundary and not enclosed\n"
-# define CELL_NOT_ENCLOSED "Error: Cell (%d, %d) is not enclosed\n"
-# define SMALL_MAP "Error: Map is too small\n"
-# define INVALID_CHARACTERS "Error: Map contains invalid characters\n"
-# define TRAILING_EMPTY_LINES "Error: Map contains trailing empty lines\n"
-# define SINGLE_PLAYER_NEEDED "Error: Map must contain exactly one player (found %d)\n"
+# define DUPLICATE_TEXTURE "Error\nDuplicate texture identifier: "
+# define DUPLICATE_COLOR "Error\nDuplicate color identifier: "
+# define UNKNOWN_IDENTIFIER "Error\nUnknown identifier: "
+# define BOUNDARY_CELL_NOT_ENCLOSED "Error\nCell (%d, %d) is at the boundary and not enclosed\n"
+# define CELL_NOT_ENCLOSED "Error\nCell (%d, %d) is not enclosed\n"
+# define SMALL_MAP "Error\nMap is too small\n"
+# define INVALID_CHARACTERS "Error\nMap contains invalid characters\n"
+# define TRAILING_EMPTY_LINES "Error\nMap contains trailing empty lines\n"
+# define SINGLE_PLAYER_NEEDED "Error\nMap must contain exactly one player (found %d)\n"
+# define ERR_INIT_MLX "Error\nFailed to initialize MLX"
+# define ERR_CREATE_WINDOW "Error\nFailed to create window"
+# define ERR_CREATE_IMAGE "Error\nFailed to create image"
+# define ERR_GET_IMAGE_ADDR "Error\nFailed to get image address"
+
 
 // Structs
 
