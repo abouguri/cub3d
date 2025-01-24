@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/24 17:39:08 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/24 22:17:31 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -916,38 +916,103 @@ static int get_cell_color(char cell)
 
 static void draw_grid(t_data *img, int map_width, int map_height, int cell_size)
 {
-    int x, y;
-
-    // Draw vertical grid lines
-    for (x = 0; x <= map_width; x++)
+    int x;
+    int y;
+    
+    x = 0;
+    // Vertical
+    while (x <= map_width)
     {
-        for (y = 0; y < map_height * cell_size; y++)
+        y = 0;
+        while (y < map_height * cell_size)
         {
             my_mlx_pixel_put(img, x * cell_size, y, 0x000000); // Black for grid lines
+            y++;
         }
+        x++;
     }
-
-    // Draw horizontal grid lines
-    for (y = 0; y <= map_height; y++)
+    // Horizontal
+    y = 0;
+    while (y <= map_height)
     {
-        for (x = 0; x < map_width * cell_size; x++)
+        x = 0;
+        while (x < map_width * cell_size)
         {
             my_mlx_pixel_put(img, x, y * cell_size, 0x000000); // Black for grid lines
+            x++;
         }
+        y++;
     }
 }
 
 static void draw_circle(t_data *img, int center_x, int center_y, int radius, int color)
 {
-    for (int y = -radius; y <= radius; y++)
+    int y = -radius;
+
+    while (y <= radius)
     {
-        for (int x = -radius; x <= radius; x++)
+        int x = -radius;
+        while (x <= radius)
         {
             if (x * x + y * y <= radius * radius) // Check if the pixel is within the circle
             {
                 my_mlx_pixel_put(img, center_x + x, center_y + y, color);
             }
+            x++;
         }
+        y++;
+    }
+}
+
+static void draw_cell(t_data *img, int x, int y, int cell_size, int color)
+{
+    int p_x = 0;
+
+    while (p_x < cell_size)
+    {
+        int p_y = 0;
+        while (p_y < cell_size)
+        {
+            int pixel_x = p_x + x * cell_size;
+            int pixel_y = p_y + y * cell_size;
+            my_mlx_pixel_put(img, pixel_x, pixel_y, color);
+            p_y++;
+        }
+        p_x++;
+    }
+}
+
+static void draw_player(t_data *img, int x, int y, int cell_size)
+{
+    // Draw a white background for the player
+    draw_cell(img, x, y, cell_size, 0xFFFFFFFF);
+
+    // Draw a green circle in the center for the player
+    int center_x = x * cell_size + cell_size / 2;
+    int center_y = y * cell_size + cell_size / 2;
+    draw_circle(img, center_x, center_y, cell_size / 4, 0x00FF00); // Green circle
+}
+
+static void render_map_cells(t_data *img, char **map, int cell_size)
+{
+    int y = 0;
+
+    while (y < ft_array_length(map))
+    {
+        int x = 0;
+        while (x < (int)strlen(map[y]))
+        {
+            int color = get_cell_color(map[y][x]);
+
+            draw_cell(img, x, y, cell_size, color);
+
+            if (map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'E' || map[y][x] == 'W')
+            {
+                draw_player(img, x, y, cell_size);
+            }
+            x++;
+        }
+        y++;
     }
 }
 
@@ -956,49 +1021,13 @@ static void render_map_to_image(t_data *img, char **map, int cell_size)
     int map_width = ft_max_length(map);
     int map_height = ft_array_length(map);
 
-    // Render the map and player
-    for (int y = 0; y < map_height; y++)
-    {
-        for (int x = 0; x < (int)strlen(map[y]); x++)
-        {
-            int color = get_cell_color(map[y][x]);
+    // cells and player
+    render_map_cells(img, map, cell_size);
 
-            // Draw the background of the cell
-            for (int p_x = 0; p_x < cell_size; p_x++)
-            {
-                for (int p_y = 0; p_y < cell_size; p_y++)
-                {
-                    int pixel_x = p_x + x * cell_size;
-                    int pixel_y = p_y + y * cell_size;
-                    my_mlx_pixel_put(img, pixel_x, pixel_y, color);
-                }
-            }
-
-            // If it's the player, draw the green circle
-            if (map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'E' || map[y][x] == 'W')
-            {
-                // Ensure the player square is white first
-                for (int p_x = 0; p_x < cell_size; p_x++)
-                {
-                    for (int p_y = 0; p_y < cell_size; p_y++)
-                    {
-                        int pixel_x = p_x + x * cell_size;
-                        int pixel_y = p_y + y * cell_size;
-                        my_mlx_pixel_put(img, pixel_x, pixel_y, 0xFFFFFFFF); // White square for player background
-                    }
-                }
-
-                // Draw the green circle for the player
-                int center_x = x * cell_size + cell_size / 2;
-                int center_y = y * cell_size + cell_size / 2;
-                draw_circle(img, center_x, center_y, cell_size / 4, 0x00FF00); // Green circle
-            }
-        }
-    }
-
-    // Draw the grid on top of the map
+    // Grid
     draw_grid(img, map_width, map_height, cell_size);
 }
+
 
 
 void init(void)
@@ -1013,8 +1042,8 @@ void init(void)
     render_map_to_image(&img, data->map, CELL_SIZE);
     mlx_put_image_to_window(data->mlx, data->win, img.img, 0, 0);
 
-    mlx_hook(data->win, 17, 0L, on_destroy, data); // Close event
-    mlx_loop(data->mlx); // Start the MLX loop
+    mlx_hook(data->win, 17, 0L, on_destroy, data);
+    mlx_loop(data->mlx);
 }
 
 
