@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/24 22:17:31 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/24 22:39:59 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,40 +209,56 @@ int read_and_append_to_buffer(char **buffer, int fd, int *bytes_read)
     return append_to_buffer(buffer, combined_content, &temp);
 }
 
+static char *create_line(const char *buffer, int length)
+{
+    char *line = malloc(length + 1);
+    if (!line)
+        return NULL;
+
+    strncpy(line, buffer, length);
+    line[length] = '\0';
+    return line;
+}
+
+static char *get_remaining_content(const char *buffer, int index)
+{
+    char *remaining = strdup(&buffer[index + 1]);
+    return remaining;
+}
+
+static void clear_buffer(char **buffer)
+{
+    free(*buffer);
+    *buffer = NULL;
+}
+
 int extract_line(char **buffer, char **line)
 {
     int i = 0;
-    char *remaining_content;
 
     while ((*buffer)[i] != '\n' && (*buffer)[i] != '\0')
         i++;
-
-    *line = malloc(i + 1);
+    *line = create_line(*buffer, i);
     if (!*line)
         return -1;
 
-    strncpy(*line, *buffer, i);
-    (*line)[i] = '\0';
-
-    if ((*buffer)[i] == '\0')
+    if ((*buffer)[i] == '\0') // No remaining content
     {
-        free(*buffer);
-        *buffer = NULL;
+        clear_buffer(buffer); // Free and NULL the buffer
     }
     else
     {
-        remaining_content = strdup(&((*buffer)[i + 1]));
-        if (!remaining_content)
+        char *remaining = get_remaining_content(*buffer, i);
+        if (!remaining)
         {
-            free(*line);
-            *line = NULL; // Reset pointer to avoid dangling reference
+            free(*line); // Free the allocated line in case of failure
+            *line = NULL;
             return -1;
         }
 
-        free(*buffer);
-        *buffer = remaining_content;
+        clear_buffer(buffer); // Free old buffer
+        *buffer = remaining;  // Set remaining buffer
     }
-
     return 1;
 }
 
@@ -908,9 +924,9 @@ static void init_window(t_cub *data, t_data *img, int win_width, int win_height)
 static int get_cell_color(char cell)
 {
     if (cell == '0') // Floor
-        return (0xFFFFFF); // White
+        return (WHITE); // White
     if (cell == '1') // Wall
-        return (0x0000FF); // Blue
+        return (BLUE); // Blue
     return (0); // Default color for invalid cells
 }
 
@@ -926,7 +942,7 @@ static void draw_grid(t_data *img, int map_width, int map_height, int cell_size)
         y = 0;
         while (y < map_height * cell_size)
         {
-            my_mlx_pixel_put(img, x * cell_size, y, 0x000000); // Black for grid lines
+            my_mlx_pixel_put(img, x * cell_size, y, BLACK);
             y++;
         }
         x++;
@@ -938,7 +954,7 @@ static void draw_grid(t_data *img, int map_width, int map_height, int cell_size)
         x = 0;
         while (x < map_width * cell_size)
         {
-            my_mlx_pixel_put(img, x, y * cell_size, 0x000000); // Black for grid lines
+            my_mlx_pixel_put(img, x, y * cell_size, BLACK);
             x++;
         }
         y++;
@@ -984,13 +1000,11 @@ static void draw_cell(t_data *img, int x, int y, int cell_size, int color)
 
 static void draw_player(t_data *img, int x, int y, int cell_size)
 {
-    // Draw a white background for the player
-    draw_cell(img, x, y, cell_size, 0xFFFFFFFF);
+    draw_cell(img, x, y, cell_size, WHITE);
 
-    // Draw a green circle in the center for the player
     int center_x = x * cell_size + cell_size / 2;
     int center_y = y * cell_size + cell_size / 2;
-    draw_circle(img, center_x, center_y, cell_size / 4, 0x00FF00); // Green circle
+    draw_circle(img, center_x, center_y, cell_size / 4, GREEN);
 }
 
 static void render_map_cells(t_data *img, char **map, int cell_size)
