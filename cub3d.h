@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 18:05:04 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/24 11:30:26 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 
 # define SCREEN_HEIGHT	1000
 # define SCREEN_WIDTH 	1500
+# define CELL_SIZE	100
 # define TEXTURE_HEIGHT 64
 # define TEXTURE_WIDTH  64
 
