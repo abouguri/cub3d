@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/23 18:25:25 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/24 15:56:44 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,23 @@ int ft_array_length(char **array)
     return (i);
 }
 
+int ft_max_length(char **array)
+{
+    int result = -1;
+    int tmp;
+    int i = 0;
 
+    if (!array)
+        return (0);
+    while (array[i])
+    {
+        tmp = strlen(array[i]);
+        if (tmp > result)
+            result = tmp;    
+        i++;
+    }
+    return (result);
+}
 static int	count_words(const char *str, char c)
 {
 	int	i;
@@ -240,44 +256,93 @@ int contains_newline(char *buffer)
     return buffer[i] == '\n';
 }
 
+static int validate_inputs(int fd, char **line)
+{
+    if (fd < 0 || BUFFER_SIZE <= 0 || fd >= FOPEN_MAX || !line)
+        return (-1);
+    return (0);
+}
+static int initialize_buffer(char **buffer)
+{
+    if (!*buffer)
+    {
+        *buffer = malloc(1);
+        if (!*buffer)
+            return (-1);
+        (*buffer)[0] = '\0';
+    }
+    return (0);
+}
+
+static int read_to_buffer(char **buffer, int fd, int *bytes_read)
+{
+    while (!contains_newline(*buffer) && *bytes_read == BUFFER_SIZE)
+    {
+        if (read_and_append_to_buffer(buffer, fd, bytes_read) == -1)
+            return (-1);
+    }
+    return (0);
+}
+
 int get_next_line(int fd, char **line)
 {
-    int bytes_read;
     static char *buffers[FOPEN_MAX];
+    int bytes_read = BUFFER_SIZE;
 
-    if (fd < 0 || BUFFER_SIZE <= 0 || fd >= FOPEN_MAX || !line)
-        return -1;
-
-    if (!buffers[fd])
-    {
-        buffers[fd] = malloc(1);
-        if (!buffers[fd])
-            return -1;
-        buffers[fd][0] = '\0';
-    }
-
-    bytes_read = BUFFER_SIZE;
-    while (!contains_newline(buffers[fd]) && bytes_read == BUFFER_SIZE)
-    {
-        if (read_and_append_to_buffer(&buffers[fd], fd, &bytes_read) == -1)
-            return -1;
-    }
-
+    if (validate_inputs(fd, line) == -1)
+        return (-1);
+    if (initialize_buffer(&buffers[fd]) == -1)
+        return (-1);
+    if (read_to_buffer(&buffers[fd], fd, &bytes_read) == -1)
+        return (-1);
     if (contains_newline(buffers[fd]))
-    {
-        int ret = extract_line(&buffers[fd], line);
-        return ret;
-    }
+        return (extract_line(&buffers[fd], line));
     else
     {
         *line = strdup(buffers[fd]);
         if (!*line)
-            return -1;
+            return (-1);
         free(buffers[fd]);
         buffers[fd] = NULL;
-        return 0;
+        return (0);
     }
 }
+
+// int get_next_line(int fd, char **line)
+// {
+//     int bytes_read;
+//     static char *buffers[FOPEN_MAX];
+
+//     if (fd < 0 || BUFFER_SIZE <= 0 || fd >= FOPEN_MAX || !line)
+//         return (-1);
+//     if (!buffers[fd])
+//     {
+//         buffers[fd] = malloc(1);
+//         if (!buffers[fd])
+//             return (-1);
+//         buffers[fd][0] = '\0';
+//     }
+//     bytes_read = BUFFER_SIZE;
+//     while (!contains_newline(buffers[fd]) && bytes_read == BUFFER_SIZE)
+//     {
+//         if (read_and_append_to_buffer(&buffers[fd], fd, &bytes_read) == -1)
+//             return (-1);
+//     }
+//     if (contains_newline(buffers[fd]))
+//     {
+//         int ret = extract_line(&buffers[fd], line);
+//         return (ret);
+//     }
+//     else
+//     {
+//         *line = strdup(buffers[fd]);
+//         if (!*line)
+//             return (-1);
+//         free(buffers[fd]);
+//         buffers[fd] = NULL;
+//         return (0);
+//     }
+// }
 
 
 
@@ -316,20 +381,16 @@ int parse_file(int fd)
 
     if (initialize_resources(data))
         return (1);
-
     while (ft_array_length(data->textures) != TEXTURE_COUNT || ft_array_length(data->colors) != RGB_COUNT)
     {
         ret = get_next_line(fd, &line);
-
         if (ret == -1)
         {
             free(line);
             return (1);
         }
-
         if (process_line(line))
             return (1);
-
         if (ret == 0)
             break;
     }
@@ -524,24 +585,63 @@ int append_line_to_map(t_cub *data, char *line)
     return (0);
 }
 
+int is_whitespace(char c)
+{
+    return (c == ' ' || c == '\t' || c == '\n' ||
+            c == '\v' || c == '\f' || c == '\r');
+}
+
+static char *trim_line(const char *line)
+{
+    const char *start = line;
+    const char *end;
+
+    while (*start && is_whitespace(*start))
+        start++;
+    if (*start == '\0')
+        return (strdup(""));
+    end = start + strlen(start) - 1;
+    while (end > start && is_whitespace(*end))
+        end--;
+    int length = end - start + 1;
+    char *trimmed = malloc(length + 1);
+    if (!trimmed)
+        return (NULL);
+    strncpy(trimmed, start, length);
+    trimmed[length] = '\0';
+    return (trimmed);
+}
+
+
 static int add_line_to_map(char *line)
 {
     t_cub *data = get_cub_data();
+    char *trimmed_line = trim_line(line); // Trim leading and trailing spaces
 
-    if (strlen(line) == 0)
+    if (!trimmed_line)
+        return (1);
+    if (strlen(trimmed_line) == 0)
+    {
+        free(trimmed_line);
         return (0);
-
+    }
     if (!data->map)
     {
-        if (initialize_map(data, line) == 1)
+        if (initialize_map(data, trimmed_line) == 1)
+        {
+            free(trimmed_line);
             return (1);
+        }
     }
     else
     {
-        if (append_line_to_map(data, line) == 1)
+        if (append_line_to_map(data, trimmed_line) == 1)
+        {
+            free(trimmed_line);
             return (1);
+        }
     }
-
+    free(trimmed_line); // Clean up the trimmed line
     return (0);
 }
 
@@ -585,30 +685,38 @@ static int add_line_to_map(char *line)
 
 
 
-int	parse_map(int fd)
+int parse_map(int fd)
 {
-	char	*line;
-	int		ret;
-
+    char *line;
+    int ret;
     t_cub *data = get_cub_data();
-	while (1)
-	{
-		ret = get_next_line(fd, &line);
-		if (ret == -1)
-			return (1);
-		if (strlen(line) == 0 && !data->map)
-            ;
-		else if (add_line_to_map(line) == 1)
-		{
-			free(line);
-			return (1);
-		}
-		free(line);
-		if (ret == 0)
-			break ;
-	}
-	return (0);
+
+    while (1)
+    {
+        ret = get_next_line(fd, &line);
+        if (ret == -1)
+            return (1);
+
+        if (strlen(line) == 0 && !data->map) // Skip leading empty lines
+        {
+            free(line);
+            continue;
+        }
+
+        if (add_line_to_map(line) == 1) // Add valid map lines
+        {
+            free(line);
+            return (1);
+        }
+
+        free(line);
+        if (ret == 0) // End of file
+            break;
+    }
+
+    return (0);
 }
+
 
 static int	check_cell_enclosure(int i, int j)
 {
@@ -821,6 +929,13 @@ int	exitbyx(int keycode, t_data *data)
         }
 	return (0);
 }
+
+int on_destroy(void*data)
+{
+    printf("ded\n");
+    mlx_loop_end(((t_cub*)data)->mlx);
+    return 0;
+}
 void	init(void)
 {
 	void	*temporary;
@@ -832,14 +947,37 @@ void	init(void)
 	// 	error_exit_cleanup(ERR_TEXTURE_LOAD);
 	// if (init_colors() == 1)
 	// 	error_exit_cleanup(ERR_COLORS_LOAD);
-	temporary = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
-    img.img = mlx_new_image(data->mlx, 1920, 1080);
+    int win_height = ft_array_length(data->map) * CELL_SIZE; 
+    int win_width = ft_max_length(data->map) * CELL_SIZE; 
+	temporary = mlx_new_window(data->mlx, win_width, win_height, "cub3D");
+    img.img = mlx_new_image(data->mlx, win_width, win_height);
     img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-    draw_circle(&img, 250, 250, 100, 0x0000FF00); // Draw a green circle
+    for (int y = 0; y < ft_array_length(data->map); y++)
+    {
+        for (int x = 0; x < (int)strlen(data->map[y]); x++)
+        {
+            int color = 0;
+            if (data->map[y][x] == '0')
+                color = 0xFFFFFFFF;
+            else if (data->map[y][x] == 'N' || data->map[y][x] == 'W' || data->map[y][x] == 'S' || data->map[y][x] == 'E')
+                color = 0xFF0000FF;
+            for (int p_x = 0; p_x < CELL_SIZE; p_x++)
+            {
+                for (int p_y = 0; p_y < CELL_SIZE; p_y++)
+                {
+                    int pixel_x = p_x + x * CELL_SIZE;
+                    int pixel_y = p_y + y * CELL_SIZE;
+                    my_mlx_pixel_put(&img, pixel_x,  pixel_y,  color);
+                }
+            }
+        }
+    }
+    
     // my_mlx_pixel_put(&img, 5, 5, 0x00CC66FF);
     mlx_put_image_to_window(data->mlx, temporary, img.img, 0, 0);
     // mlx_key_hook(temporary, exitbyx, &data);
-    mlx_hook(temporary, 3, 1L<<1, exitbyx, &data);
+    //mlx_hook(temporary, 3, 1L<<1, exitbyx, &data);
+    mlx_hook(temporary, 17, 0L, on_destroy, &data);
     mlx_loop(data->mlx);    
 	// data->win = temporary;
 }
