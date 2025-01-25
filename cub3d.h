@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/24 22:24:04 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/25 21:21:25 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@
 # define ERR_CREATE_WINDOW "Error\nFailed to create window"
 # define ERR_CREATE_IMAGE "Error\nFailed to create image"
 # define ERR_GET_IMAGE_ADDR "Error\nFailed to get image address"
+# define ERR_ADJ_INCOMPLETE_ROW "Error\nCell (%d, %d) is adjacent to an incomplete row\n"
 
 
 // Structs

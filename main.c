@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:48:57 by abouguri          #+#    #+#             */
-/*   Updated: 2025/01/24 22:39:59 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/01/25 21:29:58 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -694,29 +694,63 @@ int parse_map(int fd)
     return (0);
 }
 
+static int is_boundary_cell(int i, int j, char **map)
+{
+    return (i == 0 || j == 0 || 
+            i >= ft_array_length(map) - 1 || 
+            j >= (int)strlen(map[i]) - 1);
+}
 
-static int	check_cell_enclosure(int i, int j)
+static int print_boundary_error(int i, int j)
+{
+    printf(BOUNDARY_CELL_NOT_ENCLOSED, i, j);
+    return (1);
+}
+
+static int has_adjacent_space(int i, int j, char **map)
+{
+    return ((i > 0 && j < (int)strlen(map[i - 1]) && map[i - 1][j] == ' ') ||    // Above
+            (i + 1 < ft_array_length(map) && j < (int)strlen(map[i + 1]) && map[i + 1][j] == ' ') || // Below
+            (j > 0 && map[i][j - 1] == ' ') || // Left
+            (j + 1 < (int)strlen(map[i]) && map[i][j + 1] == ' ')); // Right
+}
+
+static int print_adjacent_space_error(int i, int j)
+{
+    printf(CELL_NOT_ENCLOSED, i, j);
+    return (1);
+}
+
+static int is_adjacent_to_incomplete_row(int i, int j, char **map)
+{
+    return ((i > 0 && j >= (int)strlen(map[i - 1])) || // Current cell exceeds previous row length
+            (i + 1 < ft_array_length(map) && j >= (int)strlen(map[i + 1]))); // Current cell exceeds next row length
+}
+
+static int print_incomplete_row_error(int i, int j)
+{
+    printf(ERR_ADJ_INCOMPLETE_ROW, i, j);
+    return (1);
+}
+
+
+int check_cell_enclosure(int i, int j)
 {
     t_cub *data = get_cub_data();
+    char **map = data->map;
 
-    if (data->map[i][j] == '0' || (data->map[i][j] != '1' && data->map[i][j] != ' '))
+    if (map[i][j] == '0' || (map[i][j] != '1' && map[i][j] != ' '))
     {
-        if (i == 0 || j == 0 || i >= ft_array_length(data->map) - 1 || j >= (int)strlen(data->map[i]) - 1)
-        {
-            printf(BOUNDARY_CELL_NOT_ENCLOSED, i, j);
-            return 1;
-        }
+        if (is_boundary_cell(i, j, map))
+            return print_boundary_error(i, j);
 
-        if ((i > 0 && j < (int)strlen(data->map[i - 1]) && data->map[i - 1][j] == ' ') ||
-            (i + 1 < ft_array_length(data->map) && j < (int)strlen(data->map[i + 1]) && data->map[i + 1][j] == ' ') ||
-            (j > 0 && data->map[i][j - 1] == ' ') ||
-            (j + 1 < (int)strlen(data->map[i]) && data->map[i][j + 1] == ' '))
-        {
-            printf(CELL_NOT_ENCLOSED, i, j);
-            return 1;
-        }
+        if (has_adjacent_space(i, j, map))
+            return print_adjacent_space_error(i, j);
+
+        if (is_adjacent_to_incomplete_row(i, j, map))
+            return print_incomplete_row_error(i, j);
     }
-    return 0;
+    return (0);
 }
 
 static int	check_trailing_map_lines(int index)
