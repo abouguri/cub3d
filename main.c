@@ -784,8 +784,8 @@ static void	init_player(int x, int y)
 {
     t_cub *data = get_cub_data();
 
-	data->var.position_x = x + 0.5;
-	data->var.position_y = y + 0.5;
+	data->var.position_x = x * CELL_SIZE + CELL_SIZE / 2;
+	data->var.position_y = y * CELL_SIZE + CELL_SIZE / 2;
 	if (data->map[y][x] == NORTH)
 		init_camera_plane(0, -1, 0.66, 0);
 	else if (data->map[y][x] == SOUTH)
@@ -900,13 +900,7 @@ int parse(char *file)
     return 0;
 }
 
-typedef struct	s_data {
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-}				t_data;
+
 
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
@@ -932,7 +926,8 @@ int	exitbyx(int keycode, t_data *data)
 int on_destroy(void*data)
 {
     printf("ded\n");
-    mlx_loop_end(((t_cub*)data)->mlx);
+	(void)data;
+    // mlx_loop_end(((t_cub*)data)->mlx);
     return 0;
 }
 static void init_window(t_cub *data, t_data *img, int win_width, int win_height)
@@ -957,14 +952,14 @@ static void init_window(t_cub *data, t_data *img, int win_width, int win_height)
 
 static int get_cell_color(char cell)
 {
-    if (cell == '0') // Floor
+    if (cell == '0' || cell == 'N' || cell == 'E' || cell == 'W' || cell == 'S') // Floor or player
         return (WHITE); // White
     if (cell == '1') // Wall
         return (BLUE); // Blue
     return (0); // Default color for invalid cells
 }
 
-static void draw_grid(t_data *img, int map_width, int map_height, int cell_size)
+static void draw_grid(t_cub *data, int map_width, int map_height, int cell_size)
 {
     int x;
     int y;
@@ -976,7 +971,7 @@ static void draw_grid(t_data *img, int map_width, int map_height, int cell_size)
         y = 0;
         while (y < map_height * cell_size)
         {
-            my_mlx_pixel_put(img, x * cell_size, y, BLACK);
+            my_mlx_pixel_put(&data->img, x * cell_size, y, BLACK);
             y++;
         }
         x++;
@@ -988,14 +983,14 @@ static void draw_grid(t_data *img, int map_width, int map_height, int cell_size)
         x = 0;
         while (x < map_width * cell_size)
         {
-            my_mlx_pixel_put(img, x, y * cell_size, BLACK);
+            my_mlx_pixel_put(&data->img, x, y * cell_size, BLACK);
             x++;
         }
         y++;
     }
 }
 
-static void draw_circle(t_data *img, int center_x, int center_y, int radius, int color)
+static void draw_circle(t_cub *data, int center_x, int center_y, int radius, int color)
 {
     int y = -radius;
 
@@ -1006,7 +1001,7 @@ static void draw_circle(t_data *img, int center_x, int center_y, int radius, int
         {
             if (x * x + y * y <= radius * radius) // Check if the pixel is within the circle
             {
-                my_mlx_pixel_put(img, center_x + x, center_y + y, color);
+                my_mlx_pixel_put(&data->img, center_x + x, center_y + y, color);
             }
             x++;
         }
@@ -1014,7 +1009,7 @@ static void draw_circle(t_data *img, int center_x, int center_y, int radius, int
     }
 }
 
-static void draw_cell(t_data *img, int x, int y, int cell_size, int color)
+static void draw_cell(t_cub *data, int x, int y, int cell_size, int color)
 {
     int p_x = 0;
 
@@ -1025,23 +1020,23 @@ static void draw_cell(t_data *img, int x, int y, int cell_size, int color)
         {
             int pixel_x = p_x + x * cell_size;
             int pixel_y = p_y + y * cell_size;
-            my_mlx_pixel_put(img, pixel_x, pixel_y, color);
+            my_mlx_pixel_put(&data->img, pixel_x, pixel_y, color);
             p_y++;
         }
         p_x++;
     }
 }
 
-static void draw_player(t_data *img, int x, int y, int cell_size)
+static void draw_player(t_cub *data, int cell_size)
 {
-    draw_cell(img, x, y, cell_size, WHITE);
+    // draw_cell(data, cell_size, WHITE);
 
-    int center_x = x * cell_size + cell_size / 2;
-    int center_y = y * cell_size + cell_size / 2;
-    draw_circle(img, center_x, center_y, cell_size / 4, GREEN);
+    int center_x = data->var.position_x;
+    int center_y = data->var.position_y;
+    draw_circle(data, center_x, center_y, cell_size / 4, GREEN);
 }
 
-static void render_map_cells(t_data *img, char **map, int cell_size)
+static void render_map_cells(t_cub *data, char **map, int cell_size)
 {
     int y = 0;
 
@@ -1052,45 +1047,79 @@ static void render_map_cells(t_data *img, char **map, int cell_size)
         {
             int color = get_cell_color(map[y][x]);
 
-            draw_cell(img, x, y, cell_size, color);
+            draw_cell(data, x, y, cell_size, color);
 
-            if (map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'E' || map[y][x] == 'W')
-            {
-                draw_player(img, x, y, cell_size);
-            }
+            // if (map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'E' || map[y][x] == 'W')
+            // {
+            //     draw_player(img, x, y, cell_size);
+            // }
             x++;
         }
         y++;
     }
+	draw_player(data, cell_size);
 }
 
-static void render_map_to_image(t_data *img, char **map, int cell_size)
+static void render_map_to_image(t_cub *data, char **map, int cell_size)
 {
     int map_width = ft_max_length(map);
     int map_height = ft_array_length(map);
 
     // cells and player
-    render_map_cells(img, map, cell_size);
+    render_map_cells(data, map, cell_size);
 
     // Grid
-    draw_grid(img, map_width, map_height, cell_size);
+    draw_grid(data, map_width, map_height, cell_size);
 }
 
+// Function to move the player
+void 	move_player(t_var *player, int keycode, t_cub *data) 
+{
+	printf("KEY : %d\n",keycode);
+	printf("MAP: %s\n", data->map[0]);
+	printf("fhjrifherlhf %f %f\n", player->position_x, player->position_y);
+    if (keycode == KEY_UP) {
+        player->position_y -= 1; // move up
+    }
+    else if (keycode == KEY_DOWN) {
+        player->position_y += 1; // move down
+    }
+    else if (keycode == KEY_LEFT) {
+        player->position_x -= 1; // move left
+    }
+    else if (keycode == KEY_RIGHT) {
+        player->position_x += 1; // move right
+    }
+}
+
+// Key event handler for movement
+int 	handle_key_press(int keycode, t_cub *data)
+{
+	printf("HANDLE KEY PRESS\n");
+	move_player(&data->var, keycode, data);
+	render_map_to_image(data, data->map, CELL_SIZE);
+	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
+	return keycode;
+}
 
 
 void init(void)
 {
     t_cub *data = get_cub_data();
-    t_data img;
+
 
     int win_height = ft_array_length(data->map) * CELL_SIZE;
     int win_width = ft_max_length(data->map) * CELL_SIZE;
 
-    init_window(data, &img, win_width, win_height);
-    render_map_to_image(&img, data->map, CELL_SIZE);
-    mlx_put_image_to_window(data->mlx, data->win, img.img, 0, 0);
+    init_window(data, &data->img, win_width, win_height);
+    render_map_to_image(data, data->map, CELL_SIZE);
+    mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 
-    mlx_hook(data->win, 17, 0L, on_destroy, data);
+	//move event
+	printf("ANA HNA\n");
+	mlx_hook(data->win, 2, (1L<<0), handle_key_press, data);
+
+    // mlx_hook(data->win, 17, 0L, on_destroy, data);
     mlx_loop(data->mlx);
 }
 
@@ -1141,6 +1170,7 @@ void init(void)
 // 	// data->win = temporary;
 // }
 //added
+
 
 
 int main(int argc, char **argv)

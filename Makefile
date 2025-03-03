@@ -2,8 +2,8 @@
 NAME := cub3d
 
 # Compiler and flags
-CC := gcc  -g3 -fsanitize=address
-CFLAGS := -Wall -Wextra -Werror -DBUFFER_SIZE=100 -Iminilibx-linux -I.
+CC := gcc  -g3
+CFLAGS := -Wall -Wextra -Werror -DBUFFER_SIZE=100  -Iminilibx-mac -I.
 
 # Source files
 SRC := main.c 
@@ -12,19 +12,20 @@ SRC := main.c
 OBJ := $(SRC:.c=.o)
 
 # Library paths and linking
-LIBRARY := -Lminilibx-linux -lmlx -L/usr/lib/x86_64-linux-gnu -lXext -lX11 -lm
-MINILIBX := minilibx-linux/
+# LIBRARY := -Lminilibx-linux -lmlx -L/usr/lib/x86_64-linux-gnu -lXext -lX11 -lm
+LIBRARY := -Lminilibx-mac
+MINILIBX := minilibx-mac/libmlx.a
 
 # Default target
 all: $(NAME)
 
 # Build the executable
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBRARY) -o $(NAME)
+	$(CC) $(CFLAGS) $(MINILIBX) -framework OpenGL -framework AppKit $(OBJ) $(LIBRARY) -o $(NAME)
 
 # Compile object files
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS)  -c $< -o $@
 
 # Clean object files
 clean:

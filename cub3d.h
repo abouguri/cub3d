@@ -19,7 +19,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
-# include "minilibx-linux/mlx.h"
+# include "minilibx-mac/mlx.h"
+
+
+// Define the keycodes for movement (you can adjust as per your requirement)
+#define KEY_UP    126 // arrow up or W key
+#define KEY_DOWN  125 // arrow down or S key
+#define KEY_LEFT  123 // arrow left or A key
+#define KEY_RIGHT 124 // arrow right or D key
 
 // colors
 
@@ -75,6 +82,13 @@
 
 // Structs
 
+typedef struct	s_data {
+	void	*img;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+}				t_data;
 
 // 	unsigned int	color;
 // }			t_var;
@@ -120,6 +134,7 @@ typedef struct s_cub {
 	unsigned long	floor;
 	unsigned long	ceilling;
     t_var   var;
+	t_data	img;
 } t_cub;
 
 
