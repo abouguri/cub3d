@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:03:47 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/04 02:11:55 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/05 20:42:56 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,38 +86,6 @@ int load_texture(t_cub *data, int index, char *path)
     mlx_destroy_image(data->mlx, img.img_ptr);
     return (0);
 }
-
-// int load_texture(t_cub *data, int index, char *path)
-// {
-//     t_img2 img;
-//     int x, y;
-    
-//     // Load texture
-//     img.img_ptr = mlx_xpm_file_to_image(data->mlx, path, &img.width, &img.height);
-//     if (!img.img_ptr)
-//         return (1);
-    
-//     img.data_addr = (int *)mlx_get_data_addr(img.img_ptr, &img.bpp, &img.line_size, &img.endian);
-    
-//     // ✅ Ensure the texture is 64x64 (or expected size)
-//     if (img.width != TEXTURE_WIDTH || img.height != TEXTURE_HEIGHT)
-//     {
-//         printf("WARNING: Texture %d has unexpected size %d x %d\n", index, img.width, img.height);
-//     }
-
-//     // ✅ Corrected Texture Copying (No Scaling)
-//     for (y = 0; y < TEXTURE_HEIGHT; y++)
-//     {
-//         for (x = 0; x < TEXTURE_WIDTH; x++)
-//         {
-//             data->texture[index][TEXTURE_WIDTH * y + x] = 
-//                 img.data_addr[img.width * y + x]; // Direct pixel copy
-//         }
-//     }
-    
-//     mlx_destroy_image(data->mlx, img.img_ptr);
-//     return (0);
-// }
 
 
 
