@@ -6,7 +6,7 @@ CC := gcc  -g3 -fsanitize=address
 CFLAGS := -Wall -Wextra -Werror -DBUFFER_SIZE=100 -Iminilibx-linux -I.
 
 # Source files
-SRC := main.c 
+SRC := main.c array.c extra.c file.c get_next_line.c movement.c parse.c raycast.c render.c textures.c utility.c ray_cast2.c
 
 # Object files
 OBJ := $(SRC:.c=.o)
