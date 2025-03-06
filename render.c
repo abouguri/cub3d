@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:09:34 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/06 03:45:46 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/06 21:07:07 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,8 +290,10 @@ void init(void)
     t_cub *data = get_cub_data();
     t_game_state *g;
 
-    int win_height = ft_array_length(data->map) * CELL_SIZE;
-    int win_width = ft_max_length(data->map) * CELL_SIZE;
+    // int win_height = ft_array_length(data->map) * CELL_SIZE;
+    int win_height = SCREEN_HEIGHT;
+    // int win_width = ft_max_length(data->map) * CELL_SIZE;
+    int win_width = SCREEN_WIDTH;
 
     g = malloc(sizeof(t_game_state));
     if (!g)

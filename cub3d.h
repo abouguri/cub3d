@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/06 02:35:56 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/06 21:13:12 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@
 # define RGB_COUNT 2
 # define TEXTURE_WIDTH 64
 # define TEXTURE_HEIGHT 64
-# define SCREEN_WIDTH 1500
-# define SCREEN_HEIGHT 1000
+# define SCREEN_WIDTH 1280
+# define SCREEN_HEIGHT 720
 # define CELL_SIZE 40
 
 /* Player orientation */

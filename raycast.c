@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:59:25 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/06 03:34:02 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/06 21:10:03 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	draw_floor_ceiling(t_data *img, int x, t_render *render, t_cub *data)
 	}
 }
 
-#define CAMERA_HEIGHT_OFFSET 200  // Adjust this value as needed
+#define CAMERA_HEIGHT_OFFSET 0  // Adjust this value as needed
 
 void draw_textured_line(t_data *img, int x, t_render *render, t_cub *data)
 {
