@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:06:54 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/05 20:35:14 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/06 03:42:49 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,82 +137,3 @@ int on_destroy(void *data)
     return (0);
 }
 
-// int render_frame(void *param)
-// {
-// 	t_game_state *game = (t_game_state *)param;
-// 	t_data img;
-
-// 	if (!game || !game->data || !game->data->mlx || !game->data->win)
-// 	{
-// 		printf("Error: Invalid game state or MLX instance.\n");
-// 		return (1);
-// 	}
-
-// 	img.img = mlx_new_image(game->data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
-// 	if (!img.img)
-// 	{
-// 		printf("Error: Failed to create new image.\n");
-// 		error_exit_cleanup(ERR_CREATE_IMAGE);
-// 	}
-
-// 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel,
-// 			&img.line_length, &img.endian);
-// 	if (!img.addr)
-// 	{
-// 		printf("Error: Failed to get image data address.\n");
-// 		mlx_destroy_image(game->data->mlx, img.img);
-// 		error_exit_cleanup(ERR_GET_IMAGE_ADDR);
-// 	}
-
-// 	printf("Debug: Calling raycast function.\n");
-// 	raycast(game->data, &img);
-// 	printf("Debug: Finished raycast function.\n");
-
-// 	// Debugging: Check if the image buffer is being modified
-// 	int *pixels = (int *)img.addr;
-// 	int all_black = 1;
-// 	for (int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++)
-// 	{
-// 		if (pixels[i] != 0x000000) // Check if any pixel is not black
-// 		{
-// 			all_black = 0;
-// 			break;
-// 		}
-// 	}
-// 	if (all_black)
-// 		printf("Warning: All pixels are black.\n");
-// 	else
-// 		printf("Debug: Image contains non-black pixels.\n");
-
-// 	mlx_put_image_to_window(game->data->mlx, game->data->win, img.img, 0, 0);
-// 	printf("Debug: Image put to window.\n");
-
-// 	mlx_destroy_image(game->data->mlx, img.img);
-// 	printf("Debug: Image destroyed.\n");
-
-// 	return (0);
-// }
-
-
-
-int render_frame(void *param)
-{
-	t_game_state *game = (t_game_state *)param;
-	t_data img;
-
-	img.img = mlx_new_image(game->data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
-	if (!img.img)
-		error_exit_cleanup(ERR_CREATE_IMAGE);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel,
-			&img.line_length, &img.endian);
-	if (!img.addr)
-	{
-		mlx_destroy_image(game->data->mlx, img.img);
-		error_exit_cleanup(ERR_GET_IMAGE_ADDR);
-	}
-	raycast(game->data, &img);
-	mlx_put_image_to_window(game->data->mlx, game->data->win, img.img, 0, 0);
-	mlx_destroy_image(game->data->mlx, img.img);
-
-	return (0);
-}
