@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:59:25 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/06 21:10:03 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/07 02:50:19 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
-	// if(x > SCREEN_WIDTH || y > SCREEN_HEIGHT)
-	// 	return ;
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
 	*(unsigned int *)dst = color;
 }
@@ -26,14 +24,12 @@ void	draw_floor_ceiling(t_data *img, int x, t_render *render, t_cub *data)
 {
 	int	y;
 
-	// Draw ceiling
 	y = 0;
 	while (y < render->draw_start)
 	{
 		my_mlx_pixel_put(img, x, y, data->ceilling);
 		y++;
 	}
-	// Draw floor
 	y = render->draw_end;
 	while (y < SCREEN_HEIGHT)
 	{
@@ -42,7 +38,7 @@ void	draw_floor_ceiling(t_data *img, int x, t_render *render, t_cub *data)
 	}
 }
 
-#define CAMERA_HEIGHT_OFFSET 0 // Adjust this value as needed
+#define CAMERA_HEIGHT_OFFSET 0
 
 void	draw_textured_line(t_data *img, int x, t_render *render, t_cub *data)
 {
@@ -76,7 +72,6 @@ void	calc_texture_coords(t_dda *dda, t_var *var, t_render *render,
 {
 	double	wall_x;
 
-	// The issue is here: don't use position + perp_wall_dist
 	if (dda->side == 0)
 		wall_x = var->position_y + (dda->map_x - var->position_x + (1
 					- dda->step_x) / 2) / ray_dir_x * ray_dir_y;
@@ -91,13 +86,13 @@ void	calc_texture_coords(t_dda *dda, t_var *var, t_render *render,
 		render->tex_x = TEXTURE_WIDTH - render->tex_x - 1;
 	render->tex_num = 0;
 	if (dda->side == 0 && ray_dir_x < 0)
-		render->tex_num = 0; // North texture
+		render->tex_num = 0;
 	if (dda->side == 0 && ray_dir_x > 0)
-		render->tex_num = 1; // South texture
+		render->tex_num = 1;
 	if (dda->side == 1 && ray_dir_y < 0)
-		render->tex_num = 2; // West texture
+		render->tex_num = 2;
 	if (dda->side == 1 && ray_dir_y > 0)
-		render->tex_num = 3; // East texture
+		render->tex_num = 3;
 }
 
 void	calc_wall_params(t_dda *dda, t_var *var, double ray_dir_x,
@@ -112,9 +107,7 @@ void	calc_wall_params(t_dda *dda, t_var *var, double ray_dir_x,
 		render->perp_wall_dist = (dda->map_y - var->position_y + (1
 					- dda->step_y) / 2) / ray_dir_y;
 	render->line_height = (int)(SCREEN_HEIGHT / render->perp_wall_dist);
-	// Use negative pitch to move the horizon line up
 	pitch = -CAMERA_HEIGHT_OFFSET;
-	// Apply the pitch/camera height to the wall positioning
 	render->draw_start = -render->line_height / 2 + SCREEN_HEIGHT / 2 + pitch;
 	if (render->draw_start < 0)
 		render->draw_start = 0;
@@ -123,9 +116,6 @@ void	calc_wall_params(t_dda *dda, t_var *var, double ray_dir_x,
 		render->draw_end = SCREEN_HEIGHT - 1;
 }
 
-/*
-** Perform DDA (Digital Differential Analysis) algorithm to find wall hit
-*/
 void	perform_dda(t_dda *dda, char **map)
 {
 	while (dda->hit == 0)
@@ -146,9 +136,7 @@ void	perform_dda(t_dda *dda, char **map)
 			dda->hit = 1;
 	}
 }
-/*
-** Set the initial DDA parameters
-*/
+
 void	set_dda_params(t_dda *dda, t_var *var, double ray_dir_x,
 		double ray_dir_y)
 {
@@ -191,7 +179,6 @@ void	calc_ray_pos_dir(t_var *var, int x, double *ray_dir_x,
 	*ray_dir_y = var->direction_y + var->plane_y * camera_x;
 }
 
-// Helper function to get map height
 int	get_map_height(char **map)
 {
 	int	height;

@@ -1,13 +1,13 @@
 
-NO ./textures/SUPPORT_3A.xpm
-SO ./textures/SUPPORT_4A.xpm
-WE ./textures/PIPES_1A.xpm
-EA ./textures/PIPES_1A.xpm
+NO ./textures/pink_texture3.xpm
+SO ./textures/pink_texture8.xpm
+WE ./textures/pink_texture6.xpm
+EA ./textures/Pink_texture1.xpm
 
 
 
-F 30,30,30
-C 10,10,20
+F 225,104,143
+C 101,101,101
 
 
 
@@ -25,5 +25,4 @@ C 10,10,20
 1100000111010111111011110001
 11111111 111011 101111010001
 11111111 111111 111111111111
-
 

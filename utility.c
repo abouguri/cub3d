@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:39:11 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/02 20:40:16 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/07 02:24:37 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ t_cub	*get_cub_data(void)
 
 	return (&data);
 }
+
 void	error_exit(const char *message)
 {
 	write(2, message, strlen(message));
@@ -63,6 +64,7 @@ void	free_array(char ***array)
 	free(*array);
 	*array = NULL;
 }
+
 void	free_resources(t_cub *data)
 {
 	if (data->textures)

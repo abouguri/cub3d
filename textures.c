@@ -6,28 +6,32 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:03:47 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/05 23:41:34 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/07 02:36:40 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int	load_texture(t_cub *data, int index, char *path)
+int	load_image(t_cub *data, t_img2 *img, char *path)
 {
-	t_img2	img;
+	img->img_ptr = mlx_xpm_file_to_image(data->mlx, path, &img->width,
+			&img->height);
+	if (!img->img_ptr)
+		return (1);
+	img->data_addr = (int *)mlx_get_data_addr(img->img_ptr, &img->bpp,
+			&img->line_size, &img->endian);
+	return (0);
+}
+
+void	resize_texture(int *texture, t_img2 *img, int x, int y)
+{
+	float	x_ratio;
+	float	y_ratio;
 	int		src_x;
 	int		src_y;
 
-	int x, y;
-	float x_ratio, y_ratio;
-	img.img_ptr = mlx_xpm_file_to_image(data->mlx, path, &img.width,
-			&img.height);
-	if (!img.img_ptr)
-		return (1);
-	img.data_addr = (int *)mlx_get_data_addr(img.img_ptr, &img.bpp,
-			&img.line_size, &img.endian);
-	x_ratio = (float)img.width / TEXTURE_WIDTH;
-	y_ratio = (float)img.height / TEXTURE_HEIGHT;
+	x_ratio = (float)img->width / TEXTURE_WIDTH;
+	y_ratio = (float)img->height / TEXTURE_HEIGHT;
 	y = 0;
 	while (y < TEXTURE_HEIGHT)
 	{
@@ -36,12 +40,25 @@ int	load_texture(t_cub *data, int index, char *path)
 		{
 			src_x = round(x * x_ratio);
 			src_y = round(y * y_ratio);
-			data->texture[index][TEXTURE_WIDTH * y
-				+ x] = img.data_addr[img.width * src_y + src_x];
+			texture[TEXTURE_WIDTH * y + x] = img->data_addr[img->width * src_y
+				+ src_x];
 			x++;
 		}
 		y++;
 	}
+}
+
+int	load_texture(t_cub *data, int index, char *path)
+{
+	t_img2	img;
+	int		x;
+	int		y;
+
+	x = 0;
+	y = 0;
+	if (load_image(data, &img, path))
+		return (1);
+	resize_texture(data->texture[index], &img, x, y);
 	mlx_destroy_image(data->mlx, img.img_ptr);
 	return (0);
 }
@@ -73,12 +90,10 @@ int	parse_rgb(char *str)
 	color = (r << 16) | (g << 8) | b;
 	return (color);
 }
-/*
-** Initialize all textures and colors
-*/
+
 int	init_textures_and_colors(t_cub *data)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < TEXTURE_COUNT)
@@ -87,7 +102,6 @@ int	init_textures_and_colors(t_cub *data)
 			return (1);
 		i++;
 	}
-
 	data->floor = parse_rgb(data->colors[0]);
 	data->ceilling = parse_rgb(data->colors[1]);
 	if (data->floor == -1 || data->ceilling == -1)
