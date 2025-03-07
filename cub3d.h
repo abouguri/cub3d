@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/06 21:13:12 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/07 05:51:07 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,10 +184,22 @@ typedef struct s_render
 	int		side;
 }	t_render;
 
+typedef struct s_keys
+{
+    int w_pressed;
+    int a_pressed;
+    int s_pressed;
+    int d_pressed;
+    int left_pressed;
+    int right_pressed;
+} t_keys;
+
 typedef struct s_game_state
 {
 	t_cub	*data;
 	t_data	*img;
+	t_keys keys;
+	int    prev_mouse_x;
 }	t_game_state;
 
 /* Function prototypes */
@@ -252,6 +264,8 @@ int				init_textures_and_colors(t_cub *data);
 
 /* Movement and input */
 int				handle_keypress(int keycode, t_game_state *game);
+int				handle_keyrelease(int keycode, t_game_state *game);
+int handle_mouse_move(int x, int y, t_game_state *game);
 void			move_forward_backward(t_cub *data, double move_speed, int direction);
 void			move_strafe(t_cub *data, double move_speed, int direction);
 void			rotate_view(t_cub *data, double rot_speed, int direction);
