@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
 /*
 ** Key handling function
 */
@@ -46,10 +47,10 @@ void	move_forward_backward(t_cub *data, double move_speed, int direction)
 	double	new_pos_x;
 	double	new_pos_y;
 
-	new_pos_x = data->var.position_x + direction
-		* data->var.direction_x * move_speed;
-	new_pos_y = data->var.position_y + direction
-		* data->var.direction_y * move_speed;
+	new_pos_x = data->var.position_x + direction * data->var.direction_x
+		* move_speed;
+	new_pos_y = data->var.position_y + direction * data->var.direction_y
+		* move_speed;
 	if (is_valid_position(data->map, new_pos_x, data->var.position_y))
 		data->var.position_x = new_pos_x;
 	if (is_valid_position(data->map, data->var.position_x, new_pos_y))
@@ -63,10 +64,10 @@ void	move_strafe(t_cub *data, double move_speed, int direction)
 	double	new_pos_x;
 	double	new_pos_y;
 
-	new_pos_x = data->var.position_x + direction
-		* data->var.direction_y * move_speed;
-	new_pos_y = data->var.position_y - direction
-		* data->var.direction_x * move_speed;
+	new_pos_x = data->var.position_x + direction * data->var.direction_y
+		* move_speed;
+	new_pos_y = data->var.position_y - direction * data->var.direction_x
+		* move_speed;
 	if (is_valid_position(data->map, new_pos_x, data->var.position_y))
 		data->var.position_x = new_pos_x;
 	if (is_valid_position(data->map, data->var.position_x, new_pos_y))
@@ -96,8 +97,7 @@ void	rotate_view(t_cub *data, double rot_speed, int direction)
 */
 int	is_valid_position(char **map, double pos_x, double pos_y)
 {
-	if (map[(int)pos_y][(int)pos_x] == '0'
-		|| map[(int)pos_y][(int)pos_x] == 'N'
+	if (map[(int)pos_y][(int)pos_x] == '0' || map[(int)pos_y][(int)pos_x] == 'N'
 		|| map[(int)pos_y][(int)pos_x] == 'S'
 		|| map[(int)pos_y][(int)pos_x] == 'E'
 		|| map[(int)pos_y][(int)pos_x] == 'W')
@@ -116,24 +116,22 @@ int	exit_game(t_game_state *game)
 	exit(EXIT_SUCCESS);
 	return (0);
 }
-int on_destroy(void *data)
+int	on_destroy(void *data)
 {
-    t_cub *cub_data = (t_cub*)data;
-    
-    // End the MLX loop first
-    mlx_loop_end(cub_data->mlx);
-    
-    // Destroy window
-    if (cub_data->win)
-        mlx_destroy_window(cub_data->mlx, cub_data->win);
-    
-    // Destroy display (Linux only)
-    if (cub_data->mlx) {
-        mlx_destroy_display(cub_data->mlx);
-        free(cub_data->mlx);
-    }
-    
-    exit(0);
-    return (0);
-}
+	t_cub	*cub_data;
 
+	cub_data = (t_cub *)data;
+	// End the MLX loop first
+	mlx_loop_end(cub_data->mlx);
+	// Destroy window
+	if (cub_data->win)
+		mlx_destroy_window(cub_data->mlx, cub_data->win);
+	// Destroy display (Linux only)
+	if (cub_data->mlx)
+	{
+		mlx_destroy_display(cub_data->mlx);
+		free(cub_data->mlx);
+	}
+	exit(0);
+	return (0);
+}

@@ -10,52 +10,58 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "cub3d.h"
 
-t_cub *get_cub_data(void)
+t_cub	*get_cub_data(void)
 {
-    static t_cub data;
-    
-    return &data;
+	static t_cub	data;
+
+	return (&data);
 }
-void error_exit(const char *message)
+void	error_exit(const char *message)
 {
-    write(2, message, strlen(message));
-    exit(EXIT_FAILURE);
+	write(2, message, strlen(message));
+	exit(EXIT_FAILURE);
 }
 
-void error_exit_fd_cleanup(const char *message, int fd)
+void	error_exit_fd_cleanup(const char *message, int fd)
 {
-    if (fd >= 0) close(fd);
-    t_cub *data = get_cub_data();
-    free_array(&data->textures);
-    free_array(&data->colors);
-    free_array(&data->map);
-    error_exit(message);
+	t_cub	*data;
+
+	if (fd >= 0)
+		close(fd);
+	data = get_cub_data();
+	free_array(&data->textures);
+	free_array(&data->colors);
+	free_array(&data->map);
+	error_exit(message);
 }
 
-void error_exit_cleanup(const char *message)
+void	error_exit_cleanup(const char *message)
 {
-    t_cub *data = get_cub_data();
-    free_array(&data->textures);
-    free_array(&data->colors);
-    free_array(&data->map);
-    error_exit(message);
+	t_cub	*data;
+
+	data = get_cub_data();
+	free_array(&data->textures);
+	free_array(&data->colors);
+	free_array(&data->map);
+	error_exit(message);
 }
 
-void free_array(char ***array)
+void	free_array(char ***array)
 {
-    if (!*array)
-        return;
-    int i = 0;
-    while ((*array)[i])
-    {
-        free((*array)[i]);
-        i++;
-    }
-    free(*array);
-    *array = NULL;
+	int	i;
+
+	if (!*array)
+		return ;
+	i = 0;
+	while ((*array)[i])
+	{
+		free((*array)[i]);
+		i++;
+	}
+	free(*array);
+	*array = NULL;
 }
 void	free_resources(t_cub *data)
 {

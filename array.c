@@ -12,33 +12,36 @@
 
 #include "cub3d.h"
 
-int ft_array_length(char **array)
+int	ft_array_length(char **array)
 {
-    int i = 0;
+	int	i;
 
-    if (!array)
-        return (0);
-    while (array[i])
-        i++;
-    return (i);
+	i = 0;
+	if (!array)
+		return (0);
+	while (array[i])
+		i++;
+	return (i);
 }
 
-int ft_max_length(char **array)
+int	ft_max_length(char **array)
 {
-    int result = -1;
-    int tmp;
-    int i = 0;
+	int	result;
+	int	tmp;
+	int	i;
 
-    if (!array)
-        return (0);
-    while (array[i])
-    {
-        tmp = strlen(array[i]);
-        if (tmp > result)
-            result = tmp;    
-        i++;
-    }
-    return (result);
+	result = -1;
+	i = 0;
+	if (!array)
+		return (0);
+	while (array[i])
+	{
+		tmp = strlen(array[i]);
+		if (tmp > result)
+			result = tmp;
+		i++;
+	}
+	return (result);
 }
 
 static int	count_words(const char *str, char c)

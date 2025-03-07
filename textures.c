@@ -12,46 +12,47 @@
 
 #include "cub3d.h"
 
-int load_texture(t_cub *data, int index, char *path)
+int	load_texture(t_cub *data, int index, char *path)
 {
-    t_img2 img;
-    int x, y;
-    float x_ratio, y_ratio;
-    
-    img.img_ptr = mlx_xpm_file_to_image(data->mlx, path, &img.width, &img.height);
-    if (!img.img_ptr)
-        return (1);
-    
-    img.data_addr = (int *)mlx_get_data_addr(img.img_ptr, &img.bpp, &img.line_size, &img.endian);
-    x_ratio = (float)img.width / TEXTURE_WIDTH;
-    y_ratio = (float)img.height / TEXTURE_HEIGHT;
-    y = 0;
-    while (y < TEXTURE_HEIGHT)
-    {
-        x = 0;
-        while (x < TEXTURE_WIDTH)
-        {
-            int src_x = round(x * x_ratio);
-            int src_y = round(y * y_ratio);
+	t_img2	img;
+	int		src_x;
+	int		src_y;
 
-            data->texture[index][TEXTURE_WIDTH * y + x] = 
-                img.data_addr[img.width * src_y + src_x];
-
-            x++;
-        }
-        y++;
-    }
-    mlx_destroy_image(data->mlx, img.img_ptr);
-    return (0);
+	int x, y;
+	float x_ratio, y_ratio;
+	img.img_ptr = mlx_xpm_file_to_image(data->mlx, path, &img.width,
+			&img.height);
+	if (!img.img_ptr)
+		return (1);
+	img.data_addr = (int *)mlx_get_data_addr(img.img_ptr, &img.bpp,
+			&img.line_size, &img.endian);
+	x_ratio = (float)img.width / TEXTURE_WIDTH;
+	y_ratio = (float)img.height / TEXTURE_HEIGHT;
+	y = 0;
+	while (y < TEXTURE_HEIGHT)
+	{
+		x = 0;
+		while (x < TEXTURE_WIDTH)
+		{
+			src_x = round(x * x_ratio);
+			src_y = round(y * y_ratio);
+			data->texture[index][TEXTURE_WIDTH * y
+				+ x] = img.data_addr[img.width * src_y + src_x];
+			x++;
+		}
+		y++;
+	}
+	mlx_destroy_image(data->mlx, img.img_ptr);
+	return (0);
 }
 
 int	parse_rgb(char *str)
 {
-	char			**rgb_values;
-	int				r;
-	int				g;
-	int				b;
-	int				color;
+	char	**rgb_values;
+	int		r;
+	int		g;
+	int		b;
+	int		color;
 
 	rgb_values = ft_split(str, ',');
 	if (!rgb_values || ft_array_length(rgb_values) != 3)
@@ -77,7 +78,7 @@ int	parse_rgb(char *str)
 */
 int	init_textures_and_colors(t_cub *data)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (i < TEXTURE_COUNT)

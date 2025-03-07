@@ -12,21 +12,19 @@
 
 #include "cub3d.h"
 
-
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-    if (argc < 2)
-        error_exit(ERR_TOO_FEW_ARGS);
-    if (argc > 2)
-        error_exit(ERR_TOO_MANY_ARGS);
-    parse(argv[1]);
-    for (int i = 0; get_cub_data()->textures[i]; i++)
-        printf("textures: %s\n",get_cub_data()->textures[i]);
-    for (int i = 0; get_cub_data()->colors[i]; i++)
-        printf("colors: %s\n",get_cub_data()->colors[i]);
-    for (int i = 0; get_cub_data()->map[i]; i++)
-        printf("map: %s\n",get_cub_data()->map[i]);
-    init();
-    
-    return EXIT_SUCCESS; 
+	if (argc < 2)
+		error_exit(ERR_TOO_FEW_ARGS);
+	if (argc > 2)
+		error_exit(ERR_TOO_MANY_ARGS);
+	parse(argv[1]);
+	for (int i = 0; get_cub_data()->textures[i]; i++)
+		printf("textures: %s\n", get_cub_data()->textures[i]);
+	for (int i = 0; get_cub_data()->colors[i]; i++)
+		printf("colors: %s\n", get_cub_data()->colors[i]);
+	for (int i = 0; get_cub_data()->map[i]; i++)
+		printf("map: %s\n", get_cub_data()->map[i]);
+	init();
+	return (EXIT_SUCCESS);
 }
