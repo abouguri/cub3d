@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:09:34 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/06 21:07:07 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/07 01:57:15 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,16 +107,16 @@ char	*ft_strchr(const char *s, int c)
 
 // // Function for raycasting rendering
 // void clear_screen(t_data *img, t_cub *data, int window_width,
-	int window_height)
+	// int window_height)
 // {
 //     draw_rectangle(img, 0, 0, window_width, window_height / 2,
-	data->ceilling);
+	// data->ceilling);
 //     draw_rectangle(img, 0, window_height / 2, window_width, window_height
-	/ 2, data->floor);
+	// / 2, data->floor);
 // }
 
 // void   initialize_ray(int x, int window_width, t_cub *data, t_dda *dda,
-	double *ray_dir_x, double *ray_dir_y)
+	// double *ray_dir_x, double *ray_dir_y)
 // {
 //     double camera_x = 2 * x / (double)window_width - 1;
 //     *ray_dir_x = data->var.direction_x + data->var.plane_x * camera_x;
@@ -129,32 +129,32 @@ char	*ft_strchr(const char *s, int c)
 // }
 
 // void calculate_step_and_side_distance(t_cub *data, t_dda *dda,
-	double ray_dir_x, double ray_dir_y)
+	// double ray_dir_x, double ray_dir_y)
 // {
 //     if (ray_dir_x < 0)
 //     {
 //         dda->step_x = -1;
 //         dda->side_dist_x = (data->var.position_x - dda->map_x)
-	* dda->delta_dist_x;
+	// * dda->delta_dist_x;
 //     }
 //     else
 //     {
 //         dda->step_x = 1;
 //         dda->side_dist_x = (dda->map_x + 1.0 - data->var.position_x)
-	* dda->delta_dist_x;
+	// * dda->delta_dist_x;
 //     }
 
 //     if (ray_dir_y < 0)
 //     {
 //         dda->step_y = -1;
 //         dda->side_dist_y = (data->var.position_y - dda->map_y)
-	* dda->delta_dist_y;
+	// * dda->delta_dist_y;
 //     }
 //     else
 //     {
 //         dda->step_y = 1;
 //         dda->side_dist_y = (dda->map_y + 1.0 - data->var.position_y)
-	* dda->delta_dist_y;
+	// * dda->delta_dist_y;
 //     }
 // }
 
@@ -178,25 +178,25 @@ char	*ft_strchr(const char *s, int c)
 
 //         if (dda->map_y >= 0 && dda->map_y < ft_array_length(data->map) &&
 //             dda->map_x >= 0
-	&& dda->map_x < (int)strlen(data->map[dda->map_y]) &&
+	// && dda->map_x < (int)strlen(data->map[dda->map_y]) &&
 //             data->map[dda->map_y][dda->map_x] == '1')
 //             dda->hit = 1;
 //     }
 // }
 
 // double calculate_wall_distance(t_cub *data, t_dda *dda, double ray_dir_x,
-	double ray_dir_y)
+	// double ray_dir_y)
 // {
 //     if (dda->side == 0)
 //         return (dda->map_x - data->var.position_x + (1 - dda->step_x) / 2)
-	/ fabs(ray_dir_x);
+	// / fabs(ray_dir_x);
 //     else
 //         return (dda->map_y - data->var.position_y + (1 - dda->step_y) / 2)
-	/ fabs(ray_dir_y);
+	// / fabs(ray_dir_y);
 // }
 
 // void calculate_wall_height(t_render *render, int window_height,
-	double perp_wall_dist)
+	// double perp_wall_dist)
 // {
 //     render->perp_wall_dist = perp_wall_dist < 0.0001 ? 0.0001 : perp_wall_dist;
 //     render->line_height = (int)(window_height / render->perp_wall_dist);
@@ -204,7 +204,7 @@ char	*ft_strchr(const char *s, int c)
 //     render->draw_start = (render->draw_start < 0) ? 0 : render->draw_start;
 //     render->draw_end = render->line_height / 2 + window_height / 2;
 //     render->draw_end = (render->draw_end >= window_height) ? window_height
-	- 1 : render->draw_end;
+	// - 1 : render->draw_end;
 // }
 
 // void draw_wall_column(t_data *img, int x, t_render *render, int wall_color)
@@ -243,7 +243,7 @@ char	*ft_strchr(const char *s, int c)
 
 //         // Step 4: Calculate wall distance
 //         double perp_wall_dist = calculate_wall_distance(data, &dda,
-		ray_dir_x, ray_dir_y);
+		// ray_dir_x, ray_dir_y);
 
 //         // Step 5: Calculate wall height on screen
 //         calculate_wall_height(&render, window_height, perp_wall_dist);
