@@ -2,7 +2,7 @@
 NAME := cub3d
 
 # Compiler and flags
-CC := gcc  -g3 -fsanitize=address
+CC := gcc -g3
 CFLAGS := -Wall -Wextra -Werror -DBUFFER_SIZE=100 -Iminilibx-linux -I.
 
 # Source files

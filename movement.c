@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:06:54 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/07 06:02:39 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/08 00:39:20 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,10 +138,23 @@ int handle_mouse_move(int x, int y, t_game_state *game)
 */
 int	exit_game(t_game_state *game)
 {
-	mlx_destroy_window(game->data->mlx, game->data->win);
-	// Free resources
-	free_resources(game->data);
-	exit(EXIT_SUCCESS);
+	t_cub	*data;
+	data = game->data;
+
+	// data = (t_cub *)data;
+	// End the MLX loop first
+	mlx_loop_end(data->mlx);
+	// Destroy window
+	if (data->win)
+		mlx_destroy_window(data->mlx, data->win);
+	// Destroy display (Linux only)
+	if (data->mlx)
+	{
+		// mlx_destroy_image(data->mlx, data->img2);
+		mlx_destroy_display(data->mlx);
+		free(data->mlx);
+	}
+	exit(0);
 	return (0);
 }
 int	on_destroy(void *data)
