@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:59:25 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/07 02:50:19 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/08 07:52:28 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,40 @@ void	draw_floor_ceiling(t_data *img, int x, t_render *render, t_cub *data)
 }
 
 #define CAMERA_HEIGHT_OFFSET 0
+#define MAX_DIST 10.0
+typedef struct s_rgb {
+	unsigned int r;
+	unsigned int g;
+	unsigned int b;
+} t_rgb;
+
+t_rgb to_rgb(unsigned int clr) {
+	t_rgb res;
+	res.r = clr >> 16 & 0xFF;
+	res.g = clr >> 8 & 0xFF;
+	res.b = clr & 0xFF;
+	return res;
+}
+void applyShading(t_rgb *rgb, double d) {
+    double shading = 1.0 - (d / MAX_DIST);
+    if (shading < 0.3)
+        shading = 0.3;
+    
+    // Apply shading and round properly
+    rgb->r = (unsigned int)(rgb->r * shading + 0.5);
+    rgb->g = (unsigned int)(rgb->g * shading + 0.5);
+    rgb->b = (unsigned int)(rgb->b * shading + 0.5);
+}
+
+unsigned int to_int(t_rgb rgb) {
+    return (rgb.r << 16) | (rgb.g << 8) | rgb.b;
+}
+
 
 void	draw_textured_line(t_data *img, int x, t_render *render, t_cub *data)
 {
 	int		y;
-	int		color;
+	unsigned int		color;
 	int		tex_y;
 	double	step;
 	double	tex_pos;
@@ -60,8 +89,11 @@ void	draw_textured_line(t_data *img, int x, t_render *render, t_cub *data)
 		tex_pos += step;
 		color = data->texture[render->tex_num][TEXTURE_HEIGHT * tex_y
 			+ render->tex_x];
-		if (render->side == 1)
-			color = (color >> 1) & 8355711;
+		t_rgb rgb = to_rgb(color);
+		applyShading(&rgb, render->perp_wall_dist);
+		color = to_int(rgb);
+		// if (render->side == 1)
+		// 	color = (color >> 1) & 8355711;
 		my_mlx_pixel_put(img, x, y, color);
 		y++;
 	}
@@ -114,6 +146,7 @@ void	calc_wall_params(t_dda *dda, t_var *var, double ray_dir_x,
 	render->draw_end = render->line_height / 2 + SCREEN_HEIGHT / 2 + pitch;
 	if (render->draw_end >= SCREEN_HEIGHT)
 		render->draw_end = SCREEN_HEIGHT - 1;
+	render->side = dda->side;
 }
 
 void	perform_dda(t_dda *dda, char **map)

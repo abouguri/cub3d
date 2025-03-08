@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:06:54 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/08 00:39:20 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/08 08:21:32 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@
 ** Check if the new position is valid (not inside a wall)
 */
 int	is_valid_position(char **map, double pos_x, double pos_y)
-{
-	if (map[(int)pos_y][(int)pos_x] == '0' || map[(int)pos_y][(int)pos_x] == 'N'
+{	
+ 	if (map[(int)pos_y][(int)pos_x] == '0' || map[(int)pos_y][(int)pos_x] == 'N'
 	|| map[(int)pos_y][(int)pos_x] == 'S'
 	|| map[(int)pos_y][(int)pos_x] == 'E'
 	|| map[(int)pos_y][(int)pos_x] == 'W')
-	return (1);
+		return (1);
 	return (0);
-}
+} 
 /*
 ** Handle rotation (looking left/right)
 */
