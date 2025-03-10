@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:41:22 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/02 20:43:06 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/09 21:31:49 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,25 +24,25 @@ int	ft_array_length(char **array)
 	return (i);
 }
 
-int	ft_max_length(char **array)
-{
-	int	result;
-	int	tmp;
-	int	i;
+// int	ft_max_length(char **array)
+// {
+// 	int	result;
+// 	int	tmp;
+// 	int	i;
 
-	result = -1;
-	i = 0;
-	if (!array)
-		return (0);
-	while (array[i])
-	{
-		tmp = strlen(array[i]);
-		if (tmp > result)
-			result = tmp;
-		i++;
-	}
-	return (result);
-}
+// 	result = -1;
+// 	i = 0;
+// 	if (!array)
+// 		return (0);
+// 	while (array[i])
+// 	{
+// 		tmp = strlen(array[i]);
+// 		if (tmp > result)
+// 			result = tmp;
+// 		i++;
+// 	}
+// 	return (result);
+// }
 
 static int	count_words(const char *str, char c)
 {

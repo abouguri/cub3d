@@ -2,12 +2,12 @@
 NO ./textures/HEART_WALL.xpm
 SO ./textures/HEART_WALL.xpm
 WE ./textures/HEART_WALL.xpm
-EA ./textures/HEART_WALL.xpm
+EA ./textures/POISON_WALL.xpm
 
 
 
-F 255,146,51
-C 31,13,0
+F 31,13,0
+C 255,146,51
 
 
 

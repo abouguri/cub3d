@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:59:25 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/08 07:52:28 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/10 00:06:59 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
+	// Make sure we're not writing outside the image
+    if (x < 0 || y < 0 || x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT)
+	{
+        return;
+	}
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
 	*(unsigned int *)dst = color;
 }
@@ -53,10 +58,11 @@ t_rgb to_rgb(unsigned int clr) {
 	res.b = clr & 0xFF;
 	return res;
 }
-void applyShading(t_rgb *rgb, double d) {
+void applyShading(t_rgb *rgb, double d)
+{
     double shading = 1.0 - (d / MAX_DIST);
-    if (shading < 0.3)
-        shading = 0.3;
+    if (shading < 0.4)
+        shading = 0.4;
     
     // Apply shading and round properly
     rgb->r = (unsigned int)(rgb->r * shading + 0.5);
@@ -407,8 +413,40 @@ void	draw_player_on_circular_map(t_cub *data, t_data *img, t_map_params *p)
 	draw_direction_line_circular(img, player_x, player_y, p, data);
 }
 
-void	draw_2d_map(t_cub *data, t_data *img)
+// Function to draw enemies on the 2D circular map
+void draw_enemies_on_circular_map(t_game_state *game, t_data *img, t_map_params *p)
 {
+    int i;
+    int draw_x, draw_y;
+    double distance;
+    
+    // Check if enemies exist
+    if (!game->enemy_manager.enemies || game->enemy_manager.enemy_count <= 0)
+        return;
+    
+    // Draw each enemy
+    for (i = 0; i < game->enemy_manager.enemy_count; i++)
+    {
+        t_enemy *enemy = &game->enemy_manager.enemies[i];
+        
+        // Calculate drawing position (similar to player drawing)
+        draw_x = p->center_x + ((int)enemy->pos_x - p->start_x - p->view_width / 2) * p->tile_size;
+        draw_y = p->center_y + ((int)enemy->pos_y - p->start_y - p->view_height / 2) * p->tile_size;
+        
+        // Check if enemy is within the circular view
+        distance = sqrt(pow(draw_x - p->center_x, 2) + pow(draw_y - p->center_y, 2));
+        if (distance > p->radius)
+            continue;
+        
+        // Draw enemy (red circle)
+        fill_circle(img, draw_x, draw_y, 3, RED);
+    }
+}
+
+void	draw_2d_map(t_game_state *game)
+{
+	t_cub *data = game->data;
+	t_data *img = game->img;
 	t_map_params	p;
 
 	p.tile_size = 12;
@@ -424,27 +462,39 @@ void	draw_2d_map(t_cub *data, t_data *img)
 	draw_circular_map_border(img, p.center_x, p.center_y, p.radius);
 	draw_map_tiles_circular_zoomed(data, img, &p);
 	draw_player_on_circular_map(data, img, &p);
+	draw_enemies_on_circular_map(game, img, &p);
 }
 
-void	raycast(t_cub *data, t_data *img)
+void raycast(t_game_state *game)
 {
-	int			x;
-	double		ray_dir_x;
-	double		ray_dir_y;
-	t_dda		dda;
-	t_render	render;
+    t_cub *data = game->data;
+    t_data *img = game->img;
+    int x;
+    double ray_dir_x;
+    double ray_dir_y;
+    t_dda dda;
+    t_render render;
 
-	x = 0;
-	while (x < SCREEN_WIDTH)
-	{
-		calc_ray_pos_dir(&data->var, x, &ray_dir_x, &ray_dir_y);
-		set_dda_params(&dda, &data->var, ray_dir_x, ray_dir_y);
-		perform_dda(&dda, data->map);
-		calc_wall_params(&dda, &data->var, ray_dir_x, ray_dir_y, &render);
-		calc_texture_coords(&dda, &data->var, &render, ray_dir_x, ray_dir_y);
-		draw_floor_ceiling(img, x, &render, data);
-		draw_textured_line(img, x, &render, data);
-		x++;
-	}
-	draw_2d_map(data, img);
+    x = 0;
+    while (x < SCREEN_WIDTH)
+    {
+        calc_ray_pos_dir(&data->var, x, &ray_dir_x, &ray_dir_y);
+        set_dda_params(&dda, &data->var, ray_dir_x, ray_dir_y);
+        perform_dda(&dda, data->map);
+        calc_wall_params(&dda, &data->var, ray_dir_x, ray_dir_y, &render);
+        
+        // Store the perpendicular wall distance in the z_buffer
+        game->z_buffer[x] = render.perp_wall_dist;
+        
+        calc_texture_coords(&dda, &data->var, &render, ray_dir_x, ray_dir_y);
+        draw_floor_ceiling(img, x, &render, data);
+        draw_textured_line(img, x, &render, data);
+        x++;
+    }
+	   // Only try to update enemies if they were successfully initialized
+    if (game->enemy_manager.enemies != NULL) {
+        update_enemies(game);
+        render_enemies(game, game->z_buffer);
+    }
+    draw_2d_map(game);
 }

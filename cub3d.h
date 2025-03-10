@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/07 05:51:07 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/10 01:53:00 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,9 @@
 # define KEY_LEFT 65361    // Left arrow
 # define KEY_RIGHT 65363   // Right arrow
 
+# define ENEMIES_COUNT 7
+# define ENEMY_PATH "./textures/enemy3.xpm"
+
 /* Error Messages */
 # define ERR_TOO_FEW_ARGS "Error\nToo few arguments. Provide a .cub file.\n"
 # define ERR_TOO_MANY_ARGS "Error\nToo many arguments. Only the .cub file is required.\n"
@@ -135,15 +138,21 @@ typedef struct s_img2
 	int		height;
 }	t_img2;
 
+typedef struct s_position
+{
+    int x;
+    int y;
+} t_position;
+
 typedef struct s_cub
 {
 	void			*mlx;
 	void			*win;
-	t_img2			*img2[4];
+	t_img2			*img2[5];
 	char			**textures;
 	char			**colors;
 	char			**map;
-	int				texture[4][TEXTURE_HEIGHT * TEXTURE_WIDTH];
+	int				texture[5][TEXTURE_HEIGHT * TEXTURE_WIDTH];
 	long	floor;
 	long	ceilling;
 	t_var			var;
@@ -194,16 +203,66 @@ typedef struct s_keys
     int right_pressed;
 } t_keys;
 
+// Enemy structure
+typedef struct s_enemy
+{
+    double pos_x;       // X position
+    double pos_y;       // Y position
+    double dir_x;       // Direction X
+    double dir_y;       // Direction Y
+    double move_speed;  // Movement speed
+    int state;          // 0: random movement, 1: following player
+    double detection_radius; // Distance to detect player
+    int move_timer;     // Timer for random movement changes
+} t_enemy;
+
+// Enemy state management
+typedef struct s_enemy_manager
+{
+    t_enemy *enemies;
+    int enemy_count;
+}	t_enemy_manager;
+
 typedef struct s_game_state
 {
 	t_cub	*data;
 	t_data	*img;
 	t_keys keys;
+	t_enemy_manager enemy_manager;
+	double z_buffer[SCREEN_WIDTH];
 	int    prev_mouse_x;
+	unsigned int rand_state;
 }	t_game_state;
+
+typedef struct s_transform {
+    double transform_x;
+    double transform_y;
+    int sprite_screen_x;
+    int sprite_height;
+    int draw_start_y;
+    int draw_end_y;
+    int sprite_width;
+    int draw_start_x;
+    int draw_end_x;
+} t_transform;
+
+typedef struct s_render_context {
+    t_game_state *game;
+    t_enemy *enemy;
+    double *z_buffer;
+    t_transform transform;
+} t_render_context;
 
 /* Function prototypes */
 /* Main and utilities */
+void update_enemies(t_game_state *game);
+void render_enemies(t_game_state *game, double *z_buffer);
+int	load_image(t_cub *data, t_img2 *img, char *path);
+t_game_state *init_game_state(t_cub *data);
+void init_input_state(t_game_state *g);
+void init_window_and_hooks(t_cub *data, t_game_state *g);
+unsigned int custom_rand(t_game_state *g);
+void	resize_texture(int *texture, t_img2 *img, int x, int y);
 int				main(int argc, char **argv);
 t_cub			*get_cub_data(void);
 void			error_exit(const char *message);
@@ -245,7 +304,7 @@ int				parse_texture(t_cub *data, char *identifier, char *path, char **tokens);
 int				parse_color(t_cub *data, char *identifier, char *value, char **tokens);
 
 /* Raycasting and rendering */
-void			raycast(t_cub *data, t_data *img);
+void			raycast(t_game_state *game);
 void			calc_ray_pos_dir(t_var *var, int x, double *ray_dir_x, double *ray_dir_y);
 void			set_dda_params(t_dda *dda, t_var *var, double ray_dir_x, double ray_dir_y);
 void			perform_dda(t_dda *dda, char **map);
