@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/10 01:53:00 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/11 06:10:45 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,11 @@
 # define SOUTH 'S'
 # define EAST 'E'
 # define WEST 'W'
+
+
+#define CAMERA_HEIGHT_OFFSET 0
+#define MAX_DIST 10.0
+
 
 /* Map symbols */
 # define VALID_MAP_SYMBOLS "01NSEW "
@@ -126,6 +131,13 @@ typedef struct s_var
 	double	plane_x;
 	double	plane_y;
 }	t_var;
+
+typedef struct s_rgb
+{
+	unsigned int r;
+	unsigned int g;
+	unsigned int b;
+}	t_rgb;
 
 typedef struct s_img2
 {
@@ -234,7 +246,8 @@ typedef struct s_game_state
 	unsigned int rand_state;
 }	t_game_state;
 
-typedef struct s_transform {
+typedef struct s_transform
+{
     double transform_x;
     double transform_y;
     int sprite_screen_x;
@@ -246,7 +259,23 @@ typedef struct s_transform {
     int draw_end_x;
 } t_transform;
 
-typedef struct s_render_context {
+typedef struct s_map_params
+{
+	int	tile_size;
+	int	offset_x;
+	int	offset_y;
+	int	radius;
+	int	center_x;
+	int	center_y;
+	int	start_x;
+	int	start_y;
+	int	view_width;
+	int	view_height;
+	double rotation_angle; // Add this field
+}		t_map_params;
+
+typedef struct s_render_context
+{
     t_game_state *game;
     t_enemy *enemy;
     double *z_buffer;
@@ -254,6 +283,52 @@ typedef struct s_render_context {
 } t_render_context;
 
 /* Function prototypes */
+void	clear_buffer(char **buffer);
+int	validate_inputs(int fd, char **line);
+int	initialize_buffer(char **buffer);
+int	read_to_buffer(char **buffer, int fd, int *bytes_read);
+int	print_incomplete_row_error(int i, int j);
+int	is_adjacent_to_incomplete_row(int i, int j, char **map);
+int	print_adjacent_space_error(int i, int j);
+int	has_adjacent_space(int i, int j, char **map);
+int	print_boundary_error(int i, int j);
+int	is_boundary_cell(int i, int j, char **map);
+char	*trim_line(const char *line);
+int	add_line_to_map(char *line);
+void	init_camera_plane(double direction_x, double direction_y, double pla_x, double pla_y);
+void	init_player(int x, int y);
+int	check_trailing_map_lines(int index);
+int	validate_cells_and_players(t_cub *data);
+int	validate_trailing_lines(int i, t_cub *data);
+void	map_info_error(char **tokens, char *s);
+int	append_line_to_map(t_cub *data, char *line);
+int	validate_characters(void);
+int	check_cell_enclosure(int i, int j);
+t_rgb to_rgb(unsigned int clr);
+void	draw_2d_map(t_game_state *game);
+void	draw_circular_map_border(t_data *img, int center_x, int center_y, int radius);
+void	draw_map_tiles_circular_zoomed(t_cub *data, t_data *img, t_map_params *p);
+void	draw_player_on_circular_map(t_cub *data, t_data *img, t_map_params *p);
+void draw_enemies_on_circular_map(t_game_state *game, t_data *img, t_map_params *p);
+int	get_map_height(char **map);
+void	fill_circle(t_data *img, int center_x, int center_y, int radius, int color);
+int	is_in_circle_border(int x, int y, int center_x, int center_y, int outer_radius, int inner_radius);
+void applyShading(t_rgb *rgb, double d);
+unsigned int to_int(t_rgb rgb);
+int initialize_enemies(t_game_state *game);
+void sort_enemies_by_distance(t_game_state *game);
+void setup_render_context(t_render_context *ctx);
+int is_player_detected(t_enemy *enemy, t_cub *data);
+void update_enemy_random_movement(t_game_state *game, t_enemy *enemy);
+void update_enemy_following(t_game_state *game, t_enemy *enemy);
+void init_enemy(t_enemy *enemy, double pos_x, double pos_y);
+void get_map_dimensions(t_cub *data, int *width, int *height);
+t_position *collect_valid_positions(t_cub *data, int map_width, int map_height, int *count);
+void custom_srand(t_game_state *g, unsigned int seed) ;
+void handle_player_movement(t_game_state *game);
+
+
+
 /* Main and utilities */
 void update_enemies(t_game_state *game);
 void render_enemies(t_game_state *game, double *z_buffer);
@@ -272,13 +347,10 @@ void			free_array(char ***array);
 void			free_resources(t_cub *data);
 char			**reallocate_map_memory(char **pointer, int size);
 int				initialize_map(t_cub *data, char *line);
-void			render_map_cells(t_data *img, char **map, int cell_size);
-void			draw_grid(t_data *img, int map_width, int map_height, int cell_size);
 int				render_frame(void *param);
 
 /* Array functions */
 int				ft_array_length(char **array);
-int				ft_max_length(char **array);
 char			**ft_split(char const *s, char c);
 int				ft_strncmp(const char *s1, char *s2, size_t n);
 
@@ -335,7 +407,6 @@ int				on_destroy(void *data);
 
 /* Rendering helpers */
 void			init_window(t_cub *data, t_data *img, int win_width, int win_height);
-void			render_map_to_image(t_data *img, char **map, int cell_size);
 void			init(void);
 
 #endif
