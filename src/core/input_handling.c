@@ -12,38 +12,38 @@
 
 #include "cub3d.h"
 
-int handle_keypress(int keycode, t_game_state *game)
+int	handle_keypress(int keycode, t_game_state *game)
 {
-    if (keycode == KEY_ESC)
-        exit_game(game);
-    else if (keycode == KEY_W)
-        game->keys.w_pressed = 1;
-    else if (keycode == KEY_S)
-        game->keys.s_pressed = 1;
-    else if (keycode == KEY_A)
-        game->keys.a_pressed = 1;
-    else if (keycode == KEY_D)
-        game->keys.d_pressed = 1;
-    else if (keycode == KEY_LEFT)
-        game->keys.left_pressed = 1;
-    else if (keycode == KEY_RIGHT)
-        game->keys.right_pressed = 1;
-    return (0);
+	if (keycode == KEY_ESC)
+		exit_game(game);
+	else if (keycode == KEY_W)
+		game->keys.w_pressed = 1;
+	else if (keycode == KEY_S)
+		game->keys.s_pressed = 1;
+	else if (keycode == KEY_A)
+		game->keys.a_pressed = 1;
+	else if (keycode == KEY_D)
+		game->keys.d_pressed = 1;
+	else if (keycode == KEY_LEFT)
+		game->keys.left_pressed = 1;
+	else if (keycode == KEY_RIGHT)
+		game->keys.right_pressed = 1;
+	return (0);
 }
 
-int handle_keyrelease(int keycode, t_game_state *game)
+int	handle_keyrelease(int keycode, t_game_state *game)
 {
-    if (keycode == KEY_W)
-        game->keys.w_pressed = 0;
-    else if (keycode == KEY_S)
-        game->keys.s_pressed = 0;
-    else if (keycode == KEY_A)
-        game->keys.a_pressed = 0;
-    else if (keycode == KEY_D)
-        game->keys.d_pressed = 0;
-    else if (keycode == KEY_LEFT)
-        game->keys.left_pressed = 0;
-    else if (keycode == KEY_RIGHT)
-        game->keys.right_pressed = 0;
-    return (0);
+	if (keycode == KEY_W)
+		game->keys.w_pressed = 0;
+	else if (keycode == KEY_S)
+		game->keys.s_pressed = 0;
+	else if (keycode == KEY_A)
+		game->keys.a_pressed = 0;
+	else if (keycode == KEY_D)
+		game->keys.d_pressed = 0;
+	else if (keycode == KEY_LEFT)
+		game->keys.left_pressed = 0;
+	else if (keycode == KEY_RIGHT)
+		game->keys.right_pressed = 0;
+	return (0);
 }

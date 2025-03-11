@@ -12,7 +12,8 @@
 
 #include "cub3d.h"
 
-void	draw_map_tiles_circular_zoomed(t_cub *data, t_data *img, t_map_params *p)
+void	draw_map_tiles_circular_zoomed(t_cub *data, t_data *img,
+		t_map_params *p)
 {
 	int		x;
 	int		y;
@@ -47,7 +48,8 @@ void	draw_map_tiles_circular_zoomed(t_cub *data, t_data *img, t_map_params *p)
 	}
 }
 
-void	draw_direction_line_circular(t_data *img, int x0, int y0, t_map_params *p, t_cub *data)
+void	draw_direction_line_circular(t_data *img, int x0, int y0,
+		t_map_params *p, t_cub *data)
 {
 	int		end_x;
 	int		end_y;
@@ -106,31 +108,32 @@ void	draw_player_on_circular_map(t_cub *data, t_data *img, t_map_params *p)
 	draw_direction_line_circular(img, player_x, player_y, p, data);
 }
 
-void draw_enemies_on_circular_map(t_game_state *game, t_data *img, t_map_params *p)
+void	draw_enemies_on_circular_map(t_game_state *game, t_data *img,
+		t_map_params *p)
 {
-    int i;
-    int draw_x, draw_y;
-    double distance;
-    
-    // Check if enemies exist
-    if (!game->enemy_manager.enemies || game->enemy_manager.enemy_count <= 0)
-        return;
-    
-    // Draw each enemy
-    for (i = 0; i < game->enemy_manager.enemy_count; i++)
-    {
-        t_enemy *enemy = &game->enemy_manager.enemies[i];
-        
-        // Calculate drawing position (similar to player drawing)
-        draw_x = p->center_x + ((int)enemy->pos_x - p->start_x - p->view_width / 2) * p->tile_size;
-        draw_y = p->center_y + ((int)enemy->pos_y - p->start_y - p->view_height / 2) * p->tile_size;
-        
-        // Check if enemy is within the circular view
-        distance = sqrt(pow(draw_x - p->center_x, 2) + pow(draw_y - p->center_y, 2));
-        if (distance > p->radius)
-            continue;
-        
-        // Draw enemy (red circle)
-        fill_circle(img, draw_x, draw_y, 3, RED);
-    }
+	int		i;
+	double	distance;
+	t_enemy	*enemy;
+
+	int draw_x, draw_y;
+	// Check if enemies exist
+	if (!game->enemy_manager.enemies || game->enemy_manager.enemy_count <= 0)
+		return ;
+	// Draw each enemy
+	for (i = 0; i < game->enemy_manager.enemy_count; i++)
+	{
+		enemy = &game->enemy_manager.enemies[i];
+		// Calculate drawing position (similar to player drawing)
+		draw_x = p->center_x + ((int)enemy->pos_x - p->start_x - p->view_width
+				/ 2) * p->tile_size;
+		draw_y = p->center_y + ((int)enemy->pos_y - p->start_y - p->view_height
+				/ 2) * p->tile_size;
+		// Check if enemy is within the circular view
+		distance = sqrt(pow(draw_x - p->center_x, 2) + pow(draw_y - p->center_y,
+					2));
+		if (distance > p->radius)
+			continue ;
+		// Draw enemy (red circle)
+		fill_circle(img, draw_x, draw_y, 3, RED);
+	}
 }

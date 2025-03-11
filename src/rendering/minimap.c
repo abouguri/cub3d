@@ -14,10 +14,12 @@
 
 void	draw_2d_map(t_game_state *game)
 {
-	t_cub *data = game->data;
-	t_data *img = game->img;
+	t_cub			*data;
+	t_data			*img;
 	t_map_params	p;
 
+	data = game->data;
+	img = game->img;
 	p.tile_size = 12;
 	p.radius = 80;
 	p.center_x = 100;

@@ -12,7 +12,8 @@
 
 #include "cub3d.h"
 
-void	draw_circular_map_border(t_data *img, int center_x, int center_y, int radius)
+void	draw_circular_map_border(t_data *img, int center_x, int center_y,
+		int radius)
 {
 	int	x;
 	int	y;
@@ -40,7 +41,8 @@ void	draw_circular_map_border(t_data *img, int center_x, int center_y, int radiu
 	}
 }
 
-void	fill_circle(t_data *img, int center_x, int center_y, int radius, int color)
+void	fill_circle(t_data *img, int center_x, int center_y, int radius,
+		int color)
 {
 	int		x;
 	int		y;
@@ -60,4 +62,3 @@ void	fill_circle(t_data *img, int center_x, int center_y, int radius, int color)
 		y++;
 	}
 }
-

@@ -12,7 +12,8 @@
 
 #include "cub3d.h"
 
-void	calc_ray_pos_dir(t_var *var, int x, double *ray_dir_x, double *ray_dir_y)
+void	calc_ray_pos_dir(t_var *var, int x, double *ray_dir_x,
+		double *ray_dir_y)
 {
 	double	camera_x;
 
@@ -21,7 +22,8 @@ void	calc_ray_pos_dir(t_var *var, int x, double *ray_dir_x, double *ray_dir_y)
 	*ray_dir_y = var->direction_y + var->plane_y * camera_x;
 }
 
-void	calc_wall_params(t_dda *dda, t_var *var, double ray_dir_x, double ray_dir_y, t_render *render)
+void	calc_wall_params(t_dda *dda, t_var *var, double ray_dir_x,
+		double ray_dir_y, t_render *render)
 {
 	int	pitch;
 

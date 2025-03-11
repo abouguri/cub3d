@@ -13,14 +13,14 @@
 #include "cub3d.h"
 
 int	is_valid_position(char **map, double pos_x, double pos_y)
-{	
- 	if (map[(int)pos_y][(int)pos_x] == '0' || map[(int)pos_y][(int)pos_x] == 'N'
-	|| map[(int)pos_y][(int)pos_x] == 'S'
-	|| map[(int)pos_y][(int)pos_x] == 'E'
-	|| map[(int)pos_y][(int)pos_x] == 'W')
+{
+	if (map[(int)pos_y][(int)pos_x] == '0' || map[(int)pos_y][(int)pos_x] == 'N'
+		|| map[(int)pos_y][(int)pos_x] == 'S'
+		|| map[(int)pos_y][(int)pos_x] == 'E'
+		|| map[(int)pos_y][(int)pos_x] == 'W')
 		return (1);
 	return (0);
-} 
+}
 
 void	move_strafe(t_cub *data, double move_speed, int direction)
 {

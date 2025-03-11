@@ -32,12 +32,13 @@ void	draw_floor_ceiling(t_data *img, int x, t_render *render, t_cub *data)
 
 void	draw_textured_line(t_data *img, int x, t_render *render, t_cub *data)
 {
-	int		y;
-	unsigned int		color;
-	int		tex_y;
-	double	step;
-	double	tex_pos;
-	int		pitch;
+	int				y;
+	unsigned int	color;
+	int				tex_y;
+	double			step;
+	double			tex_pos;
+	int				pitch;
+	t_rgb			rgb;
 
 	step = 1.0 * TEXTURE_HEIGHT / render->line_height;
 	pitch = -CAMERA_HEIGHT_OFFSET;
@@ -50,7 +51,7 @@ void	draw_textured_line(t_data *img, int x, t_render *render, t_cub *data)
 		tex_pos += step;
 		color = data->texture[render->tex_num][TEXTURE_HEIGHT * tex_y
 			+ render->tex_x];
-		t_rgb rgb = to_rgb(color);
+		rgb = to_rgb(color);
 		applyShading(&rgb, render->perp_wall_dist);
 		color = to_int(rgb);
 		// if (render->side == 1)
