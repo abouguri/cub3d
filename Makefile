@@ -6,14 +6,25 @@ CC := gcc
 CFLAGS := -Wall -Wextra -Werror -DBUFFER_SIZE=100 -Iminilibx-linux -I.
 
 # Source files
-SRC := main.c array.c extra.c file.c get_next_line.c movement.c parse.c \
-raycast.c render.c textures.c utility.c buffer_utils.c line_utils.c \
-read_utils.c rotation.c	input_handling.c mouse_handling.c exit_handling.c \
-map_validation.c map_validation2.c map_handling.c file_parsing.c \
-texture_parsing.c validate_full_map.c validation_cells.c validation_trailing.c \
-validation_characters.c init.c raycast_utils.c math_utils.c minimap.c \
-minimap_draw.c dda.c map_render.c image_utils.c draw_utils.c enemy_render.c \
-enemy_movement.c enemy_update.c enemy_spawn.c player_movement.c map_utils2.c \
+SRC := \
+	src/core/main.c src/core/init.c src/core/exit_handling.c src/core/input_handling.c \
+	src/core/mouse_handling.c \
+	src/parsing/parse.c src/parsing/file_parsing.c src/parsing/texture_parsing.c \
+	src/parsing/get_next_line.c src/parsing/textures.c \
+	src/validation/map_validation.c src/validation/map_validation2.c \
+	src/validation/validate_full_map.c \
+	src/validation/validation_cells.c src/validation/validation_trailing.c \
+	src/validation/validation_characters.c \
+	src/rendering/render.c src/rendering/raycast.c src/rendering/raycast_utils.c \
+	src/rendering/minimap.c src/rendering/minimap_draw.c src/rendering/draw_utils.c \
+	src/rendering/map_render.c src/rendering/image_utils.c src/rendering/dda.c \
+	src/movement/movement.c src/movement/rotation.c src/movement/player_movement.c \
+	src/enemies/enemy_render.c src/enemies/enemy_movement.c src/enemies/enemy_update.c \
+	src/enemies/enemy_spawn.c \
+	src/map/map_handling.c src/map/map_utils2.c \
+	src/utils/utility.c src/utils/extra.c src/utils/math_utils.c \
+	src/utils/buffer_utils.c \
+	src/utils/line_utils.c src/utils/read_utils.c src/utils/array.c
 
 # Object files
 OBJ := $(SRC:.c=.o)

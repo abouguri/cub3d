@@ -6,20 +6,11 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:09:34 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 06:08:57 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/11 06:20:21 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-char	*ft_strchr(const char *s, int c)
-{
-	while ((*s != '\0') && (*s != c))
-		s++;
-	if (*s == c)
-		return ((char *)s);
-	return ((char *) NULL);
-}
 
 t_data *create_frame_image(t_cub *data)
 {

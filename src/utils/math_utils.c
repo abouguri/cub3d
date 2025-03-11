@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 04:36:19 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 05:58:22 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/11 06:34:13 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	rotate_point(int *x, int *y, int center_x, int center_y, double angle)
 
 	original_x = *x - center_x;
 	original_y = *y - center_y;
-	// Apply rotation
 	*x = center_x + (int)(original_x * cos(angle) - original_y * sin(angle));
 	*y = center_y + (int)(original_x * sin(angle) + original_y * cos(angle));
 }
