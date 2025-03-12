@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 04:12:06 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 07:24:47 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 03:11:46 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,13 @@ unsigned int	to_int(t_rgb rgb)
 	return ((rgb.r << 16) | (rgb.g << 8) | rgb.b);
 }
 
-void	applyShading(t_rgb *rgb, double d)
+void	applyshading(t_rgb *rgb, double d)
 {
 	double	shading;
 
 	shading = 1.0 - (d / MAX_DIST);
 	if (shading < 0.4)
 		shading = 0.4;
-	// Apply shading and round properly
 	rgb->r = (unsigned int)(rgb->r * shading + 0.5);
 	rgb->g = (unsigned int)(rgb->g * shading + 0.5);
 	rgb->b = (unsigned int)(rgb->b * shading + 0.5);

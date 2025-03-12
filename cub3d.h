@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 07:12:27 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 03:14:18 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,12 @@ typedef struct s_position
     int y;
 } t_position;
 
+typedef struct s_vector
+{
+    double x;
+    double y;
+} t_vector;
+
 typedef struct s_rgb
 {
     unsigned int r;
@@ -204,6 +210,19 @@ typedef struct s_render
     int    side;
 } t_render;
 
+typedef struct s_line_params
+{
+    int start_x;
+    int start_y;
+    int end_x;
+    int end_y;
+    int dx;
+    int dy;
+    int sx;
+    int sy;
+    int err;
+} t_line_params;
+
 /* Game Data */
 typedef struct s_cub
 {
@@ -227,7 +246,7 @@ typedef struct s_enemy
     double dir_x;
     double dir_y;
     double move_speed;
-    int    state;             /* 0: random movement, 1: following player */
+    int    state;
     double detection_radius;
     int    move_timer;
 } t_enemy;
@@ -287,6 +306,34 @@ typedef struct s_render_context
     double       *z_buffer;
     t_transform  transform;
 } t_render_context;
+
+typedef struct s_raycast
+{
+	t_cub		*data;
+	t_data		*img;
+	t_vector	ray_dir;
+	t_dda		dda;
+	t_render	render;
+} t_raycast;
+
+typedef struct s_step_calc
+{
+	int		*step;
+	double	*side_dist;
+	double	ray_dir;
+	double	pos;
+	int		map_pos;
+	double	delta_dist;
+}	t_step_calc;
+
+typedef struct s_tex_data
+{
+	int				tex_y;
+	double			step;
+	double			tex_pos;
+	unsigned int	color;
+	t_rgb			rgb;
+}	t_tex_data;
 
 /* ************************************************************************** */
 /*                               FUNCTION PROTOTYPES                           */
@@ -352,8 +399,8 @@ void            raycast(t_game_state *game);
 void            calc_ray_pos_dir(t_var *var, int x, double *ray_dir_x, double *ray_dir_y);
 void            set_dda_params(t_dda *dda, t_var *var, double ray_dir_x, double ray_dir_y);
 void            perform_dda(t_dda *dda, char **map);
-void            calc_wall_params(t_dda *dda, t_var *var, double ray_dir_x, double ray_dir_y, t_render *render);
-void            calc_texture_coords(t_dda *dda, t_var *var, t_render *render, double ray_dir_x, double ray_dir_y);
+void            calc_wall_params(t_dda *dda, t_var *var, t_vector ray_dir, t_render *render);
+void            calc_texture_coords(t_dda *dda, t_var *var, t_render *render, t_vector ray_dir);
 
 /* Rendering */
 void            draw_textured_line(t_data *img, int x, t_render *render, t_cub *data);
@@ -390,7 +437,7 @@ void            draw_circular_map_border(t_data *img, int center_x, int center_y
 void            draw_map_tiles_circular_zoomed(t_cub *data, t_data *img, t_map_params *p);
 void            draw_player_on_circular_map(t_cub *data, t_data *img, t_map_params *p);
 void            draw_enemies_on_circular_map(t_game_state *game, t_data *img, t_map_params *p);
-void            fill_circle(t_data *img, int center_x, int center_y, int radius, int color);
+void	        fill_circle(t_data *img, t_position center, int radius, int color);
 int             is_in_circle_border(int x, int y, int center_x, int center_y, int outer_radius, int inner_radius);
 
 /* Texture Loading */
@@ -423,7 +470,7 @@ int             append_to_buffer(char **buffer, char *new_content, char **temp);
 /* Color Management */
 t_rgb           to_rgb(unsigned int clr);
 unsigned int    to_int(t_rgb rgb);
-void            applyShading(t_rgb *rgb, double d);
+void            applyshading(t_rgb *rgb, double d);
 
 /* Array Functions */
 int             ft_array_length(char **array);

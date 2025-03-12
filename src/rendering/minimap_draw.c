@@ -6,134 +6,119 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 04:39:29 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 04:42:15 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 03:29:45 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
+static void	draw_tile_if_in_radius(t_data *img, t_position draw_pos,
+		char tile_type, t_map_params *p)
+{
+	double	distance;
+
+	distance = sqrt(pow(draw_pos.x - p->center_x, 2) + pow(draw_pos.y
+				- p->center_y, 2));
+	if (distance > p->radius)
+		return ;
+	if (tile_type == '1')
+		fill_circle(img, draw_pos, 3, CYAN);
+	else if (tile_type == '0')
+		fill_circle(img, draw_pos, 4, COOL_DARKGREY);
+}
+
 void	draw_map_tiles_circular_zoomed(t_cub *data, t_data *img,
 		t_map_params *p)
 {
-	int		x;
-	int		y;
-	int		draw_x;
-	int		draw_y;
-	double	distance;
+	t_position	map_pos;
+	t_position	draw_pos;
+	char		tile_type;
 
-	// int	color;
-	y = -1;
-	while (++y < p->view_height)
+	map_pos.y = -1;
+	while (++map_pos.y < p->view_height)
 	{
-		if (p->start_y + y >= get_map_height(data->map))
+		if (p->start_y + map_pos.y >= get_map_height(data->map))
 			break ;
-		x = -1;
-		while (++x < p->view_width)
+		map_pos.x = -1;
+		while (++map_pos.x < p->view_width)
 		{
-			if (p->start_x + x >= (int)strlen(data->map[p->start_y + y]))
+			if (p->start_x + map_pos.x >= (int)strlen(data->map[p->start_y
+						+ map_pos.y]))
 				break ;
-			// Center the view around the player
-			draw_x = p->center_x + (x - p->view_width / 2) * p->tile_size;
-			draw_y = p->center_y + (y - p->view_height / 2) * p->tile_size;
-			// Check if tile is within circle
-			distance = sqrt(pow(draw_x - p->center_x, 2) + pow(draw_y
-						- p->center_y, 2));
-			if (distance > p->radius)
-				continue ;
-			if (data->map[p->start_y + y][p->start_x + x] == '1')
-				fill_circle(img, draw_x, draw_y, 3, CYAN);
-			else if (data->map[p->start_y + y][p->start_x + x] == '0')
-				fill_circle(img, draw_x, draw_y, 4, COOL_DARKGREY);
+			draw_pos.x = p->center_x + (map_pos.x - p->view_width / 2)
+				* p->tile_size;
+			draw_pos.y = p->center_y + (map_pos.y - p->view_height / 2)
+				* p->tile_size;
+			tile_type = data->map[p->start_y + map_pos.y][p->start_x
+				+ map_pos.x];
+			draw_tile_if_in_radius(img, draw_pos, tile_type, p);
 		}
 	}
 }
 
-void	draw_direction_line_circular(t_data *img, int x0, int y0,
-		t_map_params *p, t_cub *data)
+static void	init_line_params(t_line_params *line, t_position player,
+		t_cub *data)
 {
-	int		end_x;
-	int		end_y;
-	int		dx;
-	int		dy;
-	int		sx;
-	int		sy;
-	int		err;
-	int		e2;
-	double	distance;
+	line->start_x = player.x;
+	line->start_y = player.y;
+	line->end_x = player.x + (int)(10 * data->var.direction_x);
+	line->end_y = player.y + (int)(10 * data->var.direction_y);
+	line->dx = abs(line->end_x - line->start_x);
+	if (line->start_x < line->end_x)
+		line->sx = 1;
+	else
+		line->sx = -1;
+	line->dy = -abs(line->end_y - line->start_y);
+	if (line->start_y < line->end_y)
+		line->sy = 1;
+	else
+		line->sy = -1;
+	line->err = line->dx + line->dy;
+}
 
-	end_x = x0 + (int)(10 * data->var.direction_x);
-	end_y = y0 + (int)(10 * data->var.direction_y);
-	dx = abs(end_x - x0);
-	sx = x0 < end_x ? 1 : -1;
-	dy = -abs(end_y - y0);
-	sy = y0 < end_y ? 1 : -1;
-	err = dx + dy;
+void	draw_direction_line_circular(t_data *img, t_map_params *p, t_cub *data,
+		t_position player)
+{
+	t_line_params	line;
+	int				e2;
+	double			distance;
+
+	init_line_params(&line, player, data);
 	while (1)
 	{
-		// Check if line point is within the map circle
-		distance = sqrt(pow(x0 - p->center_x, 2) + pow(y0 - p->center_y, 2));
+		distance = sqrt(pow(line.start_x - p->center_x, 2) + pow(line.start_y
+					- p->center_y, 2));
 		if (distance <= p->radius)
-			my_mlx_pixel_put(img, x0, y0, WHITE);
-		if (x0 == end_x && y0 == end_y)
+			my_mlx_pixel_put(img, line.start_x, line.start_y, WHITE);
+		if (line.start_x == line.end_x && line.start_y == line.end_y)
 			break ;
-		e2 = 2 * err;
-		if (e2 >= dy)
+		e2 = 2 * line.err;
+		if (e2 >= line.dy)
 		{
-			err += dy;
-			x0 += sx;
+			line.err += line.dy;
+			line.start_x += line.sx;
 		}
-		if (e2 <= dx)
+		if (e2 <= line.dx)
 		{
-			err += dx;
-			y0 += sy;
+			line.err += line.dx;
+			line.start_y += line.sy;
 		}
 	}
 }
 
 void	draw_player_on_circular_map(t_cub *data, t_data *img, t_map_params *p)
 {
-	int		player_x;
-	int		player_y;
-	double	distance;
+	t_position	player;
+	double		distance;
 
-	player_x = p->center_x + (int)((data->var.position_x - p->start_x
+	player.x = p->center_x + (int)((data->var.position_x - p->start_x
 				- p->view_width / 2) * p->tile_size);
-	player_y = p->center_y + (int)((data->var.position_y - p->start_y
+	player.y = p->center_y + (int)((data->var.position_y - p->start_y
 				- p->view_height / 2) * p->tile_size);
-	distance = sqrt(pow(player_x - p->center_x, 2) + pow(player_y - p->center_y,
+	distance = sqrt(pow(player.x - p->center_x, 2) + pow(player.y - p->center_y,
 				2));
 	if (distance > p->radius)
 		return ;
-	fill_circle(img, player_x, player_y, 5, YELLOW);
-	draw_direction_line_circular(img, player_x, player_y, p, data);
-}
-
-void	draw_enemies_on_circular_map(t_game_state *game, t_data *img,
-		t_map_params *p)
-{
-	int		i;
-	double	distance;
-	t_enemy	*enemy;
-
-	int draw_x, draw_y;
-	// Check if enemies exist
-	if (!game->enemy_manager.enemies || game->enemy_manager.enemy_count <= 0)
-		return ;
-	// Draw each enemy
-	for (i = 0; i < game->enemy_manager.enemy_count; i++)
-	{
-		enemy = &game->enemy_manager.enemies[i];
-		// Calculate drawing position (similar to player drawing)
-		draw_x = p->center_x + ((int)enemy->pos_x - p->start_x - p->view_width
-				/ 2) * p->tile_size;
-		draw_y = p->center_y + ((int)enemy->pos_y - p->start_y - p->view_height
-				/ 2) * p->tile_size;
-		// Check if enemy is within the circular view
-		distance = sqrt(pow(draw_x - p->center_x, 2) + pow(draw_y - p->center_y,
-					2));
-		if (distance > p->radius)
-			continue ;
-		// Draw enemy (red circle)
-		fill_circle(img, draw_x, draw_y, 3, RED);
-	}
+	fill_circle(img, player, 5, YELLOW);
+	draw_direction_line_circular(img, p, data, player);
 }

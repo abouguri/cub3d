@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:59:25 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 04:43:44 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 02:50:47 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,27 +24,22 @@ int	get_map_height(char **map)
 
 void	raycast(t_game_state *game)
 {
-	t_cub		*data;
-	t_data		*img;
+	t_raycast	ctx;
 	int			x;
-	double		ray_dir_x;
-	double		ray_dir_y;
-	t_dda		dda;
-	t_render	render;
 
-	data = game->data;
-	img = game->img;
+	ctx.data = game->data;
+	ctx.img = game->img;
 	x = 0;
 	while (x < SCREEN_WIDTH)
 	{
-		calc_ray_pos_dir(&data->var, x, &ray_dir_x, &ray_dir_y);
-		set_dda_params(&dda, &data->var, ray_dir_x, ray_dir_y);
-		perform_dda(&dda, data->map);
-		calc_wall_params(&dda, &data->var, ray_dir_x, ray_dir_y, &render);
-		game->z_buffer[x] = render.perp_wall_dist;
-		calc_texture_coords(&dda, &data->var, &render, ray_dir_x, ray_dir_y);
-		draw_floor_ceiling(img, x, &render, data);
-		draw_textured_line(img, x, &render, data);
+		calc_ray_pos_dir(&ctx.data->var, x, &ctx.ray_dir.x, &ctx.ray_dir.y);
+		set_dda_params(&ctx.dda, &ctx.data->var, ctx.ray_dir.x, ctx.ray_dir.y);
+		perform_dda(&ctx.dda, ctx.data->map);
+		calc_wall_params(&ctx.dda, &ctx.data->var, ctx.ray_dir, &ctx.render);
+		game->z_buffer[x] = ctx.render.perp_wall_dist;
+		calc_texture_coords(&ctx.dda, &ctx.data->var, &ctx.render, ctx.ray_dir);
+		draw_floor_ceiling(ctx.img, x, &ctx.render, ctx.data);
+		draw_textured_line(ctx.img, x, &ctx.render, ctx.data);
 		x++;
 	}
 	if (game->enemy_manager.enemies != NULL)
