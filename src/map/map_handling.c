@@ -6,44 +6,48 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:44:30 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 03:45:36 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:07:01 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int	add_line_to_map(char *line)
+static int	handle_empty_line(char *trimmed_line)
 {
-	t_cub	*data;
-	char	*trimmed_line;
-
-	data = get_cub_data();
-	trimmed_line = trim_line(line);
-	if (!trimmed_line)
-		return (1);
 	if (strlen(trimmed_line) == 0)
 	{
 		free(trimmed_line);
 		return (0);
 	}
+	return (-1);
+}
+
+static int	handle_map_line(t_cub *data, char *trimmed_line)
+{
+	int	result;
+
 	if (!data->map)
-	{
-		if (initialize_map(data, trimmed_line) == 1)
-		{
-			free(trimmed_line);
-			return (1);
-		}
-	}
+		result = initialize_map(data, trimmed_line);
 	else
-	{
-		if (append_line_to_map(data, trimmed_line) == 1)
-		{
-			free(trimmed_line);
-			return (1);
-		}
-	}
+		result = append_line_to_map(data, trimmed_line);
 	free(trimmed_line);
-	return (0);
+	return (result);
+}
+
+int	add_line_to_map(char *line)
+{
+	t_cub	*data;
+	char	*trimmed_line;
+	int		status;
+
+	data = get_cub_data();
+	trimmed_line = trim_line(line);
+	if (!trimmed_line)
+		return (1);
+	status = handle_empty_line(trimmed_line);
+	if (status != -1)
+		return (status);
+	return (handle_map_line(data, trimmed_line));
 }
 
 int	parse_map(int fd)

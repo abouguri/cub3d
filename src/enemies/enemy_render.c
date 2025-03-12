@@ -6,20 +6,36 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 05:17:01 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 07:18:30 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 03:48:08 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	render_enemy(t_render_context *ctx)
+static void	draw_enemy_stripe(t_render_context *ctx, int stripe, t_position tex)
 {
-	int	stripe;
-	int	tex_x;
 	int	y;
 	int	d;
-	int	tex_y;
 	int	color;
+
+	y = ctx->transform.draw_start_y;
+	while (y < ctx->transform.draw_end_y)
+	{
+		d = y * 256 - SCREEN_HEIGHT * 128 + ctx->transform.sprite_height * 128;
+		tex.y = ((d * TEXTURE_HEIGHT) / ctx->transform.sprite_height) / 256;
+		color = ctx->game->data->texture[4][TEXTURE_WIDTH * tex.y + tex.x];
+		if ((color & 0x00FFFFFF) != 0)
+		{
+			my_mlx_pixel_put(ctx->game->img, stripe, y, color);
+		}
+		y++;
+	}
+}
+
+void	render_enemy(t_render_context *ctx)
+{
+	int			stripe;
+	t_position	tex;
 
 	if (ctx->transform.transform_y <= 0)
 		return ;
@@ -30,24 +46,10 @@ void	render_enemy(t_render_context *ctx)
 			&& stripe < SCREEN_WIDTH
 			&& ctx->transform.transform_y < ctx->z_buffer[stripe])
 		{
-			tex_x = (int)(256 * (stripe - (-ctx->transform.sprite_width / 2
+			tex.x = (int)(256 * (stripe - (-ctx->transform.sprite_width / 2
 							+ ctx->transform.sprite_screen_x)) * TEXTURE_WIDTH
 					/ ctx->transform.sprite_width) / 256;
-			y = ctx->transform.draw_start_y;
-			while (y < ctx->transform.draw_end_y)
-			{
-				d = y * 256 - SCREEN_HEIGHT * 128 + ctx->transform.sprite_height
-					* 128;
-				tex_y = ((d * TEXTURE_HEIGHT) / ctx->transform.sprite_height)
-					/ 256;
-				color = ctx->game->data->texture[4][TEXTURE_WIDTH * tex_y
-					+ tex_x];
-				if ((color & 0x00FFFFFF) != 0)
-				{
-					my_mlx_pixel_put(ctx->game->img, stripe, y, color);
-				}
-				y++;
-			}
+			draw_enemy_stripe(ctx, stripe, tex);
 		}
 		stripe++;
 	}
@@ -55,16 +57,21 @@ void	render_enemy(t_render_context *ctx)
 
 void	render_enemies(t_game_state *game, double *z_buffer)
 {
-    sort_enemies_by_distance(game);
-    int i = 0;
-    while (i < game->enemy_manager.enemy_count)
-    {
-        t_transform transform = {0};
-        t_render_context ctx = {game, &game->enemy_manager.enemies[i], z_buffer, transform};
-        setup_render_context(&ctx);
-        render_enemy(&ctx);
-        i++;
-    }
+	int					i;
+	t_transform			transform;
+	t_render_context	ctx;
+
+	i = 0;
+	sort_enemies_by_distance(game);
+	while (i < game->enemy_manager.enemy_count)
+	{
+		transform = (t_transform){0};
+		ctx = (t_render_context){game, &game->enemy_manager.enemies[i],
+			z_buffer, transform};
+		setup_render_context(&ctx);
+		render_enemy(&ctx);
+		i++;
+	}
 }
 
 void	calculate_enemy_transform(t_render_context *ctx)
@@ -90,7 +97,6 @@ void	setup_render_context(t_render_context *ctx)
 	calculate_enemy_transform(ctx);
 	if (ctx->transform.transform_y <= 0)
 		return ;
-
 	ctx->transform.sprite_screen_x = (int)((SCREEN_WIDTH / 2) * (1
 				+ ctx->transform.transform_x / ctx->transform.transform_y));
 	ctx->transform.sprite_height = abs((int)(SCREEN_HEIGHT

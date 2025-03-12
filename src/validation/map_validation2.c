@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:39:31 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 03:40:48 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:51:52 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	print_str(char *s)
 	while (*s)
 		write(1, s++, 1);
 }
+
 void	map_info_error(char **tokens, char *s)
 {
 	print_str(s);

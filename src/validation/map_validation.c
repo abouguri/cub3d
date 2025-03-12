@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:38:13 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 03:39:00 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:51:18 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@ int	print_boundary_error(int i, int j)
 int	has_adjacent_space(int i, int j, char **map)
 {
 	return ((i > 0 && j < (int)strlen(map[i - 1]) && map[i - 1][j] == ' ')
-		||                        // Above
+		||
 			(i + 1 < ft_array_length(map) && j < (int)strlen(map[i + 1])
-				&& map[i + 1][j] == ' ') || // Below
+				&& map[i + 1][j] == ' ') ||
 			(j > 0 && map[i][j - 1] == ' ')
-				||                                                       // Left
+				||
 			(j + 1 < (int)strlen(map[i]) && map[i][j
-				+ 1] == ' '));                                  // Right
+				+ 1] == ' '));
 }
 
 int	print_adjacent_space_error(int i, int j)
@@ -44,8 +44,6 @@ int	print_adjacent_space_error(int i, int j)
 
 int	is_adjacent_to_incomplete_row(int i, int j, char **map)
 {
-	return ((i > 0 && j >= (int)strlen(map[i - 1])) ||                      
-		// Current cell exceeds previous row length
-			(i + 1 < ft_array_length(map) && j >= (int)strlen(map[i + 1])));
-				// Current cell exceeds next row length
+	return ((i > 0 && j >= (int)strlen(map[i - 1]))
+		|| (i + 1 < ft_array_length(map) && j >= (int)strlen(map[i + 1])));
 }

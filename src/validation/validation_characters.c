@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:49:32 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 03:50:24 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:55:12 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,29 @@
 
 int	validate_characters(void)
 {
-	int		i;
-	int		j;
+	t_index	z;
 	int		count;
 	t_cub	*data;
 
 	data = get_cub_data();
-	i = 0;
+	z.i = 0;
 	count = 0;
-	while (data->map[i])
+	while (data->map[z.i])
 	{
-		j = 0;
-		while (data->map[i][j])
+		z.j = 0;
+		while (data->map[z.i][z.j])
 		{
-			if (!strchr(VALID_MAP_SYMBOLS, data->map[i][j]))
+			if (!strchr(VALID_MAP_SYMBOLS, data->map[z.i][z.j]))
 				return (0);
-			if (data->map[i][j] == NORTH || data->map[i][j] == SOUTH
-				|| data->map[i][j] == EAST || data->map[i][j] == WEST)
+			if (data->map[z.i][z.j] == NORTH || data->map[z.i][z.j] == SOUTH
+				|| data->map[z.i][z.j] == EAST || data->map[z.i][z.j] == WEST)
 			{
-				init_player(j, i);
+				init_player(z.j, z.i);
 				count++;
 			}
-			j++;
+			z.j++;
 		}
-		i++;
+		z.i++;
 	}
 	return (count);
 }

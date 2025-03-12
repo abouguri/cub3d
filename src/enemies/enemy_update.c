@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 05:37:04 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 07:19:43 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:01:36 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,38 +34,40 @@ void	update_enemies(t_game_state *game)
 	}
 }
 
-void	sort_enemies_by_distance(t_game_state *game)
+static void	swap_enemies_if_needed(t_game_state *game, t_cub *data, int j)
 {
-	int		i;
-	int		j;
-	t_cub	*data;
 	double	dist1;
 	double	dist2;
 	t_enemy	temp;
 
-	i = 0;
-	data = game->data;
-	while (i < game->enemy_manager.enemy_count - 1)
+	dist1 = pow(data->var.position_x - game->enemy_manager.enemies[j].pos_x, 2)
+		+ pow(data->var.position_y - game->enemy_manager.enemies[j].pos_y, 2);
+	dist2 = pow(data->var.position_x - game->enemy_manager.enemies[j + 1].pos_x,
+			2) + pow(data->var.position_y - game->enemy_manager.enemies[j
+			+ 1].pos_y, 2);
+	if (dist1 < dist2)
 	{
-		j = 0;
-		while (j < game->enemy_manager.enemy_count - i - 1)
+		temp = game->enemy_manager.enemies[j];
+		game->enemy_manager.enemies[j] = game->enemy_manager.enemies[j + 1];
+		game->enemy_manager.enemies[j + 1] = temp;
+	}
+}
+
+void	sort_enemies_by_distance(t_game_state *game)
+{
+	t_index	i;
+	t_cub	*data;
+
+	i.i = 0;
+	data = game->data;
+	while (i.i < game->enemy_manager.enemy_count - 1)
+	{
+		i.j = 0;
+		while (i.j < game->enemy_manager.enemy_count - i.i - 1)
 		{
-			dist1 = pow(data->var.position_x
-					- game->enemy_manager.enemies[j].pos_x, 2)
-				+ pow(data->var.position_y
-					- game->enemy_manager.enemies[j].pos_y, 2);
-			dist2 = pow(data->var.position_x - game->enemy_manager.enemies[j
-					+ 1].pos_x, 2) + pow(data->var.position_y
-					- game->enemy_manager.enemies[j + 1].pos_y, 2);
-			if (dist1 < dist2)
-			{
-				temp = game->enemy_manager.enemies[j];
-				game->enemy_manager.enemies[j] = game->enemy_manager.enemies[j
-					+ 1];
-				game->enemy_manager.enemies[j + 1] = temp;
-			}
-			j++;
+			swap_enemies_if_needed(game, data, i.j);
+			i.j++;
 		}
-		i++;
+		i.i++;
 	}
 }

@@ -6,18 +6,11 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:39:11 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 03:47:20 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:46:21 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-t_cub	*get_cub_data(void)
-{
-	static t_cub	data;
-
-	return (&data);
-}
 
 void	error_exit(const char *message)
 {
@@ -73,29 +66,4 @@ void	free_resources(t_cub *data)
 		free_array(&data->colors);
 	if (data->map)
 		free_array(&data->map);
-}
-
-int	is_whitespace(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
-		|| c == '\r');
-}
-
-char	*trim_line(const char *line)
-{
-	const char	*start = line;
-	const char	*end;
-	int			length;
-	char		*trimmed;
-
-	end = start + strlen(start) - 1;
-	while (end > start && is_whitespace(*end))
-		end--;
-	length = end - start + 1;
-	trimmed = malloc(length + 1);
-	if (!trimmed)
-		return (NULL);
-	strncpy(trimmed, start, length);
-	trimmed[length] = '\0';
-	return (trimmed);
 }

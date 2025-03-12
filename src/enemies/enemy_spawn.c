@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 05:38:14 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 05:41:01 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 03:52:17 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,9 @@ void	place_enemies_randomly(t_game_state *game)
 {
 	int			valid_positions_count;
 	t_position	*valid_positions;
+	int			map_height;
+	int			map_width;
 
-	int map_height, map_width;
 	valid_positions_count = 0;
 	get_map_dimensions(game->data, &map_width, &map_height);
 	if (map_height <= 0)

@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 05:36:10 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 05:36:45 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 03:51:05 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,30 +68,28 @@ int	is_player_detected(t_enemy *enemy, t_cub *data)
 
 void	update_enemy_following(t_game_state *game, t_enemy *enemy)
 {
-	t_cub	*data;
-	double	dx;
-	double	dy;
-	double	length;
-	double	new_x;
-	double	new_y;
+	t_cub		*data;
+	double		length;
+	t_vector	d;
+	t_vector	new;
 
 	data = game->data;
-	dx = data->var.position_x - enemy->pos_x;
-	dy = data->var.position_y - enemy->pos_y;
-	length = sqrt(dx * dx + dy * dy);
+	d.x = data->var.position_x - enemy->pos_x;
+	d.y = data->var.position_y - enemy->pos_y;
+	length = sqrt(d.x * d.x + d.y * d.y);
 	if (length > 0)
 	{
-		dx /= length;
-		dy /= length;
+		d.x /= length;
+		d.y /= length;
 	}
-	enemy->dir_x = dx;
-	enemy->dir_y = dy;
-	new_x = enemy->pos_x + enemy->dir_x * enemy->move_speed;
-	new_y = enemy->pos_y + enemy->dir_y * enemy->move_speed;
-	if (can_enemy_move(game, new_x, new_y))
+	enemy->dir_x = d.x;
+	enemy->dir_y = d.y;
+	new.x = enemy->pos_x + enemy->dir_x * enemy->move_speed;
+	new.y = enemy->pos_y + enemy->dir_y * enemy->move_speed;
+	if (can_enemy_move(game, new.x, new.y))
 	{
-		enemy->pos_x = new_x;
-		enemy->pos_y = new_y;
+		enemy->pos_x = new.x;
+		enemy->pos_y = new.y;
 	}
 	if (!is_player_detected(enemy, data))
 		enemy->state = 0;

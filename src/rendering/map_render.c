@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 04:20:25 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 03:14:02 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:20:15 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ void	draw_circular_map_border(t_data *img, int center_x, int center_y,
 		x = -outer_radius;
 		while (x <= outer_radius)
 		{
-			if (is_in_circle_border(x, y, center_x, center_y, outer_radius,
-					inner_radius))
+			if (is_in_circle_border(x, y, outer_radius, inner_radius))
 			{
 				my_mlx_pixel_put(img, center_x + x, center_y + y, PURPLE);
 			}

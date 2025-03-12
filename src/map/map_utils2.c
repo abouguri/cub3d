@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 06:02:42 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 06:04:26 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:10:47 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,9 @@ int	valid_position(t_cub *data, int x, int y)
 int	count_valid_positions(t_cub *data, int map_width, int map_height)
 {
 	int	valid_count;
+	int	x;
+	int	y;
 
-	int x, y;
 	valid_count = 0;
 	y = 1;
 	while (y < map_height - 1)
@@ -64,8 +65,9 @@ void	store_valid_positions(t_cub *data, int map_width, int map_height,
 		t_position *valid_positions)
 {
 	int	position_index;
+	int	x;
+	int	y;
 
-	int x, y;
 	position_index = 0;
 	y = 1;
 	while (y < map_height - 1)
