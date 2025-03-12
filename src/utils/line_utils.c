@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 23:31:10 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 04:17:57 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:54:36 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*create_line(const char *buffer, int length)
 	line = malloc(length + 1);
 	if (!line)
 		return (NULL);
-	strncpy(line, buffer, length);
+	ft_strncpy(line, buffer, length);
 	line[length] = '\0';
 	return (line);
 }
@@ -28,7 +28,7 @@ char	*get_remaining_content(const char *buffer, int index)
 {
 	char	*remaining;
 
-	remaining = strdup(&buffer[index + 1]);
+	remaining = ft_strdup(&buffer[index + 1]);
 	return (remaining);
 }
 

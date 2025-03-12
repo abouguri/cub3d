@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 05:07:21 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:21:31 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 /*                                  INCLUDES                                  */
 /* ************************************************************************** */
 
+# include "libft/libft.h"
 # include "mlx.h"
 # include <fcntl.h>
 # include <math.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
 # include <unistd.h>
 
 /* ************************************************************************** */
@@ -502,6 +502,5 @@ void				applyshading(t_rgb *rgb, double d);
 /* Array Functions */
 int					ft_array_length(char **array);
 char				**ft_split(char const *s, char c);
-int					ft_strncmp(const char *s1, char *s2, size_t n);
 
 #endif

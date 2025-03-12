@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:39:11 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 04:46:21 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:33:38 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	error_exit(const char *message)
 {
-	write(2, message, strlen(message));
+	write(2, message, ft_strlen(message));
 	exit(EXIT_FAILURE);
 }
 

@@ -1,44 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validation_trailing.c                              :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/11 03:50:52 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 05:31:29 by abouguri         ###   ########.fr       */
+/*   Created: 2023/11/19 15:13:49 by abouguri          #+#    #+#             */
+/*   Updated: 2023/11/23 03:01:11 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "libft.h"
 
-int	check_trailing_map_lines(int index)
+char	*ft_strdup(const char *s)
 {
+	char	*dup;
 	int		i;
-	t_cub	*data;
 
-	data = get_cub_data();
-	i = index;
-	i++;
-	while (data->map[i])
+	i = ft_strlen(s);
+	dup = malloc (sizeof (char) * (i + 1));
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (s[i])
 	{
-		if (ft_strlen(data->map[i]) > 0)
-			return (1);
+		dup[i] = s[i];
 		i++;
 	}
-	data->map[i] = NULL;
-	return (0);
-}
-
-int	validate_trailing_lines(int i, t_cub *data)
-{
-	if (ft_strlen(data->map[i]) == 0)
-	{
-		if (check_trailing_map_lines(i) == 1)
-		{
-			printf(TRAILING_EMPTY_LINES);
-			return (1);
-		}
-	}
-	return (0);
+	dup[i] = '\0';
+	return (dup);
 }

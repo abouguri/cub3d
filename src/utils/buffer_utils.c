@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 23:28:17 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 04:17:36 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:33:28 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ int	append_to_buffer(char **buffer, char *new_content, char **temp)
 	i = 0;
 	while ((*temp)[i])
 	{
-		new_content[i + strlen(*buffer)] = (*temp)[i];
+		new_content[i + ft_strlen(*buffer)] = (*temp)[i];
 		i++;
 	}
-	new_content[i + strlen(*buffer)] = '\0';
+	new_content[i + ft_strlen(*buffer)] = '\0';
 	free(*temp);
 	free(*buffer);
 	*buffer = new_content;

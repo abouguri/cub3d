@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 04:39:29 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 03:29:45 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:48:00 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	draw_map_tiles_circular_zoomed(t_cub *data, t_data *img,
 		map_pos.x = -1;
 		while (++map_pos.x < p->view_width)
 		{
-			if (p->start_x + map_pos.x >= (int)strlen(data->map[p->start_y
+			if (p->start_x + map_pos.x >= (int)ft_strlen(data->map[p->start_y
 						+ map_pos.y]))
 				break ;
 			draw_pos.x = p->center_x + (map_pos.x - p->view_width / 2)

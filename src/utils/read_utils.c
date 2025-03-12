@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 23:33:52 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/10 23:49:40 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:33:35 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	read_and_append_to_buffer(char **buffer, int fd, int *bytes_read)
 		return (-1);
 	}
 	temp[*bytes_read] = '\0';
-	combined_content = malloc(strlen(*buffer) + strlen(temp) + 1);
+	combined_content = malloc(ft_strlen(*buffer) + ft_strlen(temp) + 1);
 	if (!combined_content)
 	{
 		free(temp);

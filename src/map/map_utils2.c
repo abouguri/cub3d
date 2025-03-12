@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 06:02:42 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 04:10:47 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:32:14 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	valid_position(t_cub *data, int x, int y)
 {
 	int	row_len;
 
-	row_len = strlen(data->map[y]);
+	row_len = ft_strlen(data->map[y]);
 	return (x < row_len && data->map[y][x] == '0');
 }
 

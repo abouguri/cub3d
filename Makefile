@@ -3,7 +3,7 @@ NAME := cub3d
 
 # Compiler and flags
 CC := gcc 
-CFLAGS := -Wall -Wextra -Werror -DBUFFER_SIZE=100 -Iminilibx-linux -I.
+CFLAGS := -Wall -Wextra -Werror -DBUFFER_SIZE=100 -Iminilibx-linux -I. -Ilibft
 
 # Source files
 SRC := \
@@ -29,15 +29,23 @@ SRC := \
 # Object files
 OBJ := $(SRC:.c=.o)
 
+# Libft settings
+LIBFT_DIR := libft
+LIBFT := $(LIBFT_DIR)/libft.a
+
 # Library paths and linking
-LIBRARY := -Lminilibx-linux -lmlx -L/usr/lib/x86_64-linux-gnu -lXext -lX11 -lm
+LIBRARY := -Lminilibx-linux -lmlx -L/usr/lib/x86_64-linux-gnu -lXext -lX11 -lm -L$(LIBFT_DIR) -lft
 MINILIBX := minilibx-linux/
 
 # Default target
-all: $(NAME)
+all: $(LIBFT) $(NAME)
+
+# Build libft
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
 
 # Build the executable
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBRARY) -o $(NAME)
 
 # Compile object files
@@ -47,10 +55,15 @@ $(NAME): $(OBJ)
 # Clean object files
 clean:
 	rm -f $(OBJ)
+	$(MAKE) -C $(LIBFT_DIR) clean
 
 # Full clean, including the executable
 fclean: clean
 	rm -f $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
 
 # Rebuild everything
 re: fclean all
+
+# Add .PHONY to prevent conflicts with files of the same name
+.PHONY: all clean fclean re

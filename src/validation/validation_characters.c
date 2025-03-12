@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:49:32 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 04:55:12 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:34:44 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	validate_characters(void)
 		z.j = 0;
 		while (data->map[z.i][z.j])
 		{
-			if (!strchr(VALID_MAP_SYMBOLS, data->map[z.i][z.j]))
+			if (!ft_strchr(VALID_MAP_SYMBOLS, data->map[z.i][z.j]))
 				return (0);
 			if (data->map[z.i][z.j] == NORTH || data->map[z.i][z.j] == SOUTH
 				|| data->map[z.i][z.j] == EAST || data->map[z.i][z.j] == WEST)

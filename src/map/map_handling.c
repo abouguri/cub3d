@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:44:30 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 04:07:01 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:30:29 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	handle_empty_line(char *trimmed_line)
 {
-	if (strlen(trimmed_line) == 0)
+	if (ft_strlen(trimmed_line) == 0)
 	{
 		free(trimmed_line);
 		return (0);
@@ -62,7 +62,7 @@ int	parse_map(int fd)
 		ret = get_next_line(fd, &line);
 		if (ret == -1)
 			return (1);
-		if (strlen(line) == 0 && !data->map)
+		if (ft_strlen(line) == 0 && !data->map)
 		{
 			free(line);
 			continue ;

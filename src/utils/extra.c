@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 19:33:54 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 04:46:31 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:49:31 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	initialize_map(t_cub *data, char *line)
 	data->map = malloc(sizeof(char *) * 2);
 	if (!data->map)
 		return (1);
-	data->map[0] = strdup(line);
+	data->map[0] = ft_strdup(line);
 	data->map[1] = NULL;
 	return (0);
 }
@@ -61,14 +61,14 @@ char	*trim_line(const char *line)
 	int			length;
 	char		*trimmed;
 
-	end = start + strlen(start) - 1;
+	end = start + ft_strlen(start) - 1;
 	while (end > start && is_whitespace(*end))
 		end--;
 	length = end - start + 1;
 	trimmed = malloc(length + 1);
 	if (!trimmed)
 		return (NULL);
-	strncpy(trimmed, start, length);
+	ft_strncpy(trimmed, start, length);
 	trimmed[length] = '\0';
 	return (trimmed);
 }

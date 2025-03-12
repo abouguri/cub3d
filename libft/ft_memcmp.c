@@ -1,44 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validation_trailing.c                              :+:      :+:    :+:   */
+/*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/11 03:50:52 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 05:31:29 by abouguri         ###   ########.fr       */
+/*   Created: 2023/11/19 15:08:16 by abouguri          #+#    #+#             */
+/*   Updated: 2023/11/23 03:00:40 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "libft.h"
 
-int	check_trailing_map_lines(int index)
+int	ft_memcmp(const void *s1, const void *s2, size_t n)
 {
-	int		i;
-	t_cub	*data;
+	unsigned char	*p1;
+	unsigned char	*p2;
+	size_t			i;
 
-	data = get_cub_data();
-	i = index;
-	i++;
-	while (data->map[i])
+	p1 = (unsigned char *)s1;
+	p2 = (unsigned char *)s2;
+	i = 0;
+	while (i < n)
 	{
-		if (ft_strlen(data->map[i]) > 0)
-			return (1);
+		if (p1[i] != p2[i])
+			return ((int)p1[i] - p2[i]);
 		i++;
-	}
-	data->map[i] = NULL;
-	return (0);
-}
-
-int	validate_trailing_lines(int i, t_cub *data)
-{
-	if (ft_strlen(data->map[i]) == 0)
-	{
-		if (check_trailing_map_lines(i) == 1)
-		{
-			printf(TRAILING_EMPTY_LINES);
-			return (1);
-		}
 	}
 	return (0);
 }

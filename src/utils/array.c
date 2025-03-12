@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:41:22 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 06:27:49 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:33:23 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,11 @@ char	**ft_split(char const *s, char c)
 	i = 0;
 	j = 0;
 	index = -1;
-	while (i <= strlen(s))
+	while (i <= ft_strlen(s))
 	{
 		if (s[i] != c && index < 0)
 			index = i;
-		else if ((s[i] == c || i == strlen(s)) && index >= 0)
+		else if ((s[i] == c || i == ft_strlen(s)) && index >= 0)
 		{
 			split[j++] = word_dup(s, index, i);
 			index = -1;
@@ -86,15 +86,15 @@ char	**ft_split(char const *s, char c)
 	return (split);
 }
 
-int	ft_strncmp(const char *s1, char *s2, size_t n)
-{
-	while (*s1 != '\0' && *s1 == *s2 && n > 0)
-	{
-		s1++;
-		s2++;
-		n--;
-	}
-	if (n == 0)
-		return (0);
-	return (*(unsigned char *)s1 - *(unsigned char *)s2);
-}
+// int	ft_strncmp(const char *s1, char *s2, size_t n)
+// {
+// 	while (*s1 != '\0' && *s1 == *s2 && n > 0)
+// 	{
+// 		s1++;
+// 		s2++;
+// 		n--;
+// 	}
+// 	if (n == 0)
+// 		return (0);
+// 	return (*(unsigned char *)s1 - *(unsigned char *)s2);
+// }

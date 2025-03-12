@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:42:15 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 03:42:54 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:33:08 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	parse_texture(t_cub *data, char *identifier, char *path, char **tokens)
 		return (map_info_error(tokens, UNKNOWN_IDENTIFIER), 1);
 	if (data->textures[index])
 		return (map_info_error(tokens, DUPLICATE_TEXTURE), 1);
-	data->textures[index] = strdup(path);
+	data->textures[index] = ft_strdup(path);
 	return (0);
 }
 
@@ -44,13 +44,13 @@ int	parse_color(t_cub *data, char *identifier, char *value, char **tokens)
 		return (map_info_error(tokens, UNKNOWN_IDENTIFIER), 1);
 	if (data->colors[index])
 		return (map_info_error(tokens, DUPLICATE_COLOR), 1);
-	data->colors[index] = strdup(value);
+	data->colors[index] = ft_strdup(value);
 	return (0);
 }
 
 int	process_line(char *line)
 {
-	if (strlen(line) == 0)
+	if (ft_strlen(line) == 0)
 	{
 		free(line);
 		return (0);

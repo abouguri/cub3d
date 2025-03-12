@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   file.c                                             :+:      :+:    :+:   */
+/*   file_parsing.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:43:50 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/11 06:16:51 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:28:56 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,16 +58,16 @@ int	append_line_to_map(t_cub *data, char *line)
 	if (!tmp)
 		return (1);
 	data->map = tmp;
-	data->map[current_size] = strdup(line);
+	data->map[current_size] = ft_strdup(line);
 	data->map[current_size + 1] = NULL;
 	return (0);
 }
 
 int	validate_file_extension(const char *filename)
 {
-	const char	*dot = strrchr(filename, '.');
+	const char	*dot = ft_strrchr(filename, '.');
 
-	return (dot && strcmp(dot + 1, "cub") == 0);
+	return (dot && ft_strcmp((char *)dot + 1, "cub") == 0);
 }
 
 int	parse(char *file)

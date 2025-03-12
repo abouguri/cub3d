@@ -1,44 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validation_trailing.c                              :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/11 03:50:52 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 05:31:29 by abouguri         ###   ########.fr       */
+/*   Created: 2023/11/19 19:17:00 by abouguri          #+#    #+#             */
+/*   Updated: 2025/03/12 05:25:31 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "libft.h"
 
-int	check_trailing_map_lines(int index)
+int	ft_strncmp(const char *s1, char *s2, size_t n)
 {
-	int		i;
-	t_cub	*data;
+	int	i;
 
-	data = get_cub_data();
-	i = index;
-	i++;
-	while (data->map[i])
+	i = 0;
+	while (n > 0)
 	{
-		if (ft_strlen(data->map[i]) > 0)
-			return (1);
+		if (s1[i] == '\0' || s1[i] != s2[i])
+			return ((int)((unsigned char)s1[i] - (unsigned char)s2[i]));
 		i++;
+		n--;
 	}
-	data->map[i] = NULL;
 	return (0);
 }
 
-int	validate_trailing_lines(int i, t_cub *data)
+int ft_strcmp(char *s1, char *s2)
 {
-	if (ft_strlen(data->map[i]) == 0)
-	{
-		if (check_trailing_map_lines(i) == 1)
-		{
-			printf(TRAILING_EMPTY_LINES);
-			return (1);
-		}
-	}
-	return (0);
+	int i = 0;
+
+	while((s1[i] == s2[i]) && s1[i] && s2[i])
+		i++;
+	return (s1[i]-s2[i]);
 }
