@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 05:21:31 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/13 00:39:29 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@
 
 /* Enemy Settings */
 # define ENEMIES_COUNT 7
-# define ENEMY_PATH "./textures/enemy3.xpm"
+# define ENEMY_PATH "./textures/enemy_test.xpm"
 
 /* Input Controls - Linux */
 # define KEY_ESC 65307

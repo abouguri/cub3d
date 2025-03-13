@@ -6,20 +6,20 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:36:28 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 05:57:28 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/13 01:53:39 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
+# include <limits.h>
 # include <stddef.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <limits.h>
-# define SIZE_MAX (~(size_t)0)
+# define SIZE_MAX 0xFFFFFFFFFFFFFFFF
 
 int		ft_isalpha(int c);
-int     ft_strcmp(char *s1, char *s2);
+int		ft_strcmp(char *s1, char *s2);
 char	*ft_strncpy(char *dest, const char *src, unsigned int n);
 int		ft_isdigit(int c);
 int		ft_isalnum(int c);
@@ -50,7 +50,7 @@ void	*ft_memcpy(void *dest, const void *src, size_t n);
 void	*ft_memmove(void *dest, const void *src, size_t n);
 void	*ft_memchr(const void *s, int c, size_t n);
 void	*ft_calloc(size_t nmemb, size_t size);
-void	ft_striteri(char *s, void (*f)(unsigned int, char*));
+void	ft_striteri(char *s, void (*f)(unsigned int, char *));
 size_t	ft_strlen(const char *str);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);
 size_t	ft_strlcat(char *dest, const char *src, size_t size);
