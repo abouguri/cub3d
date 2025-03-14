@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 23:56:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/10 23:58:38 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/14 03:54:12 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	handle_keypress(int keycode, t_game_state *game)
 {
 	if (keycode == KEY_ESC)
-		exit_game(game);
+		on_destroy(game);
 	else if (keycode == KEY_W)
 		game->keys.w_pressed = 1;
 	else if (keycode == KEY_S)
@@ -45,5 +45,15 @@ int	handle_keyrelease(int keycode, t_game_state *game)
 		game->keys.left_pressed = 0;
 	else if (keycode == KEY_RIGHT)
 		game->keys.right_pressed = 0;
+	return (0);
+}
+
+int	on_destroy(void *data)
+{
+	t_game_state	*game;
+
+	game = (t_game_state *)data;
+	if (game && game->data && game->data->mlx)
+		mlx_loop_end(game->data->mlx);
 	return (0);
 }

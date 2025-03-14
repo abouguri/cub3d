@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:48:05 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 03:39:05 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/14 03:55:58 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	init_enemy(t_enemy *enemy, double pos_x, double pos_y)
 	enemy->pos_y = pos_y;
 	enemy->dir_x = 1.0;
 	enemy->dir_y = 0.0;
-	enemy->move_speed = 0.005;
+	enemy->move_speed = 0.01;
 	enemy->state = 0;
 	enemy->detection_radius = 3.0;
 	enemy->move_timer = 0;
@@ -41,7 +41,7 @@ void	init_window_and_hooks(t_cub *data, t_game_state *g)
 	mlx_hook(data->win, 2, 1L << 0, handle_keypress, g);
 	mlx_hook(data->win, 3, 1L << 1, handle_keyrelease, g);
 	mlx_hook(data->win, 6, 1L << 6, handle_mouse_move, g);
-	mlx_hook(data->win, 17, 0L, on_destroy, data);
+	mlx_hook(data->win, 17, 0L, on_destroy, g);
 	mlx_mouse_hide(data->mlx, data->win);
 	mlx_mouse_move(data->mlx, data->win, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	mlx_loop_hook(data->mlx, render_frame, g);
@@ -82,6 +82,5 @@ void	init(void)
 		return ;
 	init_window_and_hooks(data, g);
 	mlx_loop(data->mlx);
-	free(g->img);
-	free(g);
+	cleanup_resources(g);
 }

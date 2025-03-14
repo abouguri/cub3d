@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/13 00:39:29 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/14 03:52:23 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -430,7 +430,6 @@ int					handle_keypress(int keycode, t_game_state *game);
 int					handle_keyrelease(int keycode, t_game_state *game);
 int					handle_mouse_move(int x, int y, t_game_state *game);
 void				handle_player_movement(t_game_state *game);
-int					exit_game(t_game_state *game);
 int					on_destroy(void *data);
 
 /* Movement */
@@ -475,6 +474,7 @@ void				error_exit_fd_cleanup(const char *message, int fd);
 void				error_exit_cleanup(const char *message);
 void				free_array(char ***array);
 void				free_resources(t_cub *data);
+void				cleanup_resources(t_game_state *game);
 char				**reallocate_map_memory(char **pointer, int size);
 void				map_info_error(char **tokens, char *s);
 void				custom_srand(t_game_state *g, unsigned int seed);

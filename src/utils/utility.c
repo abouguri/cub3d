@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:39:11 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 05:33:38 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/13 21:46:15 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	free_array(char ***array)
 {
 	int	i;
 
-	if (!*array)
+	if (!array || !*array)
 		return ;
 	i = 0;
 	while ((*array)[i])
