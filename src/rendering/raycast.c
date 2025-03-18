@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 20:59:25 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 03:05:24 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/18 03:14:45 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	get_map_height(char **map)
 	return (height);
 }
 
-void	update_render(t_game_state *game)
+void	update_render_enemies(t_game_state *game)
 {
 	update_enemies(game);
 	render_enemies(game, game->z_buffer);
@@ -48,7 +48,7 @@ void	raycast(t_game_state *game)
 		draw_textured_line(ctx.img, x, &ctx.render, ctx.data);
 	}
 	if (game->enemy_manager.enemies != NULL)
-		update_render(game);
+		update_render_enemies(game);
 	if (game->player.is_damaged)
 		apply_damage_effect(game);
 	draw_health_bar(game);
