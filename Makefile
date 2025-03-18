@@ -20,7 +20,8 @@ SRC := \
 	src/rendering/map_render.c src/rendering/image_utils.c src/rendering/dda.c \
 	src/movement/movement.c src/movement/rotation.c src/movement/player_movement.c \
 	src/enemies/enemy_render.c src/enemies/enemy_movement.c src/enemies/enemy_update.c \
-	src/enemies/enemy_spawn.c \
+	src/enemies/enemy_spawn.c src/enemies/enemy_damage.c src/enemies/enemy_gameover.c \
+	src/enemies/enemy_effect.c \
 	src/map/map_handling.c src/map/map_utils2.c \
 	src/utils/utility.c src/utils/extra.c src/utils/math_utils.c \
 	src/utils/buffer_utils.c \

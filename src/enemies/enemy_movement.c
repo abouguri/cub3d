@@ -95,14 +95,14 @@ void	update_enemy_following(t_game_state *game, t_enemy *enemy)
 		enemy->state = 0;
 }
 
-int is_player_colliding_with_enemy(t_enemy *enemy, t_cub *data)
+int	is_player_colliding_with_enemy(t_enemy *enemy, t_cub *data)
 {
-    double dx;
-    double dy;
-    double distance;
+	double	dx;
+	double	dy;
+	double	distance;
 
 	dx = data->var.position_x - enemy->pos_x;
-    dy = data->var.position_y - enemy->pos_y;
+	dy = data->var.position_y - enemy->pos_y;
 	distance = sqrt(dx * dx + dy * dy);
-    return (distance <= 0.5);
+	return (distance <= 0.5);
 }

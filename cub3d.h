@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 01:27:25 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/18 02:08:52 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,62 +287,60 @@ typedef struct s_map_params
 /* Game State */
 typedef enum e_game_status
 {
-    GAME_ACTIVE,
-    GAME_OVER,
-    GAME_WIN,
-    GAME_PAUSED
-} t_game_status;
+	GAME_ACTIVE,
+	GAME_OVER,
+	GAME_WIN,
+	GAME_PAUSED
+}	t_game_status;
 
 typedef struct s_player_stats
 {
-	int health;
-	int max_health;
-	int damage_cooldown;
-	int is_damaged;
-} t_player_stats;
+	int	health;
+	int	max_health;
+	int	damage_cooldown;
+	int	is_damaged;
+}		t_player_stats;
 
 typedef struct s_health_bar
 {
-    int x;
-    int y;
-    int width;
-    int height;
-    int fill_width;
-    int bg_color;
-    int fill_color;
-} t_health_bar;
+	int	x;
+	int	y;
+	int	width;
+	int	height;
+	int	fill_width;
+	int	bg_color;
+	int	fill_color;
+}		t_health_bar;
 
 typedef struct s_rectangle
 {
-    int x;
-    int y;
-    int width;
-    int height;
-    int color;
-} t_rectangle;
+	int	x;
+	int	y;
+	int	width;
+	int	height;
+	int	color;
+}		t_rectangle;
 
 typedef struct s_game_state
 {
-    t_cub           *data;
-    t_data          *img;
-    t_keys          keys;
-    t_enemy_manager enemy_manager;
-    t_player_stats  player;
-    double          z_buffer[SCREEN_WIDTH];
-    int             prev_mouse_x;
-    unsigned int    rand_state;
-    int             game_status;
-    int             game_over_timer;
-	int             render_game_over_text;
-    
-    // For game reset functionality
-    double          initial_pos_x;
-    double          initial_pos_y;
-    double          initial_dir_x;
-    double          initial_dir_y;
-    double          initial_plane_x;
-    double          initial_plane_y;
-} t_game_state;
+	t_cub			*data;
+	t_data			*img;
+	t_keys			keys;
+	t_enemy_manager	enemy_manager;
+	t_player_stats	player;
+	double			z_buffer[SCREEN_WIDTH];
+	int				prev_mouse_x;
+	unsigned int	rand_state;
+	int				game_status;
+	int				game_over_timer;
+	int				render_game_over_text;
+	double			initial_pos_x;
+	double			initial_pos_y;
+	double			initial_dir_x;
+	double			initial_dir_y;
+	double			initial_plane_x;
+	double			initial_plane_y;
+}					t_game_state;
 
 /* Sprite Rendering */
 typedef struct s_transform
