@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/17 23:17:45 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/18 00:43:56 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,21 +295,21 @@ typedef enum e_game_status
 
 typedef struct s_player_stats
 {
-	int health;          // Player's current health
-	int max_health;      // Maximum health capacity
-	int damage_cooldown; // Cooldown timer after taking damage
-	int is_damaged;      // Flag indicating if player just took damage
+	int health;
+	int max_health;
+	int damage_cooldown;
+	int is_damaged;
 } t_player_stats;
 
 typedef struct s_health_bar
 {
-    int x;          // X position of the health bar
-    int y;          // Y position of the health bar
-    int width;      // Total width of the health bar
-    int height;     // Height of the health bar
-    int fill_width; // Width of the filled portion based on health
-    int bg_color;   // Background color
-    int fill_color; // Color of the filled portion
+    int x;
+    int y;
+    int width;
+    int height;
+    int fill_width;
+    int bg_color;
+    int fill_color;
 } t_health_bar;
 
 typedef struct s_game_state
