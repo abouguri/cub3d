@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 05:36:10 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/12 03:51:05 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/18 00:28:15 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,4 +93,16 @@ void	update_enemy_following(t_game_state *game, t_enemy *enemy)
 	}
 	if (!is_player_detected(enemy, data))
 		enemy->state = 0;
+}
+
+int is_player_colliding_with_enemy(t_enemy *enemy, t_cub *data)
+{
+    double dx;
+    double dy;
+    double distance;
+
+	dx = data->var.position_x - enemy->pos_x;
+    dy = data->var.position_y - enemy->pos_y;
+	distance = sqrt(dx * dx + dy * dy);
+    return (distance <= 0.5);
 }

@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/14 03:52:23 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/17 23:17:45 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@
 # define KEY_A 97
 # define KEY_S 115
 # define KEY_D 100
+# define KEY_R 114
 # define KEY_LEFT 65361
 # define KEY_RIGHT 65363
 
@@ -91,6 +92,10 @@
 # define COOL_DARKGREY 0x50505A
 # define ALMOST_BLACK 0x0A0A14
 # define BRIGHT_RED 0xC80000
+# define ALPHA_MASK 0xFF000000
+# define RED_MASK   0x00FF0000
+# define GREEN_MASK 0x0000FF00
+# define BLUE_MASK  0x000000FF
 
 /* Error Messages */
 # define ERR_TOO_FEW_ARGS "Error\nToo few arguments. Provide a .cub file.\n"
@@ -280,16 +285,55 @@ typedef struct s_map_params
 }					t_map_params;
 
 /* Game State */
+typedef enum e_game_status
+{
+    GAME_ACTIVE,
+    GAME_OVER,
+    GAME_WIN,
+    GAME_PAUSED
+} t_game_status;
+
+typedef struct s_player_stats
+{
+	int health;          // Player's current health
+	int max_health;      // Maximum health capacity
+	int damage_cooldown; // Cooldown timer after taking damage
+	int is_damaged;      // Flag indicating if player just took damage
+} t_player_stats;
+
+typedef struct s_health_bar
+{
+    int x;          // X position of the health bar
+    int y;          // Y position of the health bar
+    int width;      // Total width of the health bar
+    int height;     // Height of the health bar
+    int fill_width; // Width of the filled portion based on health
+    int bg_color;   // Background color
+    int fill_color; // Color of the filled portion
+} t_health_bar;
+
 typedef struct s_game_state
 {
-	t_cub			*data;
-	t_data			*img;
-	t_keys			keys;
-	t_enemy_manager	enemy_manager;
-	double			z_buffer[SCREEN_WIDTH];
-	int				prev_mouse_x;
-	unsigned int	rand_state;
-}					t_game_state;
+    t_cub           *data;
+    t_data          *img;
+    t_keys          keys;
+    t_enemy_manager enemy_manager;
+    t_player_stats  player;
+    double          z_buffer[SCREEN_WIDTH];
+    int             prev_mouse_x;
+    unsigned int    rand_state;
+    int             game_status;
+    int             game_over_timer;
+	int             render_game_over_text;
+    
+    // For game reset functionality
+    double          initial_pos_x;
+    double          initial_pos_y;
+    double          initial_dir_x;
+    double          initial_dir_y;
+    double          initial_plane_x;
+    double          initial_plane_y;
+} t_game_state;
 
 /* Sprite Rendering */
 typedef struct s_transform
@@ -418,6 +462,8 @@ void				calc_texture_coords(t_dda *dda, t_var *var,
 						t_render *render, t_vector ray_dir);
 
 /* Rendering */
+void				draw_game_over(t_game_state *game);
+void				apply_screen_overlay(t_data *img, int factor);
 void				draw_textured_line(t_data *img, int x, t_render *render,
 						t_cub *data);
 void				draw_floor_ceiling(t_data *img, int x, t_render *render,
@@ -447,6 +493,10 @@ void				setup_render_context(t_render_context *ctx);
 int					is_player_detected(t_enemy *enemy, t_cub *data);
 void				update_enemy_random_movement(t_game_state *game,
 						t_enemy *enemy);
+int					is_player_colliding_with_enemy(t_enemy *enemy, t_cub *data);
+void				check_enemy_damage(t_game_state *game, t_enemy *enemy);
+void				draw_health_bar(t_game_state *game);
+void				apply_damage_effect(t_game_state *game);
 void				update_enemy_following(t_game_state *game, t_enemy *enemy);
 
 /* Minimap Rendering */

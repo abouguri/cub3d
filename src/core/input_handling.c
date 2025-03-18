@@ -6,16 +6,39 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 23:56:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/14 03:54:12 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/18 00:26:38 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
+static void reset_game(t_game_state *game)
+{
+    game->player.health = 100;
+    game->player.damage_cooldown = 0;
+    game->player.is_damaged = 0;
+    game->game_status = GAME_ACTIVE;
+    game->data->var.position_x = game->initial_pos_x;
+    game->data->var.position_y = game->initial_pos_y;
+    if (game->enemy_manager.enemies)
+    {
+        free(game->enemy_manager.enemies);
+        game->enemy_manager.enemies = NULL;
+    }
+    initialize_enemies(game);
+    init_input_state(game);
+}
+
 int	handle_keypress(int keycode, t_game_state *game)
 {
 	if (keycode == KEY_ESC)
 		on_destroy(game);
+	if (game->game_status == GAME_OVER)
+	{
+		if (keycode == KEY_R)
+			reset_game(game);
+		return (0);
+	}
 	else if (keycode == KEY_W)
 		game->keys.w_pressed = 1;
 	else if (keycode == KEY_S)
