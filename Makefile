@@ -8,7 +8,7 @@ CFLAGS := -Wall -Wextra -Werror -DBUFFER_SIZE=100 -Iminilibx-linux -I. -Ilibft
 # Source files
 SRC := \
 	src/core/main.c src/core/init.c src/core/exit_handling.c src/core/input_handling.c \
-	src/core/mouse_handling.c src/core/init2.c \
+	src/core/mouse_handling.c src/core/init2.c src/core/init_game.c\
 	src/parsing/parse.c src/parsing/file_parsing.c src/parsing/texture_parsing.c \
 	src/parsing/get_next_line.c src/parsing/textures.c \
 	src/validation/map_validation.c src/validation/map_validation2.c \

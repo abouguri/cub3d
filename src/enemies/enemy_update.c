@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 05:37:04 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 00:34:59 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/18 01:29:32 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,51 +77,62 @@ void	sort_enemies_by_distance(t_game_state *game)
 	}
 }
 
-void	check_enemy_damage(t_game_state *game, t_enemy *enemy)
+static double	get_player_enemy_distance(t_game_state *game, t_enemy *enemy)
 {
 	double	dx;
 	double	dy;
-	double	distance;
 
 	dx = game->data->var.position_x - enemy->pos_x;
 	dy = game->data->var.position_y - enemy->pos_y;
-	distance = sqrt(dx * dx + dy * dy);
-	if (game->player.damage_cooldown <= 0 && game->game_status == 0)
+	return (sqrt(dx * dx + dy * dy));
+}
+
+static void	damage_player(t_game_state *game)
+{
+	game->player.health -= 10;
+	game->player.is_damaged = 1;
+	game->player.damage_cooldown = 60;
+	if (game->player.health <= 0)
 	{
-		if (distance <= 0.5)
-		{
-			game->player.health -= 10;
-			game->player.is_damaged = 1;
-			game->player.damage_cooldown = 60;
-			if (game->player.health <= 0)
-			{
-				game->player.health = 0;
-				game->game_status = GAME_OVER;
-				game->game_over_timer = 180;
-			}
-		}
-	}
-	else if (game->player.damage_cooldown > 0)
-	{
-		game->player.damage_cooldown--;
-		if (game->player.damage_cooldown == 0)
-			game->player.is_damaged = 0;
+		game->player.health = 0;
+		game->game_status = GAME_OVER;
+		game->game_over_timer = 180;
 	}
 }
 
-void	draw_rectangle(t_game_state *game, int x, int y, int width, int height,
-		int color)
+static void	update_damage_cooldown(t_game_state *game)
+{
+	game->player.damage_cooldown--;
+	if (game->player.damage_cooldown == 0)
+		game->player.is_damaged = 0;
+}
+
+void	check_enemy_damage(t_game_state *game, t_enemy *enemy)
+{
+	double	distance;
+
+	distance = get_player_enemy_distance(game, enemy);
+	if (game->player.damage_cooldown <= 0 && game->game_status == GAME_ACTIVE)
+	{
+		if (distance <= 0.5)
+			damage_player(game);
+	}
+	else if (game->player.damage_cooldown > 0)
+		update_damage_cooldown(game);
+}
+
+void	draw_rectangle(t_game_state *game, t_rectangle rect)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (i < width)
+	while (i < rect.width)
 	{
 		j = 0;
-		while (j < height)
+		while (j < rect.height)
 		{
-			my_mlx_pixel_put(game->img, x + i, y + j, color);
+			my_mlx_pixel_put(game->img, rect.x + i, rect.y + j, rect.color);
 			j++;
 		}
 		i++;
@@ -144,6 +155,8 @@ int	get_health_bar_color(int health, int max_health)
 void	draw_health_bar(t_game_state *game)
 {
 	t_health_bar	bar;
+	t_rectangle		bg_rect;
+	t_rectangle		fill_rect;
 
 	bar.width = 200;
 	bar.height = 20;
@@ -154,9 +167,18 @@ void	draw_health_bar(t_game_state *game)
 	bar.bg_color = DARK_RED;
 	bar.fill_color = get_health_bar_color(game->player.health,
 			game->player.max_health);
-	draw_rectangle(game, bar.x, bar.y, bar.width, bar.height, bar.bg_color);
-	draw_rectangle(game, bar.x, bar.y, bar.fill_width, bar.height,
-		bar.fill_color);
+	bg_rect.x = bar.x;
+	bg_rect.y = bar.y;
+	bg_rect.width = bar.width;
+	bg_rect.height = bar.height;
+	bg_rect.color = bar.bg_color;
+	fill_rect.x = bar.x;
+	fill_rect.y = bar.y;
+	fill_rect.width = bar.fill_width;
+	fill_rect.height = bar.height;
+	fill_rect.color = bar.fill_color;
+	draw_rectangle(game, bg_rect);
+	draw_rectangle(game, fill_rect);
 }
 
 void	apply_damage_effect(t_game_state *game)

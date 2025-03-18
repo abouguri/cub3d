@@ -12,21 +12,21 @@
 
 #include "cub3d.h"
 
-static void reset_game(t_game_state *game)
+static void	reset_game(t_game_state *game)
 {
-    game->player.health = 100;
-    game->player.damage_cooldown = 0;
-    game->player.is_damaged = 0;
-    game->game_status = GAME_ACTIVE;
-    game->data->var.position_x = game->initial_pos_x;
-    game->data->var.position_y = game->initial_pos_y;
-    if (game->enemy_manager.enemies)
-    {
-        free(game->enemy_manager.enemies);
-        game->enemy_manager.enemies = NULL;
-    }
-    initialize_enemies(game);
-    init_input_state(game);
+	game->player.health = 100;
+	game->player.damage_cooldown = 0;
+	game->player.is_damaged = 0;
+	game->game_status = GAME_ACTIVE;
+	game->data->var.position_x = game->initial_pos_x;
+	game->data->var.position_y = game->initial_pos_y;
+	if (game->enemy_manager.enemies)
+	{
+		free(game->enemy_manager.enemies);
+		game->enemy_manager.enemies = NULL;
+	}
+	initialize_enemies(game);
+	init_input_state(game);
 }
 
 int	handle_keypress(int keycode, t_game_state *game)

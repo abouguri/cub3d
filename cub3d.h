@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 00:43:56 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/18 01:27:25 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,6 +311,15 @@ typedef struct s_health_bar
     int bg_color;
     int fill_color;
 } t_health_bar;
+
+typedef struct s_rectangle
+{
+    int x;
+    int y;
+    int width;
+    int height;
+    int color;
+} t_rectangle;
 
 typedef struct s_game_state
 {
