@@ -1,8 +1,8 @@
 
-NO ./textures/pink_texture3.xpm
-SO ./textures/pink_texture8.xpm
-WE ./textures/pink_texture6.xpm
-EA ./textures/Pink_texture1.xpm
+NO ./textures/texture_heart.xpm
+SO ./textures/texture_heart.xpm
+WE ./textures/texture_heart.xpm
+EA ./textures/texture_heart.xpm
 
 
 

@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 03:48:05 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 00:59:44 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/20 04:52:30 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,21 @@
 
 void	init_enemy(t_enemy *enemy, double pos_x, double pos_y)
 {
+    double base_move_speed = 0.02;
+    double base_detection_radius = 2.0;
+    double reference_width = 1280.0;
+    double reference_height = 720.0;
+    double scale_factor_width = (double)SCREEN_WIDTH / reference_width;
+    double scale_factor_height = (double)SCREEN_HEIGHT / reference_height;
+    double scale_factor = (scale_factor_width + scale_factor_height) / 2.0;
+	
 	enemy->pos_x = pos_x;
 	enemy->pos_y = pos_y;
 	enemy->dir_x = 1.0;
 	enemy->dir_y = 0.0;
-	enemy->move_speed = 0.01;
+	enemy->move_speed = base_move_speed * scale_factor;
+	enemy->detection_radius = base_detection_radius * scale_factor;
 	enemy->state = 0;
-	enemy->detection_radius = 3.0;
 	enemy->move_timer = 0;
 }
 

@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 01:00:20 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 01:01:01 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/20 04:26:08 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,17 @@ static int	init_game_resources(t_game_state *g, t_cub *data)
 {
 	init_window(data, g->img, SCREEN_WIDTH, SCREEN_HEIGHT);
 	if (init_textures_and_colors(data))
+	{
+		cleanup_game_image(g, data);
+		free(g);
+		free_array(&data->textures);
+		free_array(&data->colors);
+		free_array(&data->map);
+		cleanup_texture_images(data);
+		cleanup_mlx(data);
+		error_exit_cleanup("");
 		return (1);
+	}
 	return (0);
 }
 

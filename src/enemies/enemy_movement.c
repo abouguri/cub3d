@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 05:36:10 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 00:28:15 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/20 04:55:31 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	update_enemy_random_movement(t_game_state *game, t_enemy *enemy)
 	{
 		enemy->dir_x = -enemy->dir_x;
 		enemy->dir_y = -enemy->dir_y;
-		enemy->move_timer = 95;
+		enemy->move_timer = 99;
 	}
 }
 

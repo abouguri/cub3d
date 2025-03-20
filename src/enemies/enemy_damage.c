@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 01:45:32 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 01:45:56 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/20 05:00:07 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	damage_player(t_game_state *game)
 {
 	game->player.health -= 10;
 	game->player.is_damaged = 1;
-	game->player.damage_cooldown = 60;
+	game->player.damage_cooldown = 20;
 	if (game->player.health <= 0)
 	{
 		game->player.health = 0;

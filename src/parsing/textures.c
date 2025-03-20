@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 21:03:47 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/08 07:07:48 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/20 04:26:59 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ int	parse_rgb(char *str)
 	if (!rgb_values || ft_array_length(rgb_values) != 3)
 	{
 		free_array(&rgb_values);
-		error_exit_cleanup("Error\nCheck colors mhan");
 		return (-1);
 	}
 	r = atoi(rgb_values[0]);
@@ -84,7 +83,7 @@ int	parse_rgb(char *str)
 	free_array(&rgb_values);
 	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
 	{
-		error_exit_cleanup("Error\nColors can't be written that way");
+		ft_putstr("Error\nColors are not valid\n");
 		return (-1);
 	}
 	color = (r << 16) | (g << 8) | b;
@@ -99,7 +98,10 @@ int	init_textures_and_colors(t_cub *data)
 	while (i < TEXTURE_COUNT)
 	{
 		if (load_texture(data, i, data->textures[i]))
+		{
+			printf("Error\nTextures are not valid\n");
 			return (1);
+		}
 		i++;
 	}
 	data->floor = parse_rgb(data->colors[0]);

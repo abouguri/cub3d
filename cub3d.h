@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 18:03:44 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 02:08:52 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/20 23:17:12 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -536,6 +536,9 @@ char				**reallocate_map_memory(char **pointer, int size);
 void				map_info_error(char **tokens, char *s);
 void				custom_srand(t_game_state *g, unsigned int seed);
 unsigned int		custom_rand(t_game_state *g);
+void				cleanup_texture_images(t_cub *cub_data);
+void				cleanup_mlx(t_cub *cub_data);
+void				cleanup_game_image(t_game_state *game, t_cub *cub_data);
 
 /* Buffer Handling */
 void				clear_buffer(char **buffer);
