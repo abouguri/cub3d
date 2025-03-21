@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   player_movement.c                                  :+:      :+:    :+:   */
+/*   init3.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/11 06:04:56 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/21 01:16:44 by abouguri         ###   ########.fr       */
+/*   Created: 2025/03/21 00:47:53 by abouguri          #+#    #+#             */
+/*   Updated: 2025/03/21 00:51:30 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,43 +26,34 @@ static double	calculate_scale_factor(void)
 	return ((scale_factor_width + scale_factor_height) / 2.0);
 }
 
-static double	calculate_movement_speed(void)
+static double	calculate_enemy_speed(void)
 {
 	double	base_move_speed;
 	double	scale_factor;
 
-	base_move_speed = 0.03;
+	base_move_speed = 0.02;
 	scale_factor = calculate_scale_factor();
 	return (base_move_speed * scale_factor);
 }
 
-static double	calculate_rotation_speed(void)
+static double	calculate_detection_radius(void)
 {
-	double	base_rot_speed;
+	double	base_detection_radius;
 	double	scale_factor;
 
-	base_rot_speed = 0.02;
+	base_detection_radius = 2.0;
 	scale_factor = calculate_scale_factor();
-	return (base_rot_speed * scale_factor);
+	return (base_detection_radius * scale_factor);
 }
 
-void	handle_player_movement(t_game_state *game)
+void	init_enemy(t_enemy *enemy, double pos_x, double pos_y)
 {
-	double	move_speed;
-	double	rot_speed;
-
-	move_speed = calculate_movement_speed();
-	rot_speed = calculate_rotation_speed();
-	if (game->keys.w_pressed)
-		move_forward_backward(game->data, move_speed, 1);
-	if (game->keys.s_pressed)
-		move_forward_backward(game->data, move_speed, -1);
-	if (game->keys.a_pressed)
-		move_strafe(game->data, move_speed, 1);
-	if (game->keys.d_pressed)
-		move_strafe(game->data, move_speed, -1);
-	if (game->keys.left_pressed)
-		rotate_view(game->data, rot_speed, -1);
-	if (game->keys.right_pressed)
-		rotate_view(game->data, rot_speed, 1);
+	enemy->pos_x = pos_x;
+	enemy->pos_y = pos_y;
+	enemy->dir_x = 1.0;
+	enemy->dir_y = 0.0;
+	enemy->move_speed = calculate_enemy_speed();
+	enemy->detection_radius = calculate_detection_radius();
+	enemy->state = 0;
+	enemy->move_timer = 0;
 }

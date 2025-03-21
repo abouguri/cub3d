@@ -6,7 +6,7 @@
 /*   By: abouguri <abouguri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 05:37:04 by abouguri          #+#    #+#             */
-/*   Updated: 2025/03/18 01:56:52 by abouguri         ###   ########.fr       */
+/*   Updated: 2025/03/21 01:44:19 by abouguri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,32 +74,5 @@ void	sort_enemies_by_distance(t_game_state *game)
 			i.j++;
 		}
 		i.i++;
-	}
-}
-
-void	apply_damage_effect(t_game_state *game)
-{
-	int	i;
-	int	j;
-	int	color;
-
-	if (game->player.is_damaged)
-	{
-		i = 0;
-		while (i < SCREEN_WIDTH)
-		{
-			j = 0;
-			while (j < SCREEN_HEIGHT)
-			{
-				color = ((unsigned char *)game->img->addr)[j
-					* game->img->line_length + i * (game->img->bits_per_pixel
-						/ 8)];
-				color = ((color & 0xFF0000)) | ((color & 0x00FF00))
-					| ((color & 0x0000FF));
-				my_mlx_pixel_put(game->img, i, j, color);
-				j++;
-			}
-			i++;
-		}
 	}
 }
