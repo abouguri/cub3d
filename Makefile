@@ -36,7 +36,6 @@ LIBFT := $(LIBFT_DIR)/libft.a
 
 # Library paths and linking
 LIBRARY := -Lminilibx-linux -lmlx -L/usr/lib/x86_64-linux-gnu -lXext -lX11 -lm -L$(LIBFT_DIR) -lft
-MINILIBX := minilibx-linux/
 
 # Default target
 all: $(LIBFT) $(NAME)
@@ -67,4 +66,4 @@ fclean: clean
 re: fclean all
 
 # Add .PHONY to prevent conflicts with files of the same name
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus
