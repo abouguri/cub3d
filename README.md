@@ -40,6 +40,7 @@ Built as part of the 42 Network curriculum, this project goes beyond the mandato
 - ✅ **100% Mandatory Requirements** - All core features implemented
 - 🌟 **All Bonus Features** - Minimap, wall collisions, mouse controls, animated sprites
 - 🚀 **Advanced Features** - Enemy AI system, player health, game states, visual effects
+- 💀 **Combat System** - Health bar, damage mechanics, enemy attacks, and death conditions
 
 ---
 
@@ -59,10 +60,12 @@ Built as part of the 42 Network curriculum, this project goes beyond the mandato
 - **Clean UI** - Minimalist interface focusing on gameplay
 
 ### 👾 Advanced Systems
-- **Enemy AI** - Intelligent enemy behavior with detection and following
-- **Health System** - Player health with damage visualization
-- **Visual Effects** - Screen overlays, damage effects, and dynamic lighting
-- **Game States** - Win/lose conditions with proper game flow
+- **Enemy AI** - Intelligent enemy behavior with detection, following, and attack patterns
+- **Health System** - Dynamic health bar that decreases when enemies attack the player
+- **Damage Mechanics** - Real-time damage detection with visual feedback and cooldown system
+- **Death System** - Player can die when health reaches zero, triggering game over state
+- **Visual Effects** - Screen overlays, damage effects, red screen flash on damage
+- **Game States** - Complete win/lose conditions with proper game flow management
 
 ### 🎨 Graphics & Audio
 - **64x64 Textures** - High-quality wall and sprite textures
@@ -99,6 +102,24 @@ void raycast(t_game_state *game)
 - **Efficient Resource Handling** - Proper allocation and deallocation
 - **Texture Caching** - Pre-loaded textures for optimal performance
 - **Clean Exit** - Graceful shutdown with complete memory cleanup
+
+### Health & Combat System
+```c
+// Player health management with damage cooldown
+typedef struct s_player_stats {
+    int health;
+    int max_health;
+    int damage_cooldown;
+    int is_damaged;
+} t_player_stats;
+
+// Health bar rendering with dynamic width based on current health
+void draw_health_bar(t_game_state *game) {
+    t_health_bar bar;
+    bar.fill_width = (game->player.health * bar.width) / game->player.max_health;
+    // Render health bar with visual damage feedback
+}
+```
 
 ### Architecture
 - **Modular Design** - Separated concerns across multiple modules
@@ -273,11 +294,47 @@ cub3d/
 
 ## 🖼️ Screenshots
 
-*Add screenshots here showing:*
-- *Game in action with textured walls*
-- *Minimap functionality*  
-- *Different map environments*
-- *Enemy interactions*
+<div align="center">
+
+### 🎮 Game in Action
+
+<table>
+<tr>
+<td align="center">
+<img src="Assets/cub3d01.png" width="400" alt="cub3D Gameplay 1"/>
+<br/>
+<em>First-person 3D view with textured walls</em>
+</td>
+<td align="center">
+<img src="Assets/cub3d02.png" width="400" alt="cub3D Gameplay 2"/>
+<br/>
+<em>Different environment and lighting</em>
+</td>
+</tr>
+<tr>
+<td align="center">
+<img src="Assets/cub3d05.png" width="400" alt="cub3D Gameplay 3"/>
+<br/>
+<em>Minimap functionality and navigation</em>
+</td>
+<td align="center">
+<img src="Assets/cub3d04.png" width="400" alt="cub3D Gameplay 4"/>
+<br/>
+<em>Enemy interactions and visual effects</em>
+</td>
+</tr>
+</table>
+
+### ✨ Key Visual Features Shown:
+- **Raycasting 3D Rendering** - Smooth perspective with proper depth
+- **Textured Walls** - Different textures for each cardinal direction
+- **Interactive Minimap** - Real-time circular map with player position
+- **Enemy System** - AI-controlled enemies with sprite rendering and attack behavior
+- **Health Bar System** - Dynamic health visualization that decreases when taking damage
+- **Visual Effects** - Screen overlays, damage indicators, and death animations
+- **Multiple Environments** - Various map themes and textures
+
+</div>
 
 ---
 

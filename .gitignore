@@ -1,0 +1,25 @@
+# Compiled executable
+cub3d
+
+# Object files
+*.o
+*.a
+
+# Build directories
+libft/*.o
+libft/*.a
+src/*/*.o
+
+# System files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
