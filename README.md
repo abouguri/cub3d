@@ -3,6 +3,7 @@
 <div align="center">
 
 ![cub3D Logo](https://img.shields.io/badge/42-cub3D-000000?style=for-the-badge&logo=42&logoColor=white)
+![1337](https://img.shields.io/badge/1337-coding%20school-F39C12?style=for-the-badge&logoColor=white)
 ![C](https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 
@@ -34,7 +35,7 @@
 
 **cub3D** is a 3D raycasting game engine inspired by the legendary Wolfenstein 3D. This project implements a complete 3D rendering system from scratch using only basic 2D graphics primitives, demonstrating the mathematical principles behind early 3D games.
 
-Built as part of the 42 Network curriculum, this project goes beyond the mandatory requirements by implementing advanced features like enemy AI, health systems, and enhanced graphics effects.
+Built as part of the 42 Network curriculum at **1337 coding school**, this project goes beyond the mandatory requirements by implementing advanced features like enemy AI, health systems, and enhanced graphics effects.
 
 ### 🏆 Project Achievements
 - ✅ **100% Mandatory Requirements** - All core features implemented
@@ -386,7 +387,8 @@ valgrind --leak-check=full ./cub3d maps/BRICKS0.cub
 **abouguri** - [GitHub Profile](https://github.com/abouguri)
 
 ### Acknowledgments
-- **42 Network** - Educational framework and project specifications
+- **1337 coding school** - Part of the 42 Network educational framework
+- **42 Network** - Global coding school network and project specifications
 - **MinilibX** - Graphics library for X Window System
 - **Wolfenstein 3D** - Inspiration for raycasting techniques
 - **Game Development Community** - Algorithms and optimization techniques
@@ -400,15 +402,16 @@ valgrind --leak-check=full ./cub3d maps/BRICKS0.cub
 
 ## 📄 License
 
-This project is created as part of the 42 Network curriculum. Feel free to use this code for educational purposes.
+This project is created as part of the 42 Network curriculum at 1337 coding school. Feel free to use this code for educational purposes.
 
 ---
 
 <div align="center">
 
-**Made with ❤️ at 42 Network**
+**Made with ❤️ at 1337 coding school**
 
 [![42](https://img.shields.io/badge/42-Network-000000?style=flat&logo=42&logoColor=white)](https://42.fr)
+[![1337](https://img.shields.io/badge/1337-coding%20school-F39C12?style=flat&logoColor=white)](https://1337.ma)
 
 *"The only way to learn programming is by writing programs"*
 
